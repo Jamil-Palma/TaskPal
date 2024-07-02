@@ -1,0 +1,5 @@
+ipython
+fastapi
+python-dotenv
+google-generativeai
+pillow

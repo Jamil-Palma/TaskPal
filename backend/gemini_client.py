@@ -1,0 +1,71 @@
+import os
+import textwrap
+import PIL.Image
+import mimetypes
+from dotenv import load_dotenv
+import google.generativeai as genai
+from IPython.display import Markdown
+
+
+class GeminiChainClient:
+    def __init__(self, model_version: str):
+        """
+        Initialize the client with the specific model version.
+        """
+        load_dotenv()
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "API_KEY is missing from the environment variables.")
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel(model_version)
+
+    @staticmethod
+    def to_markdown(text):
+        """
+        Convert text to Markdown format.
+        """
+        text = text.replace('•', '  *')
+        return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+    def generate_text(self, input_text: str):
+        """
+        Generate text based on input text.
+        """
+        response = self.model.generate_content(input_text)
+        return response.text
+
+    def generate_text_from_image(self, image_path: str):
+        """
+        Generate text based on an input image.
+        """
+
+        prompt = """You are a expert photographer. Give the image a rating from 1 to 10 based on the skill """
+        img = PIL.Image.open(image_path)
+        response = self.model.generate_content([prompt, img])
+        token = response.usage_metadata.candidates_token_count
+        total_tokens = response.usage_metadata.total_token_count
+        print(f"Response token: {token}")
+        print(f"Total tokens: {total_tokens}")
+
+        return (response.text)
+
+    def speech_to_text(self, audio_path: str):
+        """
+        Convert speech to text.
+        """
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError("Audio file not found!")
+
+        with open(audio_path, 'rb') as audio_file:
+            audio_data = audio_file.read()
+
+        audio = {
+            "inline_data": {
+                "data": audio_data,
+                "mime_type": mimetypes.guess_type(audio_path)[0]
+            }
+        }
+        prompt = "Extract text from this audio."
+        response = self.model.generate_content([audio, prompt])
+        return response.text

@@ -12,3 +12,15 @@ backend/.env
 .DS_Store
 .vscode/
 *.log
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Dependency directories
+node_modules/

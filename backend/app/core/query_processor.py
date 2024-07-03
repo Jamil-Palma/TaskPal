@@ -13,3 +13,7 @@ class QueryProcessor:
     def process_audio_query(self, audio_path):
         response = self.gemini_client.speech_to_text(audio_path)
         return response
+
+    def record_audio(self, duration):
+        response = self.gemini_client.record_audio(duration)
+        return response

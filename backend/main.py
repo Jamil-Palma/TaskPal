@@ -44,3 +44,15 @@ async def process_question(query: UserQuery):
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
+
+@app.post("/audio_url_to_text")
+async def transcribe_audio_url(query: UserQuery):
+    try:
+        audio_url = query.input_text
+        file_path = client.upload_audio(audio_url)
+        transcription = client.speech_to_text(file_path)
+        return {"response": transcription}
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="An error occurred while processing the request")

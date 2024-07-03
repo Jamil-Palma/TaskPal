@@ -10,7 +10,7 @@ const AudioRecorder = () => {
     setTranscription("");
 
     try {
-      const response = await axios.post("http://localhost:8000/audio");
+      const response = await axios.post("http://localhost:8000/audio/audio");
       setTranscription(response.data.transcription);
     } catch (error) {
       console.error("Error recording audio:", error);

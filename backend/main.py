@@ -22,11 +22,9 @@ class UserQuery(BaseModel):
 
 # Example usage
 client = GeminiChainClient(model_version='gemini-1.5-flash')
+# transcribed_text = client.record_audio(duration=5)
+# print("Transcribed text:", transcribed_text)
 # text_from_image = client.generate_text_from_image('./image/image.jpg')
-# print(text_from_image)
-# text_from_image = client.generate_text_from_image('./image/clear.jpg')
-# print(text_from_image)
-# text_from_image = client.generate_text_from_image('./image/blurry-vision.jpg')
 # print(text_from_image)
 # Convert speech to text
 # audio_path = "./audio/audio.mp3"
@@ -44,3 +42,15 @@ async def process_question(query: UserQuery):
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
+
+
+@app.post("/audio")
+async def process_audio():
+    try:
+        transcribed_text = client.record_audio(duration=5)
+        text_response = client.generate_text(transcribed_text)
+        return {"transcription": text_response}
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="An error occurred while processing the audio")

@@ -29,6 +29,7 @@ class ConversationManager:
 
         try:
             response = self.evaluator.evaluate(state)
+            print(response)
             state.update(response)
             return {
                 "response": response["messages"][-1]["content"],

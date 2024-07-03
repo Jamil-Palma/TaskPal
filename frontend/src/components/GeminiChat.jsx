@@ -15,7 +15,7 @@ const GeminiChat = () => {
     setMessages([...messages, userMessage]);
 
     try {
-      const response = await axios.post("http://localhost:8000/question", {
+      const response = await axios.post("http://localhost:8000/text/question", {
         input_text: userInput,
       });
       const botMessage = { text: response.data.response, user: false };

@@ -17,3 +17,7 @@ class QueryProcessor:
     def record_audio(self, duration):
         response = self.gemini_client.record_audio(duration)
         return response
+
+    def process_scraping(self, url):
+        response = self.gemini_client.process_scraping(url)
+        return response

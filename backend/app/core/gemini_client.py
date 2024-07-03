@@ -7,6 +7,9 @@ import google.generativeai as genai
 from IPython.display import Markdown
 import pyaudio
 import wave
+import requests
+from bs4 import BeautifulSoup
+import re
 
 
 class GeminiChainClient:
@@ -113,3 +116,30 @@ class GeminiChainClient:
         os.remove(temp_filename)
 
         return transcribed_text
+
+    def process_scraping(self, url: str):
+        """
+        Process scraping based on the input URL.
+        """
+        page = requests.get(url.input_text)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        title = soup.title.text
+        title = title.replace("-", "").replace(" ", "_")
+        article_text = " ".join([p.text for p in soup.find_all('p')])
+        prompt = """You are an expert IT instructor. Now I will give you a complete article,
+            Read and analyze the article, Then I want you to create a step-by-step guide on \
+            how to complete the task described in the article. 
+
+            ## Article Content:
+            """ + article_text
+        prompt_summary = """You are an AI language model. Please summarize the following text \
+        in no more than one paragraph.
+
+        ## Article Content:
+        """ + article_text
+        summary = self.model.generate_content(prompt_summary)
+
+        filename = title[:15]
+        response = self.model.generate_content(prompt)
+
+        return {"response": response.text, "summary": summary.text}

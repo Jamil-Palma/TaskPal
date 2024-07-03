@@ -5,6 +5,7 @@ import mimetypes
 from dotenv import load_dotenv
 import google.generativeai as genai
 from IPython.display import Markdown
+from youtube_transcript_api import YouTubeTranscriptApi
 
 
 class GeminiChainClient:
@@ -92,3 +93,35 @@ class GeminiChainClient:
         if any(ext in media_file_name for ext in text_ext):
             os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
+        
+    def video_transcript(self, video_path: str):
+        """
+        Convert video to text.
+        """
+        print("video_path: ", video_path)
+        video_id = video_path.split("v=")[-1]
+        print("video_id: ", video_id)
+
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = ''.join([d['text'] for d in transcript_list]).replace('\n', ' ')
+        print("transcript: ", transcript)
+
+        return transcript
+
+        # if not os.path.exists(video_path):
+        #     raise FileNotFoundError("Video file not found!")
+
+        # with open(video_path, 'rb') as video_file:
+        #     video_data = video_file.read()
+
+        # print(mimetypes.guess_type(video_path)[0])
+
+        # video = {
+        #     "inline_data": {
+        #         "data": video_data,
+        #         "mime_type": mimetypes.guess_type(video_path)[0]
+        #     }
+        # }
+        # prompt = "Extract text from this video."
+        # response = self.model.generate_content([video, prompt])
+        # return response.text

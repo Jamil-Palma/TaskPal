@@ -12,3 +12,12 @@ async def process_video(query: UserQuery):
         return {"response": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred while processing the video")
+
+# create /transcript endpoint
+@router.post("/transcript")
+async def process_video_transcript(query: UserQuery):
+    try:
+        response = video_service.process_transcript(query.input_text)
+        return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred while processing the video")

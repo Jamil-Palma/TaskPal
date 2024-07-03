@@ -17,3 +17,7 @@ class QueryProcessor:
     def process_media_url(self, media_url):
         response = self.gemini_client.upload_media(media_url)
         return response
+    
+    def process_video_transcript(self, video_path):
+        response = self.gemini_client.video_transcript(video_path)
+        return response

@@ -15,19 +15,39 @@ const GeminiChat = () => {
     setMessages([...messages, userMessage]);
 
     try {
-      const response = await axios.post("http://localhost:8000/question", {
-        input_text: userInput,
-      });
-      const botMessage = { text: response.data.response, user: false };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      setLoading(false);
-      setUserInput("");
+      if (userInput.includes(".mp3")) {
+        const response = await axios.post(
+          "http://localhost:8000/audio_url_to_text",
+          {
+            input_text: userInput,
+          }
+        );
+        const botMessage = { text: response.data.response, user: false };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+        setLoading(false);
+        setUserInput("");
 
-      if (botMessage.text && !isSpeaking) {
-        const utterance = new SpeechSynthesisUtterance(botMessage.text);
-        window.speechSynthesis.speak(utterance);
-        setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
+        if (botMessage.text && !isSpeaking) {
+          const utterance = new SpeechSynthesisUtterance(botMessage.text);
+          window.speechSynthesis.speak(utterance);
+          setIsSpeaking(true);
+          utterance.onend = () => setIsSpeaking(false);
+        }
+      } else {
+        const response = await axios.post("http://localhost:8000/question", {
+          input_text: userInput,
+        });
+        const botMessage = { text: response.data.response, user: false };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+        setLoading(false);
+        setUserInput("");
+
+        if (botMessage.text && !isSpeaking) {
+          const utterance = new SpeechSynthesisUtterance(botMessage.text);
+          window.speechSynthesis.speak(utterance);
+          setIsSpeaking(true);
+          utterance.onend = () => setIsSpeaking(false);
+        }
       }
     } catch (error) {
       console.error("Error fetching response:", error);

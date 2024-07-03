@@ -1,5 +1,9 @@
-ipython
+
 fastapi
+uvicorn
+pydantic
 python-dotenv
 google-generativeai
 pillow
+pydub
+

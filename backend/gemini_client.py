@@ -69,3 +69,12 @@ class GeminiChainClient:
         prompt = "Extract text from this audio."
         response = self.model.generate_content([audio, prompt])
         return response.text
+    
+    def upload_audio(self, audio_url: str):
+        """
+        Upload audio from URL.
+        """
+        audio_file_name = audio_url.split("/")[-1].replace("%20", "_")
+        os.system(f"wget -O {audio_file_name} {audio_url} && mv {audio_file_name} ./audio/{audio_file_name}")
+        
+        return "./audio/" + audio_file_name

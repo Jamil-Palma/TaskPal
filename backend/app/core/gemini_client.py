@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from IPython.display import Markdown
 from youtube_transcript_api import YouTubeTranscriptApi
+import pyaudio
+import wave
 
 
 class GeminiChainClient:
@@ -69,8 +71,50 @@ class GeminiChainClient:
         }
         prompt = "Extract text from this audio."
         response = self.model.generate_content([audio, prompt])
-        return response.text
-    
+        return response.text    
+
+    def record_audio(self, duration=5, sample_rate=16000, channels=1, chunk=1024):
+        # Initialize PyAudio
+        p = pyaudio.PyAudio()
+
+        # Open stream
+        stream = p.open(format=pyaudio.paInt16,
+                        channels=channels,
+                        rate=sample_rate,
+                        input=True,
+                        frames_per_buffer=chunk)
+
+        print("Recording...")
+
+        frames = []
+        for _ in range(0, int(sample_rate / chunk * duration)):
+            data = stream.read(chunk)
+            frames.append(data)
+
+        print("Recording finished.")
+
+        # Stop and close the stream
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # Save the recorded data as a WAV file
+        temp_filename = "temp_audio.wav"
+        wf = wave.open(temp_filename, 'wb')
+        wf.setnchannels(channels)
+        wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+        wf.setframerate(sample_rate)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+
+        # Transcribe the audio using GeminiChainClient
+        transcribed_text = self.speech_to_text(temp_filename)
+
+        # Clean up the temporary file
+        os.remove(temp_filename)
+
+        return transcribed_text
+
     def upload_media(self, media_url: str):
         """
         Upload media from URL.

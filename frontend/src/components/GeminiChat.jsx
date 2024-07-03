@@ -6,6 +6,7 @@ const GeminiChat = () => {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentUtterance, setCurrentUtterance] = useState(null);
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
@@ -22,13 +23,6 @@ const GeminiChat = () => {
       setMessages((prevMessages) => [...prevMessages, botMessage]);
       setLoading(false);
       setUserInput("");
-
-      if (botMessage.text && !isSpeaking) {
-        const utterance = new SpeechSynthesisUtterance(botMessage.text);
-        window.speechSynthesis.speak(utterance);
-        setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-      }
     } catch (error) {
       console.error("Error fetching response:", error);
       setLoading(false);
@@ -38,6 +32,22 @@ const GeminiChat = () => {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       sendMessage();
+    }
+  };
+
+  const toggleSpeech = () => {
+    if (isSpeaking && currentUtterance) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage && !lastMessage.user) {
+        const utterance = new SpeechSynthesisUtterance(lastMessage.text);
+        utterance.onend = () => setIsSpeaking(false);
+        window.speechSynthesis.speak(utterance);
+        setIsSpeaking(true);
+        setCurrentUtterance(utterance);
+      }
     }
   };
 
@@ -67,6 +77,7 @@ const GeminiChat = () => {
       <button onClick={sendMessage} disabled={loading}>
         Send
       </button>
+      <button onClick={toggleSpeech}>{isSpeaking ? "Stop" : "Speak"}</button>
       {loading && <p>Loading...</p>}
     </div>
   );

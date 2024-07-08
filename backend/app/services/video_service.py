@@ -10,3 +10,7 @@ class VideoService:
         # Implement video processing logic here
         response = self.query_processor.process_video_query(video_path)
         return response
+    
+    def process_transcript(self, video_path: str):
+        response = self.query_processor.process_video_transcript(video_path)
+        return response

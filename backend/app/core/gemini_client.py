@@ -189,7 +189,7 @@ class GeminiChainClient:
         }
 
         # Save the result to a file
-        with open(f"./data/instruction/{filename}.json", "w") as file:
+        with open(f"./data/task/{filename}.json", "w") as file:
             json.dump(result, file, indent=2)
 
         return result

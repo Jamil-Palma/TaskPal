@@ -5,6 +5,7 @@ import mimetypes
 from dotenv import load_dotenv
 import google.generativeai as genai
 from IPython.display import Markdown
+from youtube_transcript_api import YouTubeTranscriptApi
 import pyaudio
 import wave
 import requests
@@ -143,3 +144,47 @@ class GeminiChainClient:
         response = self.model.generate_content(prompt)
 
         return {"response": response.text, "summary": summary.text}
+
+    def upload_media(self, media_url: str):
+        """
+        Upload media from URL.
+        """
+        image_ext = ['.png', '.jpeg', '.webp', '.heic', '.heif']
+        audio_ext = ['.wav', '.mp3', '.aiff', '.aac', '.ogg', '.flac']
+        video_ext = ['.mp4', '.mpeg', '.mov', '.avi',
+                     '.FLV', '.mpg', '.webm', '.wmv', '.3gpp']
+        text_ext = ['.txt', '.html', '.css', '.js',
+                    '.ts', '.csv', '.py', '.json', '.xml', '.rtf']
+        media_file_name = media_url.split("/")[-1].replace("%20", "_")
+
+        if any(ext in media_file_name for ext in image_ext):
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/image/{media_file_name}")
+            return "./data/image/" + media_file_name
+        if any(ext in media_file_name for ext in audio_ext):
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/audio/{media_file_name}")
+            return "./data/audio/" + media_file_name
+        if any(ext in media_file_name for ext in video_ext):
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/video/{media_file_name}")
+            return "./data/video/" + media_file_name
+        if any(ext in media_file_name for ext in text_ext):
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/text/{media_file_name}")
+            return "./data/text/" + media_file_name
+
+    def video_transcript(self, video_path: str):
+        """
+        Get transcript from YouTube url.
+        """
+        print("video_path: ", video_path)
+        video_id = video_path.split("v=")[-1]
+        print("video_id: ", video_id)
+
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = ''.join([d['text']
+                             for d in transcript_list]).replace('\n', ' ')
+        print("transcript: ", transcript)
+
+        return transcript

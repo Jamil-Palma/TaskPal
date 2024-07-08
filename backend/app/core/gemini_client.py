@@ -14,7 +14,7 @@ import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
-import re
+from app.services.json_service import JsonService 
 
 
 class GeminiChainClient:
@@ -29,6 +29,7 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
+        self.json_service = JsonService() 
         self.langchain_model = ChatGoogleGenerativeAI(temperature=0.0, google_api_key=api_key, model=model_version)
 
     @staticmethod
@@ -46,20 +47,29 @@ class GeminiChainClient:
         response = self.model.generate_content(input_text)
         return response.text
 
-    def generate_text_from_image(self, image_path: str):
+    def generate_text_from_image(self, filename: str, task: str, input_text: str):
         """
-        Generate text based on an input image.
+        Generate text based on an input image, considering the task context.
         """
+        prompt = f"""You are an AI assistant specializing in image analysis and task-specific problem-solving.
+        The current task context is: {task}
+        The user's query is: {input_text}
 
-        prompt = """You are a expert photographer. Give the image a rating from 1 to 10 based on the skill """
-        img = PIL.Image.open(image_path)
+        Analyze the given image and respond with a JSON object containing the following:
+        1. "relevance": A boolean indicating if the image is relevant to the task context.
+        2. "analysis": If relevant, provide a detailed analysis of the image content related to the task. If not relevant, leave this field empty.
+        4. "solution": If relevant and the image shows a problem, provide a solution or next steps. If not relevant or no problem is evident, leave this field empty.
+
+        Ensure your response is in valid JSON format.
+        """
+        img = PIL.Image.open(filename)
         response = self.model.generate_content([prompt, img])
         token = response.usage_metadata.candidates_token_count
         total_tokens = response.usage_metadata.total_token_count
         print(f"Response token: {token}")
         print(f"Total tokens: {total_tokens}")
 
-        return (response.text)
+        return response.text
 
     def speech_to_text(self, audio_path: str):
         """
@@ -133,11 +143,22 @@ class GeminiChainClient:
         title = title.replace("-", "").replace(" ", "_")
         article_text = " ".join([p.text for p in soup.find_all('p')])
         prompt = """You are an expert IT instructor. Now I will give you a complete article,
-            Read and analyze the article, Then I want you to create a step-by-step guide on \
-            how to complete the task described in the article. 
+        Read and analyze the article, Then I want you to create a step-by-step guide on \
+        how to complete the task described in the article.
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
 
-            ## Article Content:
-            """ + article_text
+        ## Article Content:
+        """ + article_text
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 
@@ -145,10 +166,17 @@ class GeminiChainClient:
         """ + article_text
         summary = self.model.generate_content(prompt_summary)
 
-        filename = title[:15]
-        response = self.model.generate_content(prompt)
+        task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
+        Your task is to generate one short name for the task based on the summary.""" + summary.text
 
-        return {"response": response.text, "summary": summary.text}
+        response = self.model.generate_content(prompt)
+        task_name = self.model.generate_content(task_prompt)
+
+        # Use JsonService to process and save the result
+        result, task_name = self.json_service.process_and_save_scraping_result(
+            title, response.text, task_name.text, summary.text)
+
+        return result
 
     def upload_media(self, media_url: str):
         """
@@ -163,16 +191,20 @@ class GeminiChainClient:
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/video/{media_file_name}")
             return "./data/video/" + media_file_name
         if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
 
     def video_transcript(self, video_path: str):

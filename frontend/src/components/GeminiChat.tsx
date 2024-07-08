@@ -11,7 +11,8 @@ const GeminiChat: React.FC = () => {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [currentUtterance, setCurrentUtterance] =
+    useState<SpeechSynthesisUtterance | null>(null);
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
@@ -21,7 +22,7 @@ const GeminiChat: React.FC = () => {
     setMessages([...messages, userMessage]);
 
     try {
-      const response = await axios.post("http://localhost:8000/question", {
+      const response = await axios.post("http://localhost:8000/text/question", {
         input_text: userInput,
       });
       const botMessage: Message = { text: response.data.response, user: false };

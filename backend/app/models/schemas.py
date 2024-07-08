@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class UserQuery(BaseModel):
     input_text: str
     conversation_id: Optional[str] = None
@@ -8,3 +9,4 @@ class UserQuery(BaseModel):
 
 class TaskQuery(BaseModel):
     task: str
+

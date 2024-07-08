@@ -6,8 +6,9 @@ class QueryProcessor:
         response = self.gemini_client.generate_text(text)
         return response
 
-    def process_image_query(self, image_path):
-        response = self.gemini_client.generate_text_from_image(image_path)
+    def process_image_query(self, filename: str, task: str, input_text: str):
+        response = self.gemini_client.generate_text_from_image(
+            filename, task, input_text)
         return response
 
     def process_audio_query(self, audio_path):

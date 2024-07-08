@@ -1,43 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent } from "react";
 import axios from "axios";
 
-const GeminiChat = () => {
-  const [messages, setMessages] = useState([]);
+interface Message {
+  text: string;
+  user: boolean;
+}
+
+const GeminiChat: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
 
     setLoading(true);
-    const userMessage = { text: userInput, user: true };
+    const userMessage: Message = { text: userInput, user: true };
     setMessages([...messages, userMessage]);
 
     try {
       const response = await axios.post("http://localhost:8000/question", {
         input_text: userInput,
       });
-      const botMessage = { text: response.data.response, user: false };
+      const botMessage: Message = { text: response.data.response, user: false };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
       setLoading(false);
       setUserInput("");
-
-      if (botMessage.text && !isSpeaking) {
-        const utterance = new SpeechSynthesisUtterance(botMessage.text);
-        window.speechSynthesis.speak(utterance);
-        setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-      }
     } catch (error) {
       console.error("Error fetching response:", error);
       setLoading(false);
     }
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       sendMessage();
+    }
+  };
+
+  const toggleSpeech = () => {
+    if (isSpeaking && currentUtterance) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage && !lastMessage.user) {
+        const utterance = new SpeechSynthesisUtterance(lastMessage.text);
+        utterance.onend = () => setIsSpeaking(false);
+        window.speechSynthesis.speak(utterance);
+        setIsSpeaking(true);
+        setCurrentUtterance(utterance);
+      }
     }
   };
 
@@ -67,6 +82,7 @@ const GeminiChat = () => {
       <button onClick={sendMessage} disabled={loading}>
         Send
       </button>
+      <button onClick={toggleSpeech}>{isSpeaking ? "Stop" : "Speak"}</button>
       {loading && <p>Loading...</p>}
     </div>
   );

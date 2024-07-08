@@ -1,14 +1,17 @@
 from app.core.query_processor import QueryProcessor
 from app.core.gemini_client import GeminiChainClient
-
+from app.services.json_service import JsonService  
+import json
 
 class TextService:
     def __init__(self):
         gemini_client = GeminiChainClient(model_version='gemini-1.5-flash')
         self.query_processor = QueryProcessor(gemini_client)
         self.gemini_client = gemini_client
+        self.json_service = JsonService() 
 
     def process_query(self, input_text: str):
+        return "yes"
         response = self.query_processor.process_text_query(input_text)
         return response
 
@@ -17,7 +20,20 @@ class TextService:
         return response
 
     def generate_task_steps(self, task: str):
-        print("step 1")
+        json_response = {
+            "task": "Create Hello World with Axios in React",
+            "steps": [
+                "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
+                "Install Axios with 'npm install axios'",
+                "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
+            ],
+            "summary_task": "Create a React component that fetches and displays data using Axios."
+        }
+
+        self.json_service.write_task_json(task, json_response)
+
+        return json_response
+
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
@@ -78,6 +94,10 @@ class TextService:
         """
         print("step 2")
         response = self.gemini_client.generate_text(prompt)
+
+        json_response = json.loads(response)
+
+        self.json_service.write_json('task_steps.json', json_response)
         return response
 
 

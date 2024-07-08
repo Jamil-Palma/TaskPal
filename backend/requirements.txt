@@ -7,3 +7,4 @@ google-generativeai
 pillow
 pydub
 beautifulsoup4
+youtube-transcript-api

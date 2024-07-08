@@ -101,9 +101,6 @@ class TextService:
         return response
 
 
-
-
-
 """
 def generate_task_steps(self, task: str):
     prompt = f

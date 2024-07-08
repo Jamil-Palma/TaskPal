@@ -41,20 +41,29 @@ class GeminiChainClient:
         response = self.model.generate_content(input_text)
         return response.text
 
-    def generate_text_from_image(self, image_path: str):
+    def generate_text_from_image(self, filename: str, task: str, input_text: str):
         """
-        Generate text based on an input image.
+        Generate text based on an input image, considering the task context.
         """
+        prompt = f"""You are an AI assistant specializing in image analysis and task-specific problem-solving.
+        The current task context is: {task}
+        The user's query is: {input_text}
 
-        prompt = """You are a expert photographer. Give the image a rating from 1 to 10 based on the skill """
-        img = PIL.Image.open(image_path)
+        Analyze the given image and respond with a JSON object containing the following:
+        1. "relevance": A boolean indicating if the image is relevant to the task context.
+        2. "analysis": If relevant, provide a detailed analysis of the image content related to the task. If not relevant, leave this field empty.
+        4. "solution": If relevant and the image shows a problem, provide a solution or next steps. If not relevant or no problem is evident, leave this field empty.
+
+        Ensure your response is in valid JSON format.
+        """
+        img = PIL.Image.open(filename)
         response = self.model.generate_content([prompt, img])
         token = response.usage_metadata.candidates_token_count
         total_tokens = response.usage_metadata.total_token_count
         print(f"Response token: {token}")
         print(f"Total tokens: {total_tokens}")
 
-        return (response.text)
+        return response.text
 
     def speech_to_text(self, audio_path: str):
         """

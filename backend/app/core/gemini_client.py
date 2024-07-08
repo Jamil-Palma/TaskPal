@@ -10,8 +10,7 @@ import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
-import re
-import json
+from app.services.json_service import JsonService 
 
 
 class GeminiChainClient:
@@ -26,6 +25,7 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
+        self.json_service = JsonService() 
 
     @staticmethod
     def to_markdown(text):
@@ -164,33 +164,12 @@ class GeminiChainClient:
         task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
         Your task is to generate one short name for the task based on the summary.""" + summary.text
 
-        filename = title[:15]
         response = self.model.generate_content(prompt)
-        response_text = response.text.strip('`').strip()
         task_name = self.model.generate_content(task_prompt)
-        if response_text.startswith('json'):
-            response_text = response_text[4:].strip()
 
-        try:
-            # Parse the response as JSON
-            response_json = json.loads(response_text)
-            steps = response_json.get('steps', [])
-        except json.JSONDecodeError:
-            # If JSON parsing fails, fallback to regex extraction
-            steps = re.findall(r"(Step \d+:.*?)(?=Step \d+:|$)",
-                               response_text, re.DOTALL)
-            steps = [step.strip() for step in steps]
-
-        # Create the final JSON structure
-        result = {
-            "task": task_name.text,
-            "steps": steps,
-            "summary": summary.text
-        }
-
-        # Save the result to a file
-        with open(f"./data/task/{filename}.json", "w") as file:
-            json.dump(result, file, indent=2)
+        # Use JsonService to process and save the result
+        result, task_name = self.json_service.process_and_save_scraping_result(
+            title, response.text, task_name.text, summary.text)
 
         return result
 

@@ -158,12 +158,10 @@ class GeminiChainClient:
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
             os.system(f"wget -O {media_file_name} {media_url} && mv {

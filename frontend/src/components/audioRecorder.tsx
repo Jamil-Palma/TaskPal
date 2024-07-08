@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AudioRecorder = () => {
+const AudioRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcription, setTranscription] = useState("");
 
@@ -10,7 +10,7 @@ const AudioRecorder = () => {
     setTranscription("");
 
     try {
-      const response = await axios.post("http://localhost:8000/audio/audio");
+      const response = await axios.post("http://localhost:8000/audio");
       setTranscription(response.data.transcription);
     } catch (error) {
       console.error("Error recording audio:", error);

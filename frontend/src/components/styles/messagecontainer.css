@@ -1,0 +1,40 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .msg-container {
+    display: flex;
+    margin: 5px;
+  }
+  
+  .message-left {
+    justify-content: flex-start;
+  }
+  
+  .message-right {
+    justify-content: flex-end;
+  }
+  
+  .message {
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 70%;
+  }
+  
+  .user-message {
+    background-color: #e0f7fa;
+    align-self: flex-end;
+  }
+  
+  .assistant-message {
+    background-color: #fff9c4;
+    align-self: flex-start;
+  }
+  
+  .role {
+    font-weight: bold;
+  }
+  

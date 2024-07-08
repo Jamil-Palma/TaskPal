@@ -8,6 +8,9 @@ from IPython.display import Markdown
 from youtube_transcript_api import YouTubeTranscriptApi
 import pyaudio
 import wave
+import requests
+from bs4 import BeautifulSoup
+import re
 
 
 class GeminiChainClient:
@@ -71,7 +74,7 @@ class GeminiChainClient:
         }
         prompt = "Extract text from this audio."
         response = self.model.generate_content([audio, prompt])
-        return response.text    
+        return response.text
 
     def record_audio(self, duration=5, sample_rate=16000, channels=1, chunk=1024):
         # Initialize PyAudio
@@ -115,29 +118,62 @@ class GeminiChainClient:
 
         return transcribed_text
 
+    def process_scraping(self, url: str):
+        """
+        Process scraping based on the input URL.
+        """
+        page = requests.get(url.input_text)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        title = soup.title.text
+        title = title.replace("-", "").replace(" ", "_")
+        article_text = " ".join([p.text for p in soup.find_all('p')])
+        prompt = """You are an expert IT instructor. Now I will give you a complete article,
+            Read and analyze the article, Then I want you to create a step-by-step guide on \
+            how to complete the task described in the article. 
+
+            ## Article Content:
+            """ + article_text
+        prompt_summary = """You are an AI language model. Please summarize the following text \
+        in no more than one paragraph.
+
+        ## Article Content:
+        """ + article_text
+        summary = self.model.generate_content(prompt_summary)
+
+        filename = title[:15]
+        response = self.model.generate_content(prompt)
+
+        return {"response": response.text, "summary": summary.text}
+
     def upload_media(self, media_url: str):
         """
         Upload media from URL.
         """
         image_ext = ['.png', '.jpeg', '.webp', '.heic', '.heif']
         audio_ext = ['.wav', '.mp3', '.aiff', '.aac', '.ogg', '.flac']
-        video_ext = ['.mp4', '.mpeg', '.mov', '.avi', '.FLV', '.mpg', '.webm', '.wmv', '.3gpp']
-        text_ext = ['.txt', '.html', '.css', '.js', '.ts', '.csv', '.py', '.json', '.xml', '.rtf']
+        video_ext = ['.mp4', '.mpeg', '.mov', '.avi',
+                     '.FLV', '.mpg', '.webm', '.wmv', '.3gpp']
+        text_ext = ['.txt', '.html', '.css', '.js',
+                    '.ts', '.csv', '.py', '.json', '.xml', '.rtf']
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/video/{media_file_name}")
             return "./data/video/" + media_file_name
         if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
-        
+
     def video_transcript(self, video_path: str):
         """
         Get transcript from YouTube url.
@@ -147,7 +183,8 @@ class GeminiChainClient:
         print("video_id: ", video_id)
 
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        transcript = ''.join([d['text'] for d in transcript_list]).replace('\n', ' ')
+        transcript = ''.join([d['text']
+                             for d in transcript_list]).replace('\n', ' ')
         print("transcript: ", transcript)
 
         return transcript

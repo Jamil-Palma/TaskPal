@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Button, TextField, Typography } from "@mui/material";
+import { AppBar, Button, TextField, Typography, Box, Toolbar, Container, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import MessageContainer from "./MessageContainer";
@@ -95,48 +95,51 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
       : null;
 
   return (
-    <div>
+    <Container>
       {!allTasksCompleted && currentTask && (
-        <AppBar position="static">
-          <Typography variant="h3" component="div">
-            {currentTask.task}
-          </Typography>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <Typography variant="h6" component="div">
+              {currentTask.task}
+            </Typography>
+          </Toolbar>
         </AppBar>
       )}
-      <Button onClick={() => setSelectedTaskFilename(null)}>
+      <Button onClick={() => setSelectedTaskFilename(null)} variant="contained" color="secondary" style={{ marginTop: '16px' }}>
         Back to Task Selection
       </Button>
       <MessageContainer messageList={messages} />
-      <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+      <Paper style={{ display: 'flex', alignItems: 'center', padding: '8px', marginTop: '16px' }}>
         <TextField
           fullWidth
           placeholder="Enter a message..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={(e) => (e.key === "Enter" ? sendMessage() : null)}
+          variant="outlined"
+          style={{ marginRight: '8px' }}
         />
         <Button
           onClick={sendMessage}
-          style={{ padding: "10px" }}
+          variant="contained"
+          color="primary"
           endIcon={<SendIcon />}
         >
           Send
         </Button>
-      </div>
+      </Paper>
       {!allTasksCompleted && currentTask && (
-        <div>
-          {currentStep && <h2>Current Step: {currentStep}</h2>}
-          <div>
-            <strong>Summary:</strong> {currentTask.summary_task}
-          </div>
-        </div>
+        <Box style={{ marginTop: '16px' }}>
+          {currentStep && <Typography variant="h6">Current Step: {currentStep}</Typography>}
+          <Typography><strong>Summary:</strong> {currentTask.summary_task}</Typography>
+        </Box>
       )}
       {allTasksCompleted && (
-        <div>
-          <h2>You have completed all tasks.</h2>
-        </div>
+        <Box style={{ marginTop: '16px' }}>
+          <Typography variant="h6">You have completed all tasks.</Typography>
+        </Box>
       )}
-    </div>
+    </Container>
   );
 };
 

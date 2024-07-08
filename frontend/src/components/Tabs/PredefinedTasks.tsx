@@ -60,8 +60,8 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
 
   const defaultTask: Task = {
     task: "Default Task",
-    summary_task: "This is a default task shown when no tasks are available.",
-    file_name: "default_task",
+    summary_task: "This is a default task shown when no tasks are available, default task install vs code.",
+    file_name: "install_visual_studio_code.json",
   };
 
   return (

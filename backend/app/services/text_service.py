@@ -16,67 +16,69 @@ class TextService:
         response = self.query_processor.process_scraping(url)
         return response
 
-def generate_task_steps(self, task: str):
-    prompt = f"""
-    -- **System Instructions:**
-    -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
-    Your task is to provide a list of precise and clear steps for the given task. 
+    def generate_task_steps(self, task: str):
+        print("step 1")
+        prompt = f"""
+        -- **System Instructions:**
+        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
+        Your task is to provide a list of precise and clear steps for the given task. 
 
-    Output format:
-    Your output should be a JSON object with the following structure:
-    {{
-        "task": "<Task Description>",
-        "steps": [
-            "<Step 1>",
-            "<Step 2>",
-            ...
-        ],
-        "summary_task": "<Summary of the task>"
-    }}
-    Ensure the steps are clear, detailed, and can be easily followed.
+        Output format:
+        Your output should be a JSON object with the following structure:
+        {{
+            "task": "<Task Description>",
+            "steps": [
+                "<Step 1>",
+                "<Step 2>",
+                ...
+            ],
+            "summary_task": "<Summary of the task>"
+        }}
+        Ensure the steps are clear, detailed, and can be easily followed.
 
-    -- **Example Usage:**
+        -- **Example Usage:**
 
-    <EXAMPLE INPUT 1>
-    -- User task: Create Hello World with Axios in React
-    </EXAMPLE INPUT 1>
-    <EXAMPLE OUTPUT 1>
-    {{
-        "task": "Create Hello World with Axios in React",
-        "steps": [
-          "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
-          "Install Axios with 'npm install axios'",
-          "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
-        ],
-        "summary_task": "Create a React component that fetches and displays data using Axios."
-    }}
-    </EXAMPLE OUTPUT 1>
+        <EXAMPLE INPUT 1>
+        -- User task: Create Hello World with Axios in React
+        </EXAMPLE INPUT 1>
+        <EXAMPLE OUTPUT 1>
+        {{
+            "task": "Create Hello World with Axios in React",
+            "steps": [
+            "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
+            "Install Axios with 'npm install axios'",
+            "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
+            ],
+            "summary_task": "Create a React component that fetches and displays data using Axios."
+        }}
+        </EXAMPLE OUTPUT 1>
 
-    <EXAMPLE INPUT 2>
-    -- User task: Deploy a Node.js application on Heroku
-    </EXAMPLE INPUT 2>
-    <EXAMPLE OUTPUT 2>
-    {{
-        "task": "Deploy a Node.js application on Heroku",
-        "steps": [
-          "Ensure you have a Heroku account and the Heroku CLI installed",
-          "Log in to your Heroku account using the command 'heroku login'",
-          "Initialize a Git repository in your Node.js project directory if you haven't already",
-          "Create a new Heroku app using the command 'heroku create'",
-          "Define a 'Procfile' in the root of your project that specifies the command to run your app",
-          "Add and commit all changes to your Git repository",
-          "Deploy your application to Heroku by pushing your code to the Heroku remote with 'git push heroku main'",
-          "Ensure that your application is running properly by visiting the Heroku URL provided"
-        ],
-        "summary_task": "Deploy a Node.js application to Heroku and ensure it is running correctly."
-    }}
-    </EXAMPLE OUTPUT 2>
+        <EXAMPLE INPUT 2>
+        -- User task: Deploy a Node.js application on Heroku
+        </EXAMPLE INPUT 2>
+        <EXAMPLE OUTPUT 2>
+        {{
+            "task": "Deploy a Node.js application on Heroku",
+            "steps": [
+            "Ensure you have a Heroku account and the Heroku CLI installed",
+            "Log in to your Heroku account using the command 'heroku login'",
+            "Initialize a Git repository in your Node.js project directory if you haven't already",
+            "Create a new Heroku app using the command 'heroku create'",
+            "Define a 'Procfile' in the root of your project that specifies the command to run your app",
+            "Add and commit all changes to your Git repository",
+            "Deploy your application to Heroku by pushing your code to the Heroku remote with 'git push heroku main'",
+            "Ensure that your application is running properly by visiting the Heroku URL provided"
+            ],
+            "summary_task": "Deploy a Node.js application to Heroku and ensure it is running correctly."
+        }}
+        </EXAMPLE OUTPUT 2>
 
 
-    Task: {task}
-    """
-    response = self.gemini_client.generate_text(prompt)
-    return response
+        Task: {task}
+        """
+        print("step 2")
+        response = self.gemini_client.generate_text(prompt)
+        return response
 
 
 

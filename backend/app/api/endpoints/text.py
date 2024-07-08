@@ -26,6 +26,7 @@ async def process_scraping(url: UserQuery):
 @router.post("/generate-steps")
 async def generate_steps(task_query: TaskQuery):
     try:
+        print("start")
         response = text_service.generate_task_steps(task_query.task)
         return {"response": response}
     except Exception as e:

@@ -11,6 +11,7 @@ import wave
 import requests
 from bs4 import BeautifulSoup
 import re
+import json
 
 
 class GeminiChainClient:
@@ -137,11 +138,22 @@ class GeminiChainClient:
         title = title.replace("-", "").replace(" ", "_")
         article_text = " ".join([p.text for p in soup.find_all('p')])
         prompt = """You are an expert IT instructor. Now I will give you a complete article,
-            Read and analyze the article, Then I want you to create a step-by-step guide on \
-            how to complete the task described in the article. 
+        Read and analyze the article, Then I want you to create a step-by-step guide on \
+        how to complete the task described in the article.
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
 
-            ## Article Content:
-            """ + article_text
+        ## Article Content:
+        """ + article_text
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 
@@ -149,10 +161,38 @@ class GeminiChainClient:
         """ + article_text
         summary = self.model.generate_content(prompt_summary)
 
+        task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
+        Your task is to generate one short name for the task based on the summary.""" + summary.text
+
         filename = title[:15]
         response = self.model.generate_content(prompt)
+        response_text = response.text.strip('`').strip()
+        task_name = self.model.generate_content(task_prompt)
+        if response_text.startswith('json'):
+            response_text = response_text[4:].strip()
 
-        return {"response": response.text, "summary": summary.text}
+        try:
+            # Parse the response as JSON
+            response_json = json.loads(response_text)
+            steps = response_json.get('steps', [])
+        except json.JSONDecodeError:
+            # If JSON parsing fails, fallback to regex extraction
+            steps = re.findall(r"(Step \d+:.*?)(?=Step \d+:|$)",
+                               response_text, re.DOTALL)
+            steps = [step.strip() for step in steps]
+
+        # Create the final JSON structure
+        result = {
+            "task": task_name.text,
+            "steps": steps,
+            "summary": summary.text
+        }
+
+        # Save the result to a file
+        with open(f"./data/task/{filename}.json", "w") as file:
+            json.dump(result, file, indent=2)
+
+        return result
 
     def upload_media(self, media_url: str):
         """
@@ -167,16 +207,20 @@ class GeminiChainClient:
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/video/{media_file_name}")
             return "./data/video/" + media_file_name
         if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {
+                      media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
 
     def video_transcript(self, video_path: str):

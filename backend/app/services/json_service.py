@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 class JsonService:
     def __init__(self, base_path='data/task'):
@@ -30,7 +31,7 @@ class JsonService:
         file_path = os.path.join(self.base_path, filename)
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"{filename} not found in {self.base_path}")
-        
+
         with open(file_path, 'r') as json_file:
             return json.load(json_file)
 
@@ -44,7 +45,7 @@ class JsonService:
         file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
-        
+
         with open(file_path, 'r') as json_file:
             return json.load(json_file)
 
@@ -53,3 +54,30 @@ class JsonService:
         with open(file_path, 'w') as json_file:
             json.dump(data, json_file, indent=4)
         return file_path
+
+    def process_and_save_scraping_result(self, title, response_text, task_name, summary):
+        response_text = response_text.strip('`').strip()
+        if response_text.startswith('json'):
+            response_text = response_text[4:].strip()
+
+        try:
+            # Parse the response as JSON
+            response_json = json.loads(response_text)
+            steps = response_json.get('steps', [])
+        except json.JSONDecodeError:
+            # If JSON parsing fails, fallback to regex extraction
+            steps = re.findall(r"(Step \d+:.*?)(?=Step \d+:|$)",
+                               response_text, re.DOTALL)
+            steps = [step.strip() for step in steps]
+
+        # Create the final JSON structure
+        result = {
+            "task": task_name,
+            "steps": steps,
+            "summary": summary
+        }
+
+        # Save the result to a file
+        file_path = self.write_task_json(title, result)
+
+        return result, file_path

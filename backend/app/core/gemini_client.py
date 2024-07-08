@@ -14,7 +14,6 @@ import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
-from app.services.json_service import JsonService 
 
 
 class GeminiChainClient:
@@ -29,7 +28,6 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
-        self.json_service = JsonService() 
         self.langchain_model = ChatGoogleGenerativeAI(temperature=0.0, google_api_key=api_key, model=model_version)
 
     @staticmethod
@@ -171,7 +169,7 @@ class GeminiChainClient:
 
         response = self.model.generate_content(prompt)
         task_name = self.model.generate_content(task_prompt)
-
+        return title, response.text, task_name.text, summary.text
         # Use JsonService to process and save the result
         result, task_name = self.json_service.process_and_save_scraping_result(
             title, response.text, task_name.text, summary.text)
@@ -191,20 +189,16 @@ class GeminiChainClient:
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/video/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
             return "./data/video/" + media_file_name
         if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/text/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
 
     def video_transcript(self, video_path: str):

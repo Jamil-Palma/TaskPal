@@ -9,3 +9,5 @@ pydub
 beautifulsoup4
 youtube-transcript-api
 pyaudio
+langchain
+langchain-google-genai

@@ -4,7 +4,7 @@ import PredefinedTasks from '../Tabs/PredefinedTasks';
 import UrlTask from '../Tabs/UrlTask';
 import InstructionsTask from '../Tabs/InstructionsTask';
 import TestTask from '../Tabs/TestTask';
-import MessageBar from '../MessageBar';
+import MessageBar from '../chat/MessageBar';
 
 const MainView: React.FC = () => {
   const [selectedTaskFilename, setSelectedTaskFilename] = useState<string | null>(null);

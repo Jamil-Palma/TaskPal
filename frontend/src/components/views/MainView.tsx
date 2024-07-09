@@ -7,29 +7,33 @@ import TestTask from '../Tabs/TestTask';
 import MessageBar from '../MessageBar';
 
 const MainView: React.FC = () => {
-    const [selectedTaskFilename, setSelectedTaskFilename] = useState<string | null>(null);
-    const navigate = useNavigate();
+  const [selectedTaskFilename, setSelectedTaskFilename] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-    const handleTaskSelect = (filename: string) => {
-        setSelectedTaskFilename(filename);
-        navigate('/message-bar');
-    };
+  const handleTaskSelect = (filename: string) => {
+    setSelectedTaskFilename(filename);
+    navigate('/message-bar');
+  };
 
-    return (
-        <Routes>
-            <Route
-                path="/predefined-tasks"
-                element={<PredefinedTasks setSelectedTaskFilename={handleTaskSelect} />}
-            />
-            <Route path="/url-task" element={<UrlTask />} />
-            <Route path="/instructions-task" element={<InstructionsTask />} />
-            <Route path="/test-task" element={<TestTask />} />
-            <Route
-                path="/message-bar"
-                element={<MessageBar selectedTaskFilename={selectedTaskFilename} setSelectedTaskFilename={setSelectedTaskFilename} />}
-            />
-        </Routes>
-    );
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={<PredefinedTasks setSelectedTaskFilename={handleTaskSelect} />}
+      />
+      <Route
+        path="/predefined-tasks"
+        element={<PredefinedTasks setSelectedTaskFilename={handleTaskSelect} />}
+      />
+      <Route path="/url-task" element={<UrlTask />} />
+      <Route path="/instructions-task" element={<InstructionsTask />} />
+      <Route path="/test-task" element={<TestTask />} />
+      <Route
+        path="/message-bar"
+        element={<MessageBar selectedTaskFilename={selectedTaskFilename} setSelectedTaskFilename={setSelectedTaskFilename} />}
+      />
+    </Routes>
+  );
 };
 
 export default MainView;

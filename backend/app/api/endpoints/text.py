@@ -3,7 +3,6 @@ from app.models.schemas import UserQuery, TaskQuery
 from app.services.text_service import TextService
 from app.services.json_service import JsonService
 from app.core.conversation_manager import ConversationManager
-from app.services.json_service import JsonService
 
 router = APIRouter()
 text_service = TextService()

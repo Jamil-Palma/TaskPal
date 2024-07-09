@@ -78,6 +78,7 @@ async def start_conversation(task_query: TaskQuery):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        print("error : ", e)
         raise HTTPException(status_code=500, detail="An error occurred while starting the conversation.")
 
 @router.post("/fix_json")

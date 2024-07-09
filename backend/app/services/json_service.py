@@ -89,7 +89,7 @@ class JsonService:
         result = {
             "task": task_name,
             "steps": steps,
-            "summary": summary
+            "summary_task": summary
         }
 
         # Save the result to a file
@@ -110,7 +110,8 @@ class JsonService:
                     content = json.load(json_file)
                     task_info = {
                         'title': filename.replace('.json', '').replace('_', ' '),
-                        'content': content
+                        'content': content,
+                        'file_name': filename
                     }
                     tasks.append(task_info)
         return tasks

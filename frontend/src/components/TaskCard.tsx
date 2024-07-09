@@ -19,6 +19,7 @@ interface TaskContent {
 interface Task {
   title: string;
   content: TaskContent;
+  file_name: string;
 }
 
 interface TaskCardProps {
@@ -64,7 +65,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, expanded, onExpandClick, onSe
         <Button
           variant="contained"
           color="primary"
-          onClick={() => onSelectTask(task.title)}
+          onClick={() => onSelectTask(task.file_name)}
         >
           Select Task
         </Button>

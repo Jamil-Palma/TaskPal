@@ -100,3 +100,17 @@ class JsonService:
     def process_fix_json(self, json: str):
         response = self.query_processor.process_fix_json(json)
         return response
+    
+    def get_all_tasks(self):
+        tasks = []
+        for filename in os.listdir(self.base_path):
+            if filename.endswith('.json'):
+                file_path = os.path.join(self.base_path, filename)
+                with open(file_path, 'r') as json_file:
+                    content = json.load(json_file)
+                    task_info = {
+                        'title': filename.replace('.json', '').replace('_', ' '),
+                        'content': content
+                    }
+                    tasks.append(task_info)
+        return tasks

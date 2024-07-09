@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from IPython.display import Markdown
 from youtube_transcript_api import YouTubeTranscriptApi
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.prompts import PromptTemplate
+import json
 import pyaudio
 import wave
 import requests
@@ -24,6 +28,7 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
+        self.langchain_model = ChatGoogleGenerativeAI(temperature=0.0, google_api_key=api_key, model=model_version)
 
     @staticmethod
     def to_markdown(text):
@@ -179,20 +184,16 @@ class GeminiChainClient:
         media_file_name = media_url.split("/")[-1].replace("%20", "_")
 
         if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/image/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
             return "./data/image/" + media_file_name
         if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/audio/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
             return "./data/audio/" + media_file_name
         if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/video/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
             return "./data/video/" + media_file_name
         if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {
-                      media_file_name} ./data/text/{media_file_name}")
+            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
             return "./data/text/" + media_file_name
 
     def video_transcript(self, video_path: str):
@@ -209,3 +210,28 @@ class GeminiChainClient:
         print("transcript: ", transcript)
 
         return transcript
+    
+    def fix_json(self, json_input: str):
+        """
+        Fix invalid json.
+        """
+        output_parser = JsonOutputParser()
+        validate_template_string = """
+        you are a very helpful JSON validator. Given an invalid JSON object, you will correct the JSON format \
+        and return a valid JSON object.
+
+        Here is an invalid JSON object: {json_input}
+
+        Please correct the JSON format and return a valid JSON object.
+        """
+
+        validate_prompt_template = PromptTemplate(template=validate_template_string, input_variables=["json_input"])
+        chain = validate_prompt_template | self.langchain_model | output_parser
+        validate_result = chain.invoke({"json_input": json_input})
+
+        json_result = json.dumps(validate_result)
+        # print("json_result: ", json_result)
+
+        print("validate_result: ", validate_result)
+        return validate_result
+

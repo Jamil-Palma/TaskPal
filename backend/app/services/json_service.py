@@ -1,6 +1,8 @@
 import json
 import os
 import re
+from app.core.query_processor import QueryProcessor
+from app.core.gemini_client import GeminiChainClient
 
 class JsonService:
     def __init__(self, base_path='data/task'):
@@ -11,6 +13,9 @@ class JsonService:
         self.conversation_base_path = 'data/conversations'
         if not os.path.exists(self.conversation_base_path):
             os.makedirs(self.conversation_base_path)
+
+        gemini_client = GeminiChainClient(model_version='gemini-1.5-flash')
+        self.query_processor = QueryProcessor(gemini_client)
 
     def _sanitize_filename(self, filename):
         sanitized = filename.replace(" ", "_")
@@ -81,3 +86,7 @@ class JsonService:
         file_path = self.write_task_json(title, result)
 
         return result, file_path
+
+    def process_fix_json(self, json: str):
+        response = self.query_processor.process_fix_json(json)
+        return response

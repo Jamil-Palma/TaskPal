@@ -18,6 +18,7 @@ interface TaskContent {
 interface Task {
   title: string;
   content: TaskContent;
+  file_name: string
 }
 
 interface PredefinedTasksProps {
@@ -34,7 +35,7 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     const fetchTasks = async () => {
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/text/tasks`);
-        console.log("RESPONSE: ",response.data[0].content.task);
+        console.log("RESPONSE: ",response.data);
         setTasks(response.data);
         console.log("TASK ", tasks);
         setFilteredTasks(response.data);
@@ -70,7 +71,8 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     content: {
       task: "Default Task",
       summary_task: "his is a default task shown when no tasks are available, default task install vs code."
-    }
+    },
+    file_name: "install_visual_studio_code.json"
   };
 
   return (

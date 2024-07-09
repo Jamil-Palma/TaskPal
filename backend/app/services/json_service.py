@@ -87,33 +87,6 @@ class JsonService:
 
         return result, file_path
 
-    def process_and_save_scraping_result(self, title, response_text, task_name, summary):
-        response_text = response_text.strip('`').strip()
-        if response_text.startswith('json'):
-            response_text = response_text[4:].strip()
-
-        try:
-            # Parse the response as JSON
-            response_json = json.loads(response_text)
-            steps = response_json.get('steps', [])
-        except json.JSONDecodeError:
-            # If JSON parsing fails, fallback to regex extraction
-            steps = re.findall(r"(Step \d+:.*?)(?=Step \d+:|$)",
-                               response_text, re.DOTALL)
-            steps = [step.strip() for step in steps]
-
-        # Create the final JSON structure
-        result = {
-            "task": task_name,
-            "steps": steps,
-            "summary": summary
-        }
-
-        # Save the result to a file
-        file_path = self.write_task_json(title, result)
-
-        return result, file_path
-
     def process_fix_json(self, json: str):
         response = self.query_processor.process_fix_json(json)
         return response

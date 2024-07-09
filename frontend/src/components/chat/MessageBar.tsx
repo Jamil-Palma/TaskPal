@@ -51,16 +51,22 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
     initiateConversation();
   }, [selectedTaskFilename]);
 
-  const handleSendMessage = async (message: string | File) => {
+  const handleSendMessage = async (message: string | File, inputText?: string) => {
     if (!selectedTaskFilename || !conversationId) return;
 
     try {
       let response;
+      console.log("Message sent:", message);
       if (typeof message === 'string') {
+        console.log("case 1")
         response = await sendMessage(message, conversationId, selectedTaskFilename);
       } else {
-        response = await sendImageMessage(message, "", conversationId, selectedTaskFilename); // Assuming "" as inputText
+        console.log("Sending image with input text:", inputText);
+        response = await sendImageMessage(message, inputText || '', conversationId, selectedTaskFilename);
       }
+
+      console.log("Response:", response);
+
       const { response: botResponse, current_step_index, all_steps_completed } = response;
 
       setMessages(prevMessages => [

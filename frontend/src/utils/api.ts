@@ -20,11 +20,11 @@ export const sendImageMessage = async (image: File, inputText: string, conversat
   const formData = new FormData();
   formData.append('file', image);
   formData.append('input_text', inputText);
-  formData.append('conversation_id', conversationId);
+  formData.append('conversation_id', conversationId || '');
   if (task) {
     formData.append('task', task);
   }
-
+  console.log("before to send: ", formData)
   const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/image/process`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'

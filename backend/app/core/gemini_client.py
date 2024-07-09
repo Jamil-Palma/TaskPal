@@ -230,7 +230,7 @@ class GeminiChainClient:
         validate_result = chain.invoke({"json_input": json_input})
 
         json_result = json.dumps(validate_result)
-        # print("json_result: ", json_result)
+        print("json_result: ", json_result)
 
         print("validate_result: ", validate_result)
         return validate_result

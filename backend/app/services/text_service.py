@@ -51,20 +51,6 @@ class TextService:
 
 
     def generate_task_steps(self, task: str):
-        json_response = {
-            "task": "Create Hello World with Axios in React",
-            "steps": [
-                "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
-                "Install Axios with 'npm install axios'",
-                "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
-            ],
-            "summary_task": "Create a React component that fetches and displays data using Axios."
-        }
-
-        self.json_service.write_task_json(task, json_response)
-
-        return json_response
-
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
@@ -126,8 +112,11 @@ class TextService:
         print("step 2")
         response = self.gemini_client.generate_text(prompt)
 
-        json_response = json.loads(response)
+        json_response = self.json_service.process_fix_json(response)  # json.loads(response)
+        print(" --- json ", json_response)
+        file_path = self.json_service.write_task_json('task_steps.json', json_response)
+        return json_response, file_path
 
-        self.json_service.write_json('task_steps.json', json_response)
-        return response
+        self.json_service.write_task_json(task, json_response)
 
+        return json_response

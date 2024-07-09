@@ -100,3 +100,16 @@ class JsonService:
     def process_fix_json(self, json: str):
         response = self.query_processor.process_fix_json(json)
         return response
+    
+    def process_save_video_instructions(self, title, instructions, task_name, summary):
+        steps = instructions.get('steps', [])
+        result = {
+            "task": task_name.replace("\n", " "),
+            "steps": steps,
+            "summary": summary
+        }
+
+        # Save the result to a file
+        file_path = self.write_task_json(title, result)
+
+        return result, file_path

@@ -11,9 +11,14 @@ import {
 import { ExpandMore } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-interface Task {
+interface TaskContent {
   task: string;
   summary_task: string;
+}
+
+interface Task {
+  title: string;
+  content: TaskContent;
   file_name: string;
 }
 
@@ -48,11 +53,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, expanded, onExpandClick, onSe
     <Card variant="outlined">
       <CardContent>
         <Typography variant="h6" component="h3">
-          {task.task}
+          {task.title}
         </Typography>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Typography variant="body2" component="p">
-            {task.summary_task}
+            {task.content.summary_task}
           </Typography>
         </Collapse>
       </CardContent>

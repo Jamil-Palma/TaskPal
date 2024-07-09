@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Button, TextField, Typography, Box, Toolbar, Container, Paper } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
-import axios from "axios";
+import { Container, Box, Typography } from "@mui/material";
 import MessageContainer from "./MessageContainer";
+import MessageInput from "./MessageInput";
+import { startConversation, sendMessage, sendImageMessage } from "../../utils/api";
+import CustomAppBar from "../AppBar/CustomAppBar";
+import BackButton from "../Buttons/BackButton";
 
 interface Message {
   role: string;
   content: string;
+  type?: string;
 }
 
 interface MessageBarProps {
@@ -15,14 +18,13 @@ interface MessageBarProps {
 }
 
 const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelectedTaskFilename }) => {
-  const [inputText, setInputText] = useState("");
-  const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   useEffect(() => {
-    const startConversation = async () => {
+    const initiateConversation = async () => {
       if (!selectedTaskFilename) return;
 
       setMessages([]);
@@ -31,108 +33,69 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
       setAllTasksCompleted(false);
 
       try {
-        const startResponse = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/text/start-conversation`,
-          {
-            task: selectedTaskFilename
-          }
-        );
-
-        const {
-          response: botResponse,
-          conversation_id,
-          current_step_index,
-          all_steps_completed,
-          messages
-        } = startResponse.data;
-        console.log('Start response:', startResponse.data);
+        const response = await startConversation(selectedTaskFilename);
+        const { conversation_id, current_step_index, all_steps_completed, messages } = response;
         setConversationId(conversation_id);
         setMessages(messages);
         setCurrentStepIndex(current_step_index);
         setAllTasksCompleted(all_steps_completed);
       } catch (error) {
         console.error("Error starting task:", error);
+        setMessages([]);
+        setConversationId(null);
+        setCurrentStepIndex(0);
+        setAllTasksCompleted(false);
       }
     };
 
-    startConversation();
+    initiateConversation();
   }, [selectedTaskFilename]);
 
-  const sendMessage = async () => {
-    if (inputText.trim() === "" || !selectedTaskFilename || !conversationId) return;
+  const handleSendMessage = async (message: string | File, inputText?: string) => {
+    if (!selectedTaskFilename || !conversationId) return;
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/text/ask`, {
-        input_text: inputText,
-        conversation_id: conversationId,
-      });
-
-      const {
-        response: botResponse,
-        current_step_index,
-        all_steps_completed,
-      } = response.data;
-      console.log('Query response:', response.data);
-      setMessages([
-        ...messages,
-        { role: "user", content: inputText },
-        { role: "assistant", content: botResponse },
-      ]);
-      setCurrentStepIndex(current_step_index);
-
-      if (all_steps_completed) {
-        setAllTasksCompleted(true);
+      let response;
+      console.log("Message sent:", message);
+      if (typeof message === 'string') {
+        console.log("case 1")
+        response = await sendMessage(message, conversationId, selectedTaskFilename);
+      } else {
+        console.log("Sending image with input text:", inputText);
+        response = await sendImageMessage(message, inputText || '', conversationId, selectedTaskFilename);
       }
 
-      setInputText("");
+      console.log("Response:", response);
+
+      const { response: botResponse, current_step_index, all_steps_completed } = response;
+
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { role: "user", content: typeof message === 'string' ? message : URL.createObjectURL(message), type: typeof message === 'string' ? 'text' : 'image' },
+        { role: "assistant", content: botResponse }
+      ]);
+      setCurrentStepIndex(current_step_index);
+      setAllTasksCompleted(all_steps_completed);
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
-  const currentStep = messages[currentStepIndex] ? messages[currentStepIndex].content : null;
+  const lastBotMessage = messages.filter(msg => msg.role === 'assistant').pop()?.content || '';
 
   return (
     <Container>
-      {!allTasksCompleted && (
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <Typography variant="h6" component="div">
-              {selectedTaskFilename}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      )}
-      <Button onClick={() => setSelectedTaskFilename(null)} variant="contained" color="secondary" style={{ marginTop: '16px' }}>
-        Back to Task Selection
-      </Button>
+      {!allTasksCompleted && <CustomAppBar title={selectedTaskFilename} />}
+      <BackButton onClick={() => setSelectedTaskFilename(null)} />
       <MessageContainer messageList={messages} />
-      <Paper style={{ display: 'flex', alignItems: 'center', padding: '8px', marginTop: '16px' }}>
-        <TextField
-          fullWidth
-          placeholder="Enter a message..."
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={(e) => (e.key === "Enter" ? sendMessage() : null)}
-          variant="outlined"
-          style={{ marginRight: '8px' }}
-        />
-        <Button
-          onClick={sendMessage}
-          variant="contained"
-          color="primary"
-          endIcon={<SendIcon />}
-        >
-          Send
-        </Button>
-      </Paper>
-      {!allTasksCompleted && currentStep && (
-        <Box style={{ marginTop: '16px' }}>
-          <Typography variant="h6">Current Step: {currentStep}</Typography>
+      <MessageInput onSendMessage={handleSendMessage} lastBotMessage={lastBotMessage} />
+      {!allTasksCompleted && messages[currentStepIndex] && (
+        <Box mt={2}>
+          <Typography variant="h6">Current Step: {messages[currentStepIndex].content}</Typography>
         </Box>
       )}
       {allTasksCompleted && (
-        <Box style={{ marginTop: '16px' }}>
+        <Box mt={2}>
           <Typography variant="h6">You have completed all tasks.</Typography>
         </Box>
       )}

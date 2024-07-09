@@ -1,0 +1,50 @@
+{
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "Step 1: Install Chroma using the command: `pip install chromadb`"
+        },
+        {
+            "role": "user",
+            "content": "yes"
+        },
+        {
+            "role": "assistant",
+            "content": "Step 2: Import necessary libraries: `import chromadb`"
+        },
+        {
+            "role": "user",
+            "content": "as"
+        },
+        {
+            "role": "assistant",
+            "content": "Step 2: Import necessary libraries: `import chromadb`... Try to think about the key points."
+        }
+    ],
+    "task": "Chroma Deep Dive \n",
+    "steps": [
+        "Step 1: Install Chroma using the command: `pip install chromadb`",
+        "Step 2: Import necessary libraries: `import chromadb`",
+        "Step 3: Initialize a Chroma client: `client = chromadb.Client()`",
+        "Step 4: Create a collection for your data: `collection = client.get_or_create_collection(name='my_collection')`",
+        "Step 5: Embed your data using an open-source embedding model. For example, you can use SentenceTransformers: `from sentence_transformers import SentenceTransformer`\n`model = SentenceTransformer('paraphrase-distilroberta-base-v1')`\n`embeddings = model.encode(data)`",
+        "Step 6: Add your data to the collection: `collection.add(ids=['1', '2'], embeddings=embeddings, documents=data)`",
+        "Step 7: Query the collection for similar data: `results = collection.query(query='your search query', n_results=5)`",
+        "Step 8: Access the results: `print(results)`",
+        "Step 9: To save the collection to disk, specify the directory when initializing the client: `client = chromadb.Client(path='path/to/your/data')`",
+        "Step 10: To use Chroma with LangChain, create a Chroma client and pass it to the LangChain retriever: `from langchain.embeddings import OpenAIEmbeddings`\n`from langchain.vectorstores import Chroma`\n`embeddings = OpenAIEmbeddings()`\n`vectorstore = Chroma(client=client, embedding_function=embeddings)`",
+        "Step 11: To specify the collection name, add it as an argument to the Chroma retriever: `vectorstore = Chroma(client=client, embedding_function=embeddings, collection_name='my_collection')`",
+        "Step 12: To run Chroma Server in a Docker container, clone the Chroma repository and build the image using the provided commands. Edit the `docker-compose.yml` file and add `ALLOW_RESET=TRUE` under `environment` before running the container.",
+        "Step 13: To update data in the collection, use the `collection.update` method: `collection.update(ids=['1'], embeddings=[new_embedding], documents=[new_document])`",
+        "Step 14: To delete data from the collection, use the `collection.delete` method: `collection.delete(ids=['1'])`",
+        "Step 15: To use OpenAIEmbeddings, import the necessary library and initialize it: `from langchain.embeddings import OpenAIEmbeddings`\n`embeddings = OpenAIEmbeddings()`",
+        "Step 16: Use the `similarity_search` method in the retriever object to perform similarity search: `results = vectorstore.similarity_search('your search query', k=5)`",
+        "Step 17: Use the `mmr` method to perform maximum marginal relevance search: `results = vectorstore.mmr_search('your search query', k=5)`",
+        "Step 18: To filter the collection based on metadata, use the `get` method with the metadata key and value: `collection.get(metadata={'key': 'value'})`",
+        "Step 19: To access Chroma methods directly, use the `._collection` attribute: `collection._collection.method()`"
+    ],
+    "current_step_index": 1,
+    "all_steps_completed": false,
+    "summary_task": "Chroma is an open-source vector database designed for developer efficiency, offering features like easy installation, multiple running modes, and seamless integration with LangChain. This article demonstrates various functionalities of Chroma, including adding data, saving to disk, creating a client, and using it for retrieval tasks with LangChain. The article explores different methods for handling collections, updating and deleting data, and using OpenAI embeddings. It also highlights the use of MMR for narrowing down collections and the potential for future workflow improvements. \n",
+    "support_tasks": ""
+}

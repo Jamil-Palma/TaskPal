@@ -25,24 +25,32 @@ class TextService:
         return "yes" in user_response.lower()
     
     def provide_hint(self, user_response: str, system_question: str) -> str:
-        return f"{system_question}... Try to think about the key points."
+        prompt = f"""
+        System Question: {system_question}
+        User Response: {user_response}
+
+        As an AI assistant, provide a helpful hint to guide the user towards the correct answer. 
+        The hint should:
+        1. Not directly give away the answer
+        2. Offer a new perspective or approach to think about the question
+        3. Highlight any misconceptions in the user's response (if any)
+        4. Encourage critical thinking
+
+
+        Hint:
+        """
+
+        response = self.gemini_client.generate_text(prompt)
+        
+        if response:
+            hint = response.strip()
+        else:
+            hint = "I apologize, but I couldn't generate a hint at the moment. Please try rephrasing your response or ask for clarification on the question."
+
+        return hint
 
 
     def generate_task_steps(self, task: str):
-        json_response = {
-            "task": "Create Hello World with Axios in React",
-            "steps": [
-                "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
-                "Install Axios with 'npm install axios'",
-                "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
-            ],
-            "summary_task": "Create a React component that fetches and displays data using Axios."
-        }
-
-        self.json_service.write_task_json(task, json_response)
-
-        return json_response
-
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
@@ -104,8 +112,11 @@ class TextService:
         print("step 2")
         response = self.gemini_client.generate_text(prompt)
 
-        json_response = json.loads(response)
+        json_response = self.json_service.process_fix_json(response)  # json.loads(response)
+        print(" --- json ", json_response)
+        file_path = self.json_service.write_task_json('task_steps.json', json_response)
+        return json_response, file_path
 
-        self.json_service.write_json('task_steps.json', json_response)
-        return response
+        self.json_service.write_task_json(task, json_response)
 
+        return json_response

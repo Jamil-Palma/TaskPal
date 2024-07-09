@@ -22,8 +22,9 @@ async def process_audio(query: UserQuery):
 async def process_audio():
     try:
         transcribed_text = audio_service.record_audio(duration=5)
-        text_response = text_service.process_query(transcribed_text)
-        return {"transcription": text_response}
+        print("TEXTO DEL AUDIO: ",transcribed_text)
+        # text_response = text_service.process_query(transcribed_text)
+        return {"transcription": transcribed_text}
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(

@@ -89,7 +89,7 @@ class JsonService:
         result = {
             "task": task_name,
             "steps": steps,
-            "summary": summary
+            "summary_task": summary
         }
 
         # Save the result to a file

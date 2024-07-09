@@ -10,10 +10,15 @@ import {
 import { Search } from "@mui/icons-material";
 import TaskCard from "../TaskCard";
 
-interface Task {
+interface TaskContent {
   task: string;
   summary_task: string;
-  file_name: string;
+}
+
+interface Task {
+  title: string;
+  content: TaskContent;
+  file_name: string
 }
 
 interface PredefinedTasksProps {
@@ -29,9 +34,11 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tasks`);
-        setTasks(response.data.tasks);
-        setFilteredTasks(response.data.tasks);
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/text/tasks`);
+        console.log("RESPONSE: ",response.data);
+        setTasks(response.data);
+        console.log("TASK ", tasks);
+        setFilteredTasks(response.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -52,16 +59,20 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     setSearchQuery(query);
     setFilteredTasks(
       tasks.filter((task) =>
-        task.task.toLowerCase().includes(query) ||
-        task.summary_task.toLowerCase().includes(query)
+        task.title.toLowerCase().includes(query) ||
+        task.content.task.toLowerCase().includes(query) ||
+        task.content.summary_task.toLowerCase().includes(query)
       )
     );
   };
 
   const defaultTask: Task = {
-    task: "Default Task",
-    summary_task: "This is a default task shown when no tasks are available, default task install vs code.",
-    file_name: "install_visual_studio_code.json",
+    title: "install_visual_studio_code.json",
+    content: {
+      task: "Default Task",
+      summary_task: "his is a default task shown when no tasks are available, default task install vs code."
+    },
+    file_name: "install_visual_studio_code.json"
   };
 
   return (
@@ -82,7 +93,7 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
         sx={{ marginBottom: 2 }}
       />
       <Grid container spacing={2}>
-        {filteredTasks.length > 0 ? (
+        {filteredTasks && filteredTasks.length > 0 ? (
           filteredTasks.map((task, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <TaskCard

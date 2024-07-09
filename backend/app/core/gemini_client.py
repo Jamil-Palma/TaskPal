@@ -263,4 +263,3 @@ class GeminiChainClient:
         validate_result = chain.invoke({"json_input": json_input})
 
         return validate_result
-

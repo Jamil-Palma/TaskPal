@@ -28,7 +28,6 @@ class ConversationManager:
         return conversation_id
 
 
-
     def process_query(self, conversation_id: str, input_text: str) -> Dict:
         if conversation_id not in self.conversations:
             self.conversations[conversation_id] = self.json_service.read_conversation_json(conversation_id)

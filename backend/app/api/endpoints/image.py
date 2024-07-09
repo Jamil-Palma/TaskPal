@@ -1,18 +1,16 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from app.models.schemas import UserQuery
+from typing import Optional
 from app.services.image_service import ImageService
-from typing import Annotated
 
 router = APIRouter()
 image_service = ImageService()
 
-
 @router.post("/process")
 async def process_image(
-    file: Annotated[UploadFile, File()],
-    input_text: Annotated[str, Form()],
-    conversation_id: Annotated[str | None, Form()] = None,
-    task: Annotated[str | None, Form()] = None
+    file: UploadFile = File(...),
+    input_text: str = Form(...),
+    conversation_id: Optional[str] = Form(None),
+    task: Optional[str] = Form(None)
 ):
     try:
         # Save the uploaded file temporarily
@@ -22,8 +20,7 @@ async def process_image(
             buffer.write(content)
 
         # Process the image
-        response = image_service.process_image(
-            temp_file_path, task, input_text)
+        response = image_service.process_image(temp_file_path, task, input_text)
 
         # Clean up the temporary file
         import os
@@ -32,4 +29,5 @@ async def process_image(
         return {"response": response}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"An error occurred while processing the image: {str(e)}")
+            status_code=500, detail=f"An error occurred while processing the image: {str(e)}"
+        )

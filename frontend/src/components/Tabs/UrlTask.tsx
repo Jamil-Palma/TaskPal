@@ -7,6 +7,15 @@ const UrlTask: React.FC = () => {
   const [steps, setSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const isUrl = (text: string): boolean => {
+    try {
+      new URL(text);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const getUrlType = (url: string): string => {
     const videoPlatforms = ['youtube.com', 'vimeo.com'];
 
@@ -25,30 +34,35 @@ const UrlTask: React.FC = () => {
     setError(null);
     setSteps([]);
 
-    const urlType = getUrlType(url);
-    if (urlType === 'unknown') {
-      setError('Invalid URL. Please enter a valid URL.');
-      return;
-    }
+    // const urlType = getUrlType(url);
+    // if (urlType === 'unknown') {
+    //   setError('Invalid URL. Please enter a valid URL.');
+    //   return;
+    // }
 
     let endpoint = '';
-    switch (urlType) {
-      case 'video':
+    let input = "";
+    if (isUrl(url)) {
+      const urlType = getUrlType(url);
+      if (urlType === 'unknown') {
+        setError('Invalid URL. Please enter a valid URL.');
+        return;
+      }
+
+      if (urlType === 'video') {
         endpoint = '/video/transcript';
-        break;
-      case 'page':
+      } else {
         endpoint = '/text/scraping';
-        break;
-      default:
-        endpoint = '/text/generate-steps';
-        break;
-        // setError('Unknown URL type.');
-        // return;
+      }
+      input = 'input_text';
+    } else {
+      endpoint = '/text/generate-steps';
+      input = 'task';
     }
 
     try {
-      console.log("URL: ", url);
-      const response = await axiosInstance.post(endpoint, { input_text: url });
+      console.log("URL: ", input ," - ",url);
+      const response = await axiosInstance.post(endpoint, { [input]: url });
       console.log("RESPONSE VIDEO: ", response);
       setSteps(response.data);
     } catch (err) {

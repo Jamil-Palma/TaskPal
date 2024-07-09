@@ -3,6 +3,7 @@ from app.models.schemas import UserQuery, TaskQuery
 from app.services.text_service import TextService
 from app.services.json_service import JsonService
 from app.core.conversation_manager import ConversationManager
+from app.services.json_service import JsonService
 
 router = APIRouter()
 text_service = TextService()
@@ -22,7 +23,14 @@ async def process_question(query: UserQuery):
 async def process_scraping(url: UserQuery):
     try:
         response = text_service.process_scraping(url)
-        return {"response": response}
+        json_service = JsonService()
+        result, file_path = json_service.process_and_save_scraping_result(
+            response['Title'], 
+            response['Response'], 
+            response['Task Name'], 
+            response['Summary']
+        )
+        return {"response": result}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")

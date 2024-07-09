@@ -34,19 +34,23 @@ const UrlTask: React.FC = () => {
     let endpoint = '';
     switch (urlType) {
       case 'video':
-        endpoint = '/generate-video-steps';
+        endpoint = '/video/transcript';
         break;
       case 'page':
-        endpoint = '/generate-page-steps';
+        endpoint = '/text/scraping';
         break;
       default:
-        setError('Unknown URL type.');
-        return;
+        endpoint = '/text/generate-steps';
+        break;
+        // setError('Unknown URL type.');
+        // return;
     }
 
     try {
-      const response = await axiosInstance.post(endpoint, { url });
-      setSteps(response.data.steps);
+      console.log("URL: ", url);
+      const response = await axiosInstance.post(endpoint, { input_text: url });
+      console.log("RESPONSE VIDEO: ", response);
+      setSteps(response.data);
     } catch (err) {
       setError('Failed to generate steps. Please try again.');
     }
@@ -72,13 +76,13 @@ const UrlTask: React.FC = () => {
           {error}
         </Typography>
       )}
-      <Box sx={{ marginTop: 2 }}>
+      {/* <Box sx={{ marginTop: 2 }}>
         {steps.map((step, index) => (
           <Typography key={index}>
             {index + 1}. {step}
           </Typography>
         ))}
-      </Box>
+      </Box> */}
     </Box>
   );
 };

@@ -6,7 +6,6 @@ from typing import Annotated
 router = APIRouter()
 image_service = ImageService()
 
-
 @router.post("/process")
 async def process_image(
     file: Annotated[UploadFile, File()],
@@ -22,8 +21,7 @@ async def process_image(
             buffer.write(content)
 
         # Process the image
-        response = image_service.process_image(
-            temp_file_path, task, input_text)
+        response = image_service.process_image(temp_file_path, task, input_text)
 
         # Clean up the temporary file
         import os
@@ -32,4 +30,5 @@ async def process_image(
         return {"response": response}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"An error occurred while processing the image: {str(e)}")
+            status_code=500, detail=f"An error occurred while processing the image: {str(e)}"
+        )

@@ -57,8 +57,10 @@ async def ask_question(user_query: UserQuery):
         
         return response
     except ValueError as e:
+        print("error 1")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        print("error 2")
         raise HTTPException(status_code=500, detail="An error occurred while processing your request.")
 
 @router.post("/start-conversation")

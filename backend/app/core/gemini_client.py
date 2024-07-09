@@ -10,7 +10,6 @@ import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
-from app.services.json_service import JsonService 
 
 
 class GeminiChainClient:
@@ -25,7 +24,6 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
-        self.json_service = JsonService() 
 
     @staticmethod
     def to_markdown(text):
@@ -166,12 +164,7 @@ class GeminiChainClient:
 
         response = self.model.generate_content(prompt)
         task_name = self.model.generate_content(task_prompt)
-
-        # Use JsonService to process and save the result
-        result, task_name = self.json_service.process_and_save_scraping_result(
-            title, response.text, task_name.text, summary.text)
-
-        return result
+        return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
 
     def upload_media(self, media_url: str):
         """

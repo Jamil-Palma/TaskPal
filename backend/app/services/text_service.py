@@ -25,7 +25,29 @@ class TextService:
         return "yes" in user_response.lower()
     
     def provide_hint(self, user_response: str, system_question: str) -> str:
-        return f"{system_question}... Try to think about the key points."
+        prompt = f"""
+        System Question: {system_question}
+        User Response: {user_response}
+
+        As an AI assistant, provide a helpful hint to guide the user towards the correct answer. 
+        The hint should:
+        1. Not directly give away the answer
+        2. Offer a new perspective or approach to think about the question
+        3. Highlight any misconceptions in the user's response (if any)
+        4. Encourage critical thinking
+
+
+        Hint:
+        """
+
+        response = self.gemini_client.generate_text(prompt)
+        
+        if response:
+            hint = response.strip()
+        else:
+            hint = "I apologize, but I couldn't generate a hint at the moment. Please try rephrasing your response or ask for clarification on the question."
+
+        return hint
 
 
     def generate_task_steps(self, task: str):

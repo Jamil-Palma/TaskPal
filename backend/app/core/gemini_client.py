@@ -200,16 +200,49 @@ class GeminiChainClient:
         """
         Get transcript from YouTube url.
         """
-        print("video_path: ", video_path)
+        page = requests.get(video_path)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        title = soup.find("meta", itemprop="name")['content']
+        title = title.replace("-", "").replace(" ", "_")
         video_id = video_path.split("v=")[-1]
-        print("video_id: ", video_id)
-
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        transcript = ''.join([d['text']
+        transcript = ' '.join([d['text']
                              for d in transcript_list]).replace('\n', ' ')
-        print("transcript: ", transcript)
+        return {"transcript": transcript, "title": title}
+    
+    def video_transcript_instructions(self, transcript: str, title: str):
+        """
+        Get instructions from a YouTube video transcript.
+        """
+        instruction_prompt = """You are an expert IT instructor. Create a step-by-step guide on how to
+        complete the task from the video transcript. \
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
 
-        return transcript
+        ## Transcript:
+        """ + transcript
+
+        summary_prompt = """ Generate a conscise summary of the video transcript. \
+        Transcript: """ + transcript
+
+        name_prompt = """ Generate a concise name for the task from the title of the video. 
+        Title: """ + title
+
+        instructions = self.model.generate_content(instruction_prompt)
+        instructions = self.fix_json(instructions.text)
+        summary = self.model.generate_content(summary_prompt)
+        name = self.model.generate_content(name_prompt)
+
+        return {"title": title, "instructions": instructions, "summary": summary.text, "name": name.text}
     
     def fix_json(self, json_input: str):
         """
@@ -229,9 +262,5 @@ class GeminiChainClient:
         chain = validate_prompt_template | self.langchain_model | output_parser
         validate_result = chain.invoke({"json_input": json_input})
 
-        json_result = json.dumps(validate_result)
-        # print("json_result: ", json_result)
-
-        print("validate_result: ", validate_result)
         return validate_result
 

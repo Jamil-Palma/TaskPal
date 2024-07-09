@@ -4,6 +4,11 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import MessageContainer from "./MessageContainer";
 
+interface Message {
+  role: string;
+  content: string;
+}
+
 interface MessageBarProps {
   selectedTaskFilename: string | null;
   setSelectedTaskFilename: (filename: string | null) => void;
@@ -12,13 +17,12 @@ interface MessageBarProps {
 const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelectedTaskFilename }) => {
   const [inputText, setInputText] = useState("");
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
-  const [currentTask, setCurrentTask] = useState<any>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
 
   useEffect(() => {
-    const selectTask = async () => {
+    const startConversation = async () => {
       if (!selectedTaskFilename) return;
 
       setMessages([]);
@@ -27,17 +31,10 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
       setAllTasksCompleted(false);
 
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/task_by_filename/${selectedTaskFilename}`
-        );
-        const taskDetails = response.data;
-        setCurrentTask(taskDetails);
-
         const startResponse = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/initialize_task`,
+          `${process.env.REACT_APP_API_BASE_URL}/text/start-conversation`,
           {
-            input_text: "",
-            filename: selectedTaskFilename,
+            task: selectedTaskFilename
           }
         );
 
@@ -45,26 +42,29 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
           response: botResponse,
           conversation_id,
           current_step_index,
+          all_steps_completed,
+          messages
         } = startResponse.data;
+        console.log('Start response:', startResponse.data);
         setConversationId(conversation_id);
-        setMessages([{ role: "assistant", content: botResponse }]);
+        setMessages(messages);
         setCurrentStepIndex(current_step_index);
+        setAllTasksCompleted(all_steps_completed);
       } catch (error) {
         console.error("Error starting task:", error);
       }
     };
 
-    selectTask();
+    startConversation();
   }, [selectedTaskFilename]);
 
   const sendMessage = async () => {
     if (inputText.trim() === "" || !selectedTaskFilename || !conversationId) return;
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/query`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/text/ask`, {
         input_text: inputText,
         conversation_id: conversationId,
-        filename: selectedTaskFilename,
       });
 
       const {
@@ -72,6 +72,7 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
         current_step_index,
         all_steps_completed,
       } = response.data;
+      console.log('Query response:', response.data);
       setMessages([
         ...messages,
         { role: "user", content: inputText },
@@ -89,18 +90,15 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
     }
   };
 
-  const currentStep =
-    currentTask && currentTask.steps
-      ? currentTask.steps[currentStepIndex]
-      : null;
+  const currentStep = messages[currentStepIndex] ? messages[currentStepIndex].content : null;
 
   return (
     <Container>
-      {!allTasksCompleted && currentTask && (
+      {!allTasksCompleted && (
         <AppBar position="static" color="primary">
           <Toolbar>
             <Typography variant="h6" component="div">
-              {currentTask.task}
+              {selectedTaskFilename}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -128,10 +126,9 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
           Send
         </Button>
       </Paper>
-      {!allTasksCompleted && currentTask && (
+      {!allTasksCompleted && currentStep && (
         <Box style={{ marginTop: '16px' }}>
-          {currentStep && <Typography variant="h6">Current Step: {currentStep}</Typography>}
-          <Typography><strong>Summary:</strong> {currentTask.summary_task}</Typography>
+          <Typography variant="h6">Current Step: {currentStep}</Typography>
         </Box>
       )}
       {allTasksCompleted && (

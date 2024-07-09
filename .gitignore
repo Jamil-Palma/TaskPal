@@ -14,6 +14,7 @@ backend/app/api/endpoints/__pycache__/
 backend/app/core/__pycache__/
 backend/app/models/__pycache__/
 backend/app/services/__pycache__/
+backend/data/task/
 backend/*.py[cod]
 backend/*.so
 backend/*.egg-info/

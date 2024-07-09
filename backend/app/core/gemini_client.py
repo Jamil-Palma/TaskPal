@@ -6,11 +6,14 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from IPython.display import Markdown
 from youtube_transcript_api import YouTubeTranscriptApi
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.prompts import PromptTemplate
+import json
 import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
-import re
 
 
 class GeminiChainClient:
@@ -25,6 +28,7 @@ class GeminiChainClient:
                 "API_KEY is missing from the environment variables.")
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_version)
+        self.langchain_model = ChatGoogleGenerativeAI(temperature=0.0, google_api_key=api_key, model=model_version)
 
     @staticmethod
     def to_markdown(text):
@@ -137,11 +141,22 @@ class GeminiChainClient:
         title = title.replace("-", "").replace(" ", "_")
         article_text = " ".join([p.text for p in soup.find_all('p')])
         prompt = """You are an expert IT instructor. Now I will give you a complete article,
-            Read and analyze the article, Then I want you to create a step-by-step guide on \
-            how to complete the task described in the article. 
+        Read and analyze the article, Then I want you to create a step-by-step guide on \
+        how to complete the task described in the article.
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
 
-            ## Article Content:
-            """ + article_text
+        ## Article Content:
+        """ + article_text
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 
@@ -149,10 +164,17 @@ class GeminiChainClient:
         """ + article_text
         summary = self.model.generate_content(prompt_summary)
 
-        filename = title[:15]
-        response = self.model.generate_content(prompt)
+        task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
+        Your task is to generate one short name for the task based on the summary.""" + summary.text
 
-        return {"response": response.text, "summary": summary.text}
+        response = self.model.generate_content(prompt)
+        task_name = self.model.generate_content(task_prompt)
+        return title, response.text, task_name.text, summary.text
+        # Use JsonService to process and save the result
+        result, task_name = self.json_service.process_and_save_scraping_result(
+            title, response.text, task_name.text, summary.text)
+
+        return result
 
     def upload_media(self, media_url: str):
         """
@@ -193,3 +215,28 @@ class GeminiChainClient:
         print("transcript: ", transcript)
 
         return transcript
+    
+    def fix_json(self, json_input: str):
+        """
+        Fix invalid json.
+        """
+        output_parser = JsonOutputParser()
+        validate_template_string = """
+        you are a very helpful JSON validator. Given an invalid JSON object, you will correct the JSON format \
+        and return a valid JSON object.
+
+        Here is an invalid JSON object: {json_input}
+
+        Please correct the JSON format and return a valid JSON object.
+        """
+
+        validate_prompt_template = PromptTemplate(template=validate_template_string, input_variables=["json_input"])
+        chain = validate_prompt_template | self.langchain_model | output_parser
+        validate_result = chain.invoke({"json_input": json_input})
+
+        json_result = json.dumps(validate_result)
+        # print("json_result: ", json_result)
+
+        print("validate_result: ", validate_result)
+        return validate_result
+

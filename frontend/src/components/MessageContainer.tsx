@@ -1,5 +1,5 @@
 import React from "react";
-import "../components/styles/messagecontainer.css";
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Paper } from "@mui/material";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -14,18 +14,23 @@ interface MessageContainerProps {
 
 const MessageContainer: React.FC<MessageContainerProps> = ({ messageList }) => {
   return (
-    <div className="chat-container">
-      {messageList.map((message, index) => (
-        <div key={index} className={`msg-container ${message.role === "user" ? "message-right" : "message-left"}`}>
-          <div className={`message ${message.role === "user" ? "user-message" : "assistant-message"}`}>
-            <div className="role">
-              {message.role === "user" ? <PersonIcon /> : <SmartToyIcon />} {message.role}
-            </div>
-            <div className="content">{message.content}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    <Paper style={{ padding: '16px', marginTop: '16px', maxHeight: '60vh', overflow: 'auto' }}>
+      <List>
+        {messageList.map((message, index) => (
+          <ListItem key={index} alignItems="flex-start">
+            <ListItemAvatar>
+              <Avatar>
+                {message.role === "user" ? <PersonIcon /> : <SmartToyIcon />}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={message.role}
+              secondary={message.content}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Paper>
   );
 };
 

@@ -30,3 +30,7 @@ class QueryProcessor:
     def process_video_transcript(self, video_path):
         response = self.gemini_client.video_transcript(video_path)
         return response
+    
+    def process_fix_json(self, json):
+        response = self.gemini_client.fix_json(json)
+        return response

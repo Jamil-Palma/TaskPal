@@ -1,0 +1,26 @@
+{
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory"
+        },
+        {
+            "role": "user",
+            "content": "Start a new task"
+        },
+        {
+            "role": "assistant",
+            "content": "Install Axios with 'npm install axios'"
+        }
+    ],
+    "task": "Create Hello World with Axios in React",
+    "steps": [
+        "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
+        "Install Axios with 'npm install axios'",
+        "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
+    ],
+    "current_step_index": 1,
+    "all_steps_completed": false,
+    "summary_task": "Create a React component that fetches and displays data using Axios.",
+    "support_tasks": ""
+}

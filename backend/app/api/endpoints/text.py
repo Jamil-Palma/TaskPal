@@ -94,3 +94,15 @@ async def fix_json(query: UserQuery):
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
+    
+
+@router.post("/tasks")
+async def test_json():
+    try:
+        response = json_service.get_all_tasks()
+        # print(response)
+        return response
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="An error occurred while processing the request TEST")

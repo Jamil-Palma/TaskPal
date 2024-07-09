@@ -81,12 +81,14 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
     }
   };
 
+  const lastBotMessage = messages.filter(msg => msg.role === 'assistant').pop()?.content || '';
+
   return (
     <Container>
       {!allTasksCompleted && <CustomAppBar title={selectedTaskFilename} />}
       <BackButton onClick={() => setSelectedTaskFilename(null)} />
       <MessageContainer messageList={messages} />
-      <MessageInput onSendMessage={handleSendMessage} />
+      <MessageInput onSendMessage={handleSendMessage} lastBotMessage={lastBotMessage} />
       {!allTasksCompleted && messages[currentStepIndex] && (
         <Box mt={2}>
           <Typography variant="h6">Current Step: {messages[currentStepIndex].content}</Typography>

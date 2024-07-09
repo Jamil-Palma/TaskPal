@@ -131,15 +131,19 @@ class GeminiChainClient:
 
         return transcribed_text
 
-    def process_scraping(self, url: str):
+    def process_video_transcription(self, transcription: str):
         """
-        Process scraping based on the input URL.
+        Process the video transcription.
         """
-        page = requests.get(url.input_text)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        title = soup.title.text
-        title = title.replace("-", "").replace(" ", "_")
-        article_text = " ".join([p.text for p in soup.find_all('p')])
+        # Extract the first 30 characters for the title
+        title = transcription[:30].replace("-", "").replace(" ", "_")
+        
+        # Ensure the title is a valid filename by removing invalid characters
+        invalid_chars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|']
+        for char in invalid_chars:
+            title = title.replace(char, "")
+        
+        # Create the prompt with the transcription
         prompt = """You are an expert IT instructor. Now I will give you a complete article,
         Read and analyze the article, Then I want you to create a step-by-step guide on \
         how to complete the task described in the article.
@@ -156,20 +160,29 @@ class GeminiChainClient:
         }
 
         ## Article Content:
-        """ + article_text
+        """ + transcription
+        
+        # Create the summary prompt
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 
         ## Article Content:
-        """ + article_text
+        """ + transcription
+        
+        # Generate the summary
         summary = self.model.generate_content(prompt_summary)
-
+        
+        # Create the task name prompt
         task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
         Your task is to generate one short name for the task based on the summary.""" + summary.text
-
+        
+        # Generate the response and task name
         response = self.model.generate_content(prompt)
         task_name = self.model.generate_content(task_prompt)
+        
+        # Return the results
         return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
+
 
     def upload_media(self, media_url: str):
         """

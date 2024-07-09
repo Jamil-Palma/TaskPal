@@ -33,9 +33,11 @@ const AudioRecorder: React.FC = () => {
     setTranscription("");
 
     try {
-      // const response = await axios.post("http://localhost:8000/audio/audio");
-      // const transcribedText = response.data.transcription;
-      const transcribedText = "Si naciste el 26 de noviembre, eres **Sagitario**. Los Sagitario son conocidos por su optimismo, entusiasmo y amor por la aventura. ¡Espero que tengas un cumpleaños feliz! 😄"
+      const response = await axios.post("http://127.0.0.1:8000/audio/audio");
+      console.log("------ response: ", response.data)
+      const transcribedText = response.data.transcription;
+      console.log(" -------- transcripbend text", transcribedText)
+      //const transcribedText = "Si naciste el 26 de noviembre, eres **Sagitario**. Los Sagitario son conocidos por su optimismo, entusiasmo y amor por la aventura. ¡Espero que tengas un cumpleaños feliz! 😄"
       setTranscription(transcribedText);
       speakText(transcribedText);
     } catch (error) {

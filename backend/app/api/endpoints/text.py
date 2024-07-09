@@ -30,7 +30,7 @@ async def process_scraping(url: UserQuery):
             response['Task Name'], 
             response['Summary']
         )
-        return {"response": result}
+        return {"response": result, "file_path":file_path}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
@@ -39,8 +39,8 @@ async def process_scraping(url: UserQuery):
 async def generate_steps(task_query: TaskQuery):
     try:
         print("start")
-        response = text_service.generate_task_steps(task_query.task)
-        return {"response": response}
+        response,file_path = text_service.generate_task_steps(task_query.task)
+        return {"response":response, "file_path": file_path}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail="An error occurred while generating the steps for the task")

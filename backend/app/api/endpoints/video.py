@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import UserQuery
 from app.services.video_service import VideoService
+from app.services.json_service import JsonService
 
 router = APIRouter()
 video_service = VideoService()
+json_service = JsonService()
 
 @router.post("/process")
 async def process_video(query: UserQuery):
@@ -19,5 +21,19 @@ async def process_video_transcript(query: UserQuery):
     try:
         response = video_service.process_transcript(query.input_text)
         return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred while processing the video")
+    
+@router.post("/video-instructions")
+async def process_video_instructions(query: UserQuery):
+    try:
+        transcript_res = video_service.process_transcript(query.input_text)
+        instructions_res = video_service.process_instructions(transcript_res["transcript"], transcript_res["title"])
+        result = json_service.process_save_video_instructions(instructions_res["title"], 
+                                                              instructions_res["instructions"], 
+                                                              instructions_res["name"], 
+                                                              instructions_res["summary"])
+        
+        return {"response": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred while processing the video")

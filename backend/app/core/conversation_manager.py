@@ -27,6 +27,7 @@ class ConversationManager:
         
         return conversation_id
 
+
     def process_query(self, conversation_id: str, input_text: str) -> Dict:
         if conversation_id not in self.conversations:
             self.conversations[conversation_id] = self.json_service.read_conversation_json(conversation_id)
@@ -34,15 +35,21 @@ class ConversationManager:
         state = self.conversations[conversation_id]
         state["messages"].append({"role": "user", "content": input_text})
 
-        response = self.text_service.process_query(input_text)
-        
-        all_steps_completed = state["current_step_index"] >= len(state["steps"]) - 1
-        if not all_steps_completed:
-            state["current_step_index"] += 1
-            response = state["steps"][state["current_step_index"]]
+        current_step_index = state["current_step_index"]
+        system_question = state["messages"][-2]["content"]
+
+        is_correct = self.text_service.confirm_response(input_text, system_question)
+
+        if is_correct:
+            all_steps_completed = current_step_index >= len(state["steps"]) - 1
+            if not all_steps_completed:
+                state["current_step_index"] += 1
+                response = state["steps"][state["current_step_index"]]
+            else:
+                state["all_steps_completed"] = True
+                response = "You have completed all the steps."
         else:
-            state["all_steps_completed"] = True
-            response = "You have completed all the steps."
+            response = self.text_service.provide_hint(input_text, system_question)
 
         state["messages"].append({"role": "assistant", "content": response})
 
@@ -50,7 +57,7 @@ class ConversationManager:
 
         return {
             "response": response,
-            "success": all_steps_completed,
+            "success": is_correct,
             "conversation_id": conversation_id,
             "current_step_index": state["current_step_index"],
             "all_steps_completed": state["all_steps_completed"],

@@ -91,7 +91,7 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
         sx={{ marginBottom: 2 }}
       />
       <Grid container spacing={2}>
-        {filteredTasks.length > 0 ? (
+        {filteredTasks && filteredTasks.length > 0 ? (
           filteredTasks.map((task, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <TaskCard

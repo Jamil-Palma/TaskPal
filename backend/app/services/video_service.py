@@ -14,3 +14,7 @@ class VideoService:
     def process_transcript(self, video_path: str):
         response = self.query_processor.process_video_transcript(video_path)
         return response
+    
+    def process_instructions(self, transcript: str, title: str):
+        response = self.query_processor.process_transcript_instructions(transcript, title)
+        return response

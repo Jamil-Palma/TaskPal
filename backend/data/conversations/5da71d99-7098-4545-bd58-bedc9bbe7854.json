@@ -3,6 +3,30 @@
         {
             "role": "assistant",
             "content": "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory"
+        },
+        {
+            "role": "user",
+            "content": "what?"
+        },
+        {
+            "role": "assistant",
+            "content": "Hint: To create your React project and navigate to its directory, follow these steps:\n\n1. **Open your terminal or command prompt.** This is where you'll type the commands. \n2. **Run the command:** `npx create-react-app hello-world-app`. This will create a new React project named \"hello-world-app\".\n3. **Navigate to the project directory:** After the command finishes running, type `cd hello-world-app` into your terminal. This will move you into the newly created project folder.\n\nNow you're ready to start working on your React project! You can find more information about using create-react-app [here](https://create-react-app.dev/)."
+        },
+        {
+            "role": "user",
+            "content": "ok now I created the proyect"
+        },
+        {
+            "role": "assistant",
+            "content": "Hint: Great! Now that you've created your React project, you can start building your application. To get started, you can run the development server to see your project in action:\n\n1. **Run the command:** `npm start` or `yarn start` in your terminal, while inside the `hello-world-app` directory. This will launch the development server and open your project in your default web browser.\n\n2. **View your project:** You should now see a basic React application running in your browser. The development server is running on `http://localhost:3000/`.  This is a great starting point for your React project.\n\n3. **Make changes:** You can now start modifying the project files (especially the `src` directory) to build your application. \n\nLet me know if you have any other questions. Happy coding!"
+        },
+        {
+            "role": "user",
+            "content": "ok now I created the proyect"
+        },
+        {
+            "role": "assistant",
+            "content": "Hint: That's great! You've successfully created your React project. Now, let's bring it to life:\n\n1. **Open your terminal** and navigate to the directory where you created your project (usually named `hello-world-app`).\n\n2. **Run the command:**  `npm start` or `yarn start`. This will start the development server and open your project in your browser.\n\n3. **Enjoy your work:** You should now see a basic React app running in your browser! You're ready to start building your application.\n\nFeel free to ask any questions as you build your project. Happy coding!"
         }
     ],
     "task": "Create Hello World with Axios in React",

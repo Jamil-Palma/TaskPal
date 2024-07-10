@@ -4,7 +4,6 @@ import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
 import { startConversation, sendMessage, sendImageMessage, getConversation } from "../../utils/api";
 import CustomAppBar from "../AppBar/CustomAppBar";
-import BackButton from "../Buttons/BackButton";
 import ConversationHistory from "./ConversationHistory";
 
 interface Message {
@@ -19,6 +18,7 @@ interface MessageBarProps {
 }
 
 const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelectedTaskFilename }) => {
+  console.log("==== ingress in message bar : " , selectedTaskFilename)
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
@@ -35,6 +35,7 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
 
         try {
           const response = await startConversation(selectedTaskFilename);
+          console.log("   start video conversations is : " , response)
           const { conversation_id, current_step_index, all_steps_completed, messages } = response;
           setConversationId(conversation_id);
           setMessages(messages);

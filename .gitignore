@@ -15,7 +15,11 @@ backend/app/core/__pycache__/
 backend/app/models/__pycache__/
 backend/app/services/__pycache__/
 backend/data/task/
-backend/data/
+backend/data/audio/
+backend/data/conversations/
+backend/data/image
+backend/data/text
+backend/data/video
 backend/*.py[cod]
 backend/*.so
 backend/*.egg-info/

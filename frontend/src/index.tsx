@@ -5,14 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import theme from './components/styles/theme';
+import { SnackbarProvider } from 'notistack';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
+  <SnackbarProvider maxSnack={3}>
     <App />
-  </React.StrictMode>
+  </SnackbarProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -32,3 +32,8 @@ export const sendImageMessage = async (image: File, inputText: string, conversat
   });
   return response.data;
 };
+
+export const getConversation = async (conversationId: string) => {
+  const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/text/conversations/${conversationId}`);
+  return response.data;
+};

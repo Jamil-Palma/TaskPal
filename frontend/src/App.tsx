@@ -1,21 +1,92 @@
-import React from 'react';
-import { CssBaseline, Container } from '@mui/material';
-import AppBar from './components/AppBar';
-import Sidebar from './components/Sidebar';
-
+import React, { useState } from 'react';
+import { CssBaseline, Box, IconButton, AppBar as MuiAppBar, Toolbar, Typography } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
 import { BrowserRouter as Router } from 'react-router-dom';
 import MainView from './components/views/MainView';
+import Sidebar from './components/Sidebar';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#37474f', 
+    },
+    secondary: {
+      main: '#cfd8dc',
+    },
+    background: {
+      default: '#263238', 
+      paper: '#37474f', 
+    },
+    text: {
+      primary: '#ffffff', 
+      secondary: '#cfd8dc', 
+    },
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#37474f',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#37474f',
+          color: '#ffffff',
+        },
+      },
+    },
+  },
+});
+
+
+const drawerWidth = 240;
 
 const App: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+  };
+
+  const handleClickOutside = () => {
+    if (open) {
+      setOpen(false);
+    }
+  };
+
   return (
-    <Router>
-      <CssBaseline />
-      <AppBar/>
-      <Container>
-        <Sidebar />
-        <MainView />
-      </Container>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <CssBaseline />
+        <MuiAppBar position="fixed" style={{ zIndex: theme.zIndex.drawer + 1 }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              Chatting with GEMINI!
+            </Typography>
+          </Toolbar>
+        </MuiAppBar>
+        <Box display="flex" onClick={handleClickOutside}>
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} />
+          <Box
+            component="main"
+            flex={1}
+            ml={open ? `${drawerWidth}px` : '0px'}
+            sx={{ transition: 'margin 0.3s' }}
+            p={3}
+          >
+            <Toolbar />
+            <MainView />
+          </Box>
+        </Box>
+      </Router>
+    </ThemeProvider>
   );
 };
 

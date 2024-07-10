@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography, Button } from "@mui/material";
 import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
-import { startConversation, sendMessage, sendImageMessage } from "../../utils/api";
+import { startConversation, sendMessage, sendImageMessage, getConversation } from "../../utils/api";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import BackButton from "../Buttons/BackButton";
+import ConversationHistory from "./ConversationHistory";
 
 interface Message {
   role: string;
@@ -22,50 +23,46 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
-    const initiateConversation = async () => {
-      if (!selectedTaskFilename) return;
-
-      setMessages([]);
-      setConversationId(null);
-      setCurrentStepIndex(0);
-      setAllTasksCompleted(false);
-
-      try {
-        const response = await startConversation(selectedTaskFilename);
-        const { conversation_id, current_step_index, all_steps_completed, messages } = response;
-        setConversationId(conversation_id);
-        setMessages(messages);
-        setCurrentStepIndex(current_step_index);
-        setAllTasksCompleted(all_steps_completed);
-      } catch (error) {
-        console.error("Error starting task:", error);
+    if (selectedTaskFilename) {
+      const initiateConversation = async () => {
         setMessages([]);
         setConversationId(null);
         setCurrentStepIndex(0);
         setAllTasksCompleted(false);
-      }
-    };
 
-    initiateConversation();
+        try {
+          const response = await startConversation(selectedTaskFilename);
+          const { conversation_id, current_step_index, all_steps_completed, messages } = response;
+          setConversationId(conversation_id);
+          setMessages(messages);
+          setCurrentStepIndex(current_step_index);
+          setAllTasksCompleted(all_steps_completed);
+        } catch (error) {
+          console.error("Error starting task:", error);
+          setMessages([]);
+          setConversationId(null);
+          setCurrentStepIndex(0);
+          setAllTasksCompleted(false);
+        }
+      };
+
+      initiateConversation();
+    }
   }, [selectedTaskFilename]);
 
   const handleSendMessage = async (message: string | File, inputText?: string) => {
-    if (!selectedTaskFilename || !conversationId) return;
+    if (!conversationId) return;
 
     try {
       let response;
-      console.log("Message sent:", message);
       if (typeof message === 'string') {
-        console.log("case 1")
-        response = await sendMessage(message, conversationId, selectedTaskFilename);
+        response = await sendMessage(message, conversationId, selectedTaskFilename || undefined);
       } else {
-        console.log("Sending image with input text:", inputText);
-        response = await sendImageMessage(message, inputText || '', conversationId, selectedTaskFilename);
+        response = await sendImageMessage(message, inputText || '', conversationId, selectedTaskFilename || undefined);
       }
-
-      console.log("Response:", response);
 
       const { response: botResponse, current_step_index, all_steps_completed } = response;
 
@@ -81,24 +78,49 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
     }
   };
 
+  const handleSelectConversation = async (conversationId: string) => {
+    try {
+      const conversation = await getConversation(conversationId);
+      setMessages(conversation.messages);
+      setConversationId(conversationId);
+      setCurrentStepIndex(conversation.current_step_index);
+      setAllTasksCompleted(conversation.all_steps_completed);
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+    }
+  };
+
   const lastBotMessage = messages.filter(msg => msg.role === 'assistant').pop()?.content || '';
 
   return (
     <Container>
-      {!allTasksCompleted && <CustomAppBar title={selectedTaskFilename} />}
-      <BackButton onClick={() => setSelectedTaskFilename(null)} />
-      <MessageContainer messageList={messages} />
-      <MessageInput onSendMessage={handleSendMessage} lastBotMessage={lastBotMessage} />
-      {!allTasksCompleted && messages[currentStepIndex] && (
-        <Box mt={2}>
-          <Typography variant="h6">Current Step: {messages[currentStepIndex].content}</Typography>
+      <Button onClick={() => setShowHistory(!showHistory)} style={{ color: 'white' }}>
+        {showHistory ? 'Hide History' : 'Show History'}
+      </Button>
+      <Box display="flex" mt={2}>
+        {showHistory && (
+          <Box width="30%" mr={2}>
+            <ConversationHistory onSelectConversation={handleSelectConversation} />
+          </Box>
+        )}
+        <Box width={showHistory ? "70%" : "100%"} style={{ maxHeight: '600px', overflowY: 'auto' }}>
+          {!selectedTaskFilename && !allTasksCompleted && <CustomAppBar title="Chat" />}
+          {selectedTaskFilename && !allTasksCompleted && <CustomAppBar title={selectedTaskFilename} />}
+          {/*<BackButton onClick={() => setSelectedTaskFilename(null)} />*/}
+          <MessageContainer messageList={messages} />
+          <MessageInput onSendMessage={handleSendMessage} lastBotMessage={lastBotMessage} />
+          {!allTasksCompleted && messages[currentStepIndex] && (
+            <Box mt={2}>
+              <Typography variant="h6" style={{ color: 'white' }}>Current Step: {messages[currentStepIndex].content}</Typography>
+            </Box>
+          )}
+          {allTasksCompleted && (
+            <Box mt={2}>
+              <Typography variant="h6" style={{ color: 'white' }}>You have completed all tasks.</Typography>
+            </Box>
+          )}
         </Box>
-      )}
-      {allTasksCompleted && (
-        <Box mt={2}>
-          <Typography variant="h6">You have completed all tasks.</Typography>
-        </Box>
-      )}
+      </Box>
     </Container>
   );
 };

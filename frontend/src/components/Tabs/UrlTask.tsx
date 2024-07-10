@@ -9,7 +9,6 @@ interface UrlTaskProps {
 
 const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
   const [url, setUrl] = useState('');
-  const [steps, setSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const isUrl = (text: string): boolean => {
@@ -37,7 +36,6 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
 
   const handleGenerateSteps = async () => {
     setError(null);
-    setSteps([]);
 
     // const urlType = getUrlType(url);
     // if (urlType === 'unknown') {
@@ -55,7 +53,7 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       }
 
       if (urlType === 'video') {
-        endpoint = '/video/transcript';
+        endpoint = '/video/video-instructions';
       } else {
         endpoint = '/text/scraping';
       }
@@ -68,11 +66,11 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
     try {
       console.log("URL: ", input ," - ",url);
       const response = await axiosInstance.post(endpoint, { [input]: url });
-      console.log("RESPONSE VIDEO: ", response);
+      console.log("RESPONSE VIDEO: ", response.data);
       const filePath = response.data.file_path;
       const cleanedFilePath = filePath.replace('data/task/', '');
+      console.log("data is : " , cleanedFilePath)
       goToChat(cleanedFilePath);
-      setSteps(response.data);
     } catch (err) {
       setError('Failed to generate steps. Please try again.');
     }

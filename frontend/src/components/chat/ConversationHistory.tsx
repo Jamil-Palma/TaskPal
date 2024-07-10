@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
-import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
+import axiosInstance from '../../axiosConfig';
 
 interface Conversation {
   filename: string;
@@ -44,27 +44,30 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({ onSelectConve
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
   useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const response = await axiosInstance.post('/text/conversations');
+        console.log("response", response?.data);
+        setConversations(response.data.conversations);
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+      }
+    };
+  
+
     fetchConversations();
   }, []);
 
-  const fetchConversations = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/text/conversations`);
-      setConversations(response.data.conversations);
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-    }
-  };
 
   const handleDeleteConversation = async (conversationId: string) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/text/conversations/${conversationId}`);
-      fetchConversations();
+      await axiosInstance.delete(`/text/conversations/${conversationId}`);
+      setConversations(prevConversations => prevConversations.filter(conversation => conversation.conversation_id !== conversationId));
     } catch (error) {
       console.error('Error deleting conversation:', error);
     }
   };
-
+  
   return (
     <Box>
       <Typography variant="h6" style={{ color: 'white' }}>Conversation History</Typography>

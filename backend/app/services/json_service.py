@@ -106,7 +106,7 @@ class JsonService:
         result = {
             "task": task_name.replace("\n", " "),
             "steps": steps,
-            "summary": summary
+            "summary_task": summary
         }
 
         # Save the result to a file

@@ -66,8 +66,11 @@ async def ask_question(user_query: UserQuery):
 @router.post("/start-conversation")
 async def start_conversation(task_query: TaskQuery):
     try:
+        print("conversations step 1", task_query)
         conversation_id = conversation_manager.initialize_conversation(task_query.task)
+        print("conversations step 2")
         state = conversation_manager.conversations[conversation_id]
+        print("conversations step 3")
         return {
             "response": state["steps"][0],
             "conversation_id": conversation_id,
@@ -118,7 +121,7 @@ async def test_json():
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request TEST")
     
-@router.get("/conversations")
+@router.post("/conversations")
 async def get_all_conversations():
     try:
         conversations = json_service.get_all_conversations()
@@ -127,8 +130,8 @@ async def get_all_conversations():
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while retrieving the conversations")
-    
-@router.get("/conversations/{conversation_id}")
+
+@router.post("/conversations/{conversation_id}")
 async def get_conversation(conversation_id: str):
     try:
         conversation = json_service.read_conversation_json(conversation_id)
@@ -138,7 +141,7 @@ async def get_conversation(conversation_id: str):
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while retrieving the conversation")
-    
+   
 @router.delete("/conversations/{conversation_id}")
 async def delete_conversation(conversation_id: str):
     try:

@@ -211,38 +211,73 @@ class GeminiChainClient:
         return {"transcript": transcript, "title": title}
     
     def video_transcript_instructions(self, transcript: str, title: str):
-        """
-        Get instructions from a YouTube video transcript.
-        """
-        instruction_prompt = """You are an expert IT instructor. Create a step-by-step guide on how to
-        complete the task from the video transcript. \
-        Format your response as a JSON object with a 'steps' key containing an array of strings.
-        Each string should be a complete step, including the 'Step X:' prefix.
-        Do not include '''json in your response.
-        example output:
-        {
+        prompt = f"""
+        -- **System Instructions:**
+        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the video transcript. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources.
+
+        Context:
+        The user has provided a video transcript and a title. Your job is to extract the key tasks and convert them into a step-by-step guide. The steps should cover everything from setup to completion, including any relevant tools, commands, or code. Each step should be standalone and formatted as a complete sentence or set of sentences.
+
+        Output format:
+        Your output should be a JSON object with the following structure:
+        {{
+            "task": "<Task Description>",
             "steps": [
-                "Step 1: Do this",
-                "Step 2: Do that",
-                "Step 3: Finish"
-            ]
-        }
+                "<Step 1>",
+                "<Step 2>",
+                ...
+            ],
+            "summary_task": "<Summary of the task>"
+        }}
+        Ensure the steps are clear, detailed, and can be easily followed.
 
-        ## Transcript:
-        """ + transcript
+        -- **Example Usage:**
 
-        summary_prompt = """ Generate a conscise summary of the video transcript. \
-        Transcript: """ + transcript
+        <EXAMPLE INPUT 1>
+        -- Video Transcript: 
+        "First, set up a new React project using 'npx create-react-app hello-world-app' and navigate to the project directory by running 'cd hello-world-app'. 
+        Next, install Axios with 'npm install axios'. 
+        Then, create a new file named 'HelloWorld.js' in the 'src' directory and import Axios by adding 'import axios from 'axios';' at the top. 
+        Define a functional component named 'HelloWorld' with 'const HelloWorld = () => {{}}'. 
+        Use the 'useEffect' hook to fetch data from an API within 'HelloWorld' by writing 'useEffect(() => {{ axios.get('https://api.example.com/data').then(response => {{ console.log(response.data); }}); }}, []);'. 
+        Finally, render the fetched data in the component's return statement and export the 'HelloWorld' component with 'export default HelloWorld'. 
+        Import and use the 'HelloWorld' component in 'App.js' by adding 'import HelloWorld from './HelloWorld';' and including '<HelloWorld />' in the JSX returned by 'App'."
 
-        name_prompt = """ Generate a concise name for the task from the title of the video. 
-        Title: """ + title
+        </EXAMPLE INPUT 1>
+        <EXAMPLE OUTPUT 1>
+        {{
+            "task": "Create a Hello World application with Axios in React",
+            "steps": [
+                "Step 1: Set up a new React project using 'npx create-react-app hello-world-app'.",
+                "Step 2: Navigate to the project directory by running 'cd hello-world-app'.",
+                "Step 3: Install Axios with 'npm install axios'.",
+                "Step 4: Create a new file named 'HelloWorld.js' in the 'src' directory.",
+                "Step 5: Import Axios in 'HelloWorld.js' by adding 'import axios from 'axios';' at the top of the file.",
+                "Step 6: Define a React functional component named 'HelloWorld' using 'const HelloWorld = () => {{}}'.",
+                "Step 7: Use the 'useEffect' hook to fetch data from an API within the 'HelloWorld' component by writing 'useEffect(() => {{ axios.get('https://api.example.com/data').then(response => {{ console.log(response.data); }}); }}, []);'.",
+                "Step 8: Render the fetched data in the component's return statement by adding appropriate JSX.",
+                "Step 9: Export the 'HelloWorld' component using 'export default HelloWorld;'.",
+                "Step 10: Import and use the 'HelloWorld' component in 'App.js' by adding 'import HelloWorld from './HelloWorld';' and including '<HelloWorld />' in the JSX returned by 'App'."
+            ],
+            "summary_task": "Create a React component that fetches and displays data using Axios."
+        }}
+        </EXAMPLE OUTPUT 1>
 
-        instructions = self.model.generate_content(instruction_prompt)
+        -- Video Transcript: 
+        "{transcript}"
+
+        Task: {title}
+        """
+
+        instructions = self.model.generate_content(prompt)
         instructions = self.fix_json(instructions.text)
+        summary_prompt = f"Generate a concise summary of the video transcript. Transcript: {transcript}"
         summary = self.model.generate_content(summary_prompt)
+        name_prompt = f"Generate a concise name for the task from the title of the video. Title: {title}"
         name = self.model.generate_content(name_prompt)
 
         return {"title": title, "instructions": instructions, "summary": summary.text, "name": name.text}
+
     
     def fix_json(self, json_input: str):
         """

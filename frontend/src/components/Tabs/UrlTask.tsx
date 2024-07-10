@@ -7,6 +7,15 @@ const UrlTask: React.FC = () => {
   const [steps, setSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const isUrl = (text: string): boolean => {
+    try {
+      new URL(text);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const getUrlType = (url: string): string => {
     const videoPlatforms = ['youtube.com', 'vimeo.com'];
 
@@ -25,28 +34,37 @@ const UrlTask: React.FC = () => {
     setError(null);
     setSteps([]);
 
-    const urlType = getUrlType(url);
-    if (urlType === 'unknown') {
-      setError('Invalid URL. Please enter a valid URL.');
-      return;
-    }
+    // const urlType = getUrlType(url);
+    // if (urlType === 'unknown') {
+    //   setError('Invalid URL. Please enter a valid URL.');
+    //   return;
+    // }
 
     let endpoint = '';
-    switch (urlType) {
-      case 'video':
-        endpoint = '/generate-video-steps';
-        break;
-      case 'page':
-        endpoint = '/generate-page-steps';
-        break;
-      default:
-        setError('Unknown URL type.');
+    let input = "";
+    if (isUrl(url)) {
+      const urlType = getUrlType(url);
+      if (urlType === 'unknown') {
+        setError('Invalid URL. Please enter a valid URL.');
         return;
+      }
+
+      if (urlType === 'video') {
+        endpoint = '/video/transcript';
+      } else {
+        endpoint = '/text/scraping';
+      }
+      input = 'input_text';
+    } else {
+      endpoint = '/text/generate-steps';
+      input = 'task';
     }
 
     try {
-      const response = await axiosInstance.post(endpoint, { url });
-      setSteps(response.data.steps);
+      console.log("URL: ", input ," - ",url);
+      const response = await axiosInstance.post(endpoint, { [input]: url });
+      console.log("RESPONSE VIDEO: ", response);
+      setSteps(response.data);
     } catch (err) {
       setError('Failed to generate steps. Please try again.');
     }
@@ -72,13 +90,13 @@ const UrlTask: React.FC = () => {
           {error}
         </Typography>
       )}
-      <Box sx={{ marginTop: 2 }}>
+      {/* <Box sx={{ marginTop: 2 }}>
         {steps.map((step, index) => (
           <Typography key={index}>
             {index + 1}. {step}
           </Typography>
         ))}
-      </Box>
+      </Box> */}
     </Box>
   );
 };

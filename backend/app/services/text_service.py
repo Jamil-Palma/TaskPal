@@ -21,21 +21,146 @@ class TextService:
 
 
 
-    def confirm_response(self, user_response: str, system_question: str) -> bool:
-        return "yes" in user_response.lower()
-    
+    #def confirm_response(self, user_response: str, system_question: str) -> bool:
+    #    return "yes" in user_response.lower()
+    def confirm_response(self, user_response: str, task_details: str) -> bool:
+        prompt = f"""
+        -- **System Instructions:**
+        -- You are an AI assistant specialized in evaluating user responses to confirm if a specific step in a task has been successfully completed.
+        -- Your task is determinar si el usuario ha completado con éxito el paso específico descrito.
+        -- If the user indicates they have successfully completed the step or uses phrases like "yes", "next", "next step", "next steps", "I can", "I have", "I did", respond with "yes".
+        -- If the user has questions, shows errors, or expresses doubts, respond with "no".
+        
+        -- **Example Usage:**
+
+        ### Example 1
+        Task: How to bake a cake
+        Step: "Beat in the eggs, one at a time, then stir in the vanilla."
+        User Response: I beat in the eggs and stirred in the vanilla as instructed.
+        Response: yes
+
+        ### Example 2
+        Task: How to change a tire
+        Step: "Loosen the lug nuts."
+        User Response: I'm having trouble loosening the lug nuts. They are too tight.
+        Response: no
+
+        ### Example 3
+        Task: How to cook rice
+        Step: "Rinse the rice under cold water."
+        User Response: I rinsed the rice thoroughly under cold water.
+        Response: yes
+
+        ### Example 4
+        Task: How to play piano
+        Step: "Learn basic posture and hand position."
+        User Response: I'm not sure if my hand position is correct. Can you help?
+        Response: no
+
+        ### Example 5
+        Task: How to play piano
+        Step: "Learn basic posture and hand position."
+        User Response: Yes, next steps please.
+        Response: yes
+
+        ### Example 6
+        Task: How to play piano
+        Step: "Learn basic posture and hand position."
+        User Response: Next step.
+        Response: yes
+
+        ### Example 7
+        Task: How to play piano
+        Step: "Start with simple pieces."
+        User Response: O yeah, I can play a simple song.
+        Response: yes
+
+        ### Example 8
+        Task: How to play piano
+        Step: "Start with simple pieces."
+        User Response: I have played a simple song already.
+        Response: yes
+
+        -- **Current Task:**
+        Task: {task_details}
+        Step: {task_details}
+        User Response: {user_response}
+
+        -- **Your Task:**
+        -- Determine if the user has successfully completed the specific step.
+        -- Respond with "yes" if the step is completed successfully and "no" otherwise.
+
+        Response:
+        """
+
+        response = self.gemini_client.generate_text(prompt)
+        print(" ------- YES OR NO     - ", response)
+        if response.strip().lower() in ["yes", "next", "next step", "next steps", "i can", "i have", "i did"]:
+            return True
+        else:
+            return False
+
+
+
+
     def provide_hint(self, user_response: str, system_question: str) -> str:
         prompt = f"""
+        -- **System Instructions:**
+        -- You are an AI assistant specialized in providing detailed guidance and direct answers to help users complete tasks effectively.
+        -- Your task is to provide a response that meets the following criteria:
+        1. Provides a direct answer if possible.
+        2. Offers a step-by-step approach to complete the task if a direct answer is not feasible.
+        3. Identifies and corrects any misconceptions in the user's response (if any).
+        4. Encourages efficient problem-solving and task completion.
+
+        -- **Example Usage:**
+
+        <EXAMPLE INPUT 1>
+        System Question: How do I reset my email password?
+        User Response: I don't know where to start.
+        </EXAMPLE INPUT 1>
+        <EXAMPLE OUTPUT 1>
+        Hint: To reset your email password, follow these steps:
+        1. Go to the email provider's login page.
+        2. Click on the "Forgot Password" link.
+        3. Enter your email address and submit the form.
+        4. Check your email for a password reset link and follow the instructions.
+        5. Create a new password and save the changes.
+        </EXAMPLE OUTPUT 1>
+
+        <EXAMPLE INPUT 2>
+        System Question: How can I install Python on my computer?
+        User Response: I tried downloading it but got confused.
+        </EXAMPLE INPUT 2>
+        <EXAMPLE OUTPUT 2>
+        Hint: To install Python on your computer, follow these steps:
+        1. Go to the official Python website (python.org).
+        2. Navigate to the Downloads section.
+        3. Choose the appropriate version for your operating system (Windows, macOS, or Linux).
+        4. Download the installer and run it.
+        5. Follow the installation prompts, ensuring you check the option to add Python to your PATH.
+        6. Verify the installation by opening a command prompt or terminal and typing `python --version`.
+        </EXAMPLE OUTPUT 2>
+
+        <EXAMPLE INPUT 3>
+        System Question: What is the process for photosynthesis?
+        User Response: I think it's when plants breathe.
+        </EXAMPLE INPUT 3>
+        <EXAMPLE OUTPUT 3>
+        Hint: Photosynthesis is the process by which plants convert light energy into chemical energy. Here are the steps:
+        1. Chlorophyll in the plant cells absorbs sunlight.
+        2. The plant takes in carbon dioxide from the air through its leaves.
+        3. Water is absorbed by the roots and transported to the leaves.
+        4. Using the sunlight's energy, the plant converts carbon dioxide and water into glucose and oxygen.
+        5. The glucose is used by the plant for energy and growth, and the oxygen is released into the atmosphere.
+        </EXAMPLE OUTPUT 3>
+
+
         System Question: {system_question}
         User Response: {user_response}
 
-        As an AI assistant, provide a helpful hint to guide the user towards the correct answer. 
-        The hint should:
-        1. Not directly give away the answer
-        2. Offer a new perspective or approach to think about the question
-        3. Highlight any misconceptions in the user's response (if any)
-        4. Encourage critical thinking
-
+        -- **Your Task:**
+        -- Provide a detailed and helpful hint or direct answer for the user. Ensure the response adheres to the criteria outlined above.
 
         Hint:
         """
@@ -48,6 +173,7 @@ class TextService:
             hint = "I apologize, but I couldn't generate a hint at the moment. Please try rephrasing your response or ask for clarification on the question."
 
         return hint
+
 
 
     def generate_task_steps(self, task: str):

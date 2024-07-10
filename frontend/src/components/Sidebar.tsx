@@ -43,11 +43,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerToggle }) => {
 
   const menuItems = [
     { label: 'Predefined Tasks', icon: <AssignmentIcon />, path: '/predefined-tasks' },
-    { label: 'URL Task', icon: <LinkIcon />, path: '/url-task' },
-    { label: 'Instructions Task', icon: <DescriptionIcon />, path: '/instructions-task' },
-    { label: 'Test Task', icon: <BugReportIcon />, path: '/test-task' },
+    { label: 'Generate your Task!', icon: <LinkIcon />, path: '/url-task' },
     { label: 'Chat', icon: <ChatIcon />, path: '/empty-chat' },
   ];
+//  { label: 'Instructions Task', icon: <DescriptionIcon />, path: '/instructions-task' },
+//  { label: 'Test Task', icon: <BugReportIcon />, path: '/test-task' },
 
   return (
     <Drawer

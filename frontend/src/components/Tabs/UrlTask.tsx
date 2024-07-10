@@ -68,7 +68,9 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       const response = await axiosInstance.post(endpoint, { [input]: url });
       console.log("RESPONSE VIDEO: ", response.data);
       const filePath = response.data.file_path;
-      const cleanedFilePath = filePath.replace('data/task/', '');
+      //const cleanedFilePath = filePath.replace('data/task/', '');
+      const cleanedFilePath = filePath.slice(10);
+
       console.log("data is : " , cleanedFilePath)
       goToChat(cleanedFilePath);
     } catch (err) {

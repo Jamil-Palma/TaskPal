@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import axiosInstance from '../../axiosConfig';
 
-const UrlTask: React.FC = () => {
+interface UrlTaskProps {
+  goToChat: (filename: string) => void;
+}
+
+
+const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
   const [url, setUrl] = useState('');
   const [steps, setSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +69,9 @@ const UrlTask: React.FC = () => {
       console.log("URL: ", input ," - ",url);
       const response = await axiosInstance.post(endpoint, { [input]: url });
       console.log("RESPONSE VIDEO: ", response);
+      const filePath = response.data.file_path;
+      const cleanedFilePath = filePath.replace('data/task/', '');
+      goToChat(cleanedFilePath);
       setSteps(response.data);
     } catch (err) {
       setError('Failed to generate steps. Please try again.');

@@ -113,7 +113,7 @@ class TextService:
         response = self.gemini_client.generate_text(prompt)
 
         json_response = self.json_service.process_fix_json(response)  # json.loads(response)
-        print(" --- json ", json_response)
+        #print(" --- json ", json_response)
         file_path = self.json_service.write_task_json('task_steps.json', json_response)
         return json_response, file_path
 

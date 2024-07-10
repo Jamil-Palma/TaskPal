@@ -31,6 +31,7 @@ async def process_scraping(url: UserQuery):
         )
         return {"response": result, "file_path":file_path}
     except Exception as e:
+        print("error is: ", e)
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
 
@@ -116,3 +117,35 @@ async def test_json():
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request TEST")
+    
+@router.get("/conversations")
+async def get_all_conversations():
+    try:
+        conversations = json_service.get_all_conversations()
+        return {"conversations": conversations}
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="An error occurred while retrieving the conversations")
+    
+@router.get("/conversations/{conversation_id}")
+async def get_conversation(conversation_id: str):
+    try:
+        conversation = json_service.read_conversation_json(conversation_id)
+        return conversation
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while retrieving the conversation")
+    
+@router.delete("/conversations/{conversation_id}")
+async def delete_conversation(conversation_id: str):
+    try:
+        json_service.delete_conversation(conversation_id)
+        return {"message": "Conversation deleted successfully"}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while deleting the conversation")

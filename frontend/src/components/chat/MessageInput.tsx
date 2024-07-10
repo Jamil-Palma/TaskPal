@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Paper, TextField, Box, Typography, Button } from "@mui/material";
+import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
+import MicIcon from '@mui/icons-material/Mic';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useDropzone } from 'react-dropzone';
 import SendButton from "../Buttons/SendButton";
 import axios from "axios";
@@ -129,10 +132,21 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
         )}
       </Box>
       <SendButton onClick={handleSendMessage} />
-      <Button onClick={handleRecordClick} disabled={isRecording} style={{ marginTop: '8px' }}>
+      <Button
+        onClick={handleRecordClick}
+        disabled={isRecording}
+        style={{ marginTop: '8px' }}
+        color="secondary"
+        endIcon={isRecording ? <RecordVoiceOverIcon /> : <MicIcon />}
+      >
         {isRecording ? "Recording..." : "Record Audio"}
       </Button>
-      <Button onClick={handleReadClick} style={{ marginTop: '8px' }}>
+      <Button
+        onClick={handleReadClick}
+        style={{ marginTop: '8px' }}
+        color="secondary"
+        startIcon={<VolumeUpIcon />}
+      >
         Read Last Bot Message
       </Button>
       <div style={{ marginTop: '8px' }}>

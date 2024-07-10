@@ -131,19 +131,15 @@ class GeminiChainClient:
 
         return transcribed_text
 
-    def process_video_transcription(self, transcription: str):
+    def process_scraping(self, url: str):
         """
-        Process the video transcription.
+        Process scraping based on the input URL.
         """
-        # Extract the first 30 characters for the title
-        title = transcription[:30].replace("-", "").replace(" ", "_")
-        
-        # Ensure the title is a valid filename by removing invalid characters
-        invalid_chars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|']
-        for char in invalid_chars:
-            title = title.replace(char, "")
-        
-        # Create the prompt with the transcription
+        page = requests.get(url.input_text)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        title = soup.title.text
+        title = title.replace("-", "").replace(" ", "_")
+        article_text = " ".join([p.text for p in soup.find_all('p')])
         prompt = """You are an expert IT instructor. Now I will give you a complete article,
         Read and analyze the article, Then I want you to create a step-by-step guide on \
         how to complete the task described in the article.
@@ -160,29 +156,20 @@ class GeminiChainClient:
         }
 
         ## Article Content:
-        """ + transcription
-        
-        # Create the summary prompt
+        """ + article_text
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 
         ## Article Content:
-        """ + transcription
-        
-        # Generate the summary
+        """ + article_text
         summary = self.model.generate_content(prompt_summary)
-        
-        # Create the task name prompt
+
         task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
         Your task is to generate one short name for the task based on the summary.""" + summary.text
-        
-        # Generate the response and task name
+
         response = self.model.generate_content(prompt)
         task_name = self.model.generate_content(task_prompt)
-        
-        # Return the results
         return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
-
 
     def upload_media(self, media_url: str):
         """
@@ -213,16 +200,49 @@ class GeminiChainClient:
         """
         Get transcript from YouTube url.
         """
-        print("video_path: ", video_path)
+        page = requests.get(video_path)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        title = soup.find("meta", itemprop="name")['content']
+        title = title.replace("-", "").replace(" ", "_")
         video_id = video_path.split("v=")[-1]
-        print("video_id: ", video_id)
-
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        transcript = ''.join([d['text']
+        transcript = ' '.join([d['text']
                              for d in transcript_list]).replace('\n', ' ')
-        print("transcript: ", transcript)
+        return {"transcript": transcript, "title": title}
+    
+    def video_transcript_instructions(self, transcript: str, title: str):
+        """
+        Get instructions from a YouTube video transcript.
+        """
+        instruction_prompt = """You are an expert IT instructor. Create a step-by-step guide on how to
+        complete the task from the video transcript. \
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
 
-        return transcript
+        ## Transcript:
+        """ + transcript
+
+        summary_prompt = """ Generate a conscise summary of the video transcript. \
+        Transcript: """ + transcript
+
+        name_prompt = """ Generate a concise name for the task from the title of the video. 
+        Title: """ + title
+
+        instructions = self.model.generate_content(instruction_prompt)
+        instructions = self.fix_json(instructions.text)
+        summary = self.model.generate_content(summary_prompt)
+        name = self.model.generate_content(name_prompt)
+
+        return {"title": title, "instructions": instructions, "summary": summary.text, "name": name.text}
     
     def fix_json(self, json_input: str):
         """
@@ -241,10 +261,51 @@ class GeminiChainClient:
         validate_prompt_template = PromptTemplate(template=validate_template_string, input_variables=["json_input"])
         chain = validate_prompt_template | self.langchain_model | output_parser
         validate_result = chain.invoke({"json_input": json_input})
-
+        
         json_result = json.dumps(validate_result)
         print("json_result: ", json_result)
 
         print("validate_result: ", validate_result)
         return validate_result
+    
+    def process_scraping(self, url: str):
+        """
+        Process scraping based on the input URL.
+        """
+        page = requests.get(url.input_text)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        title = soup.title.text
+        title = title.replace("-", "").replace(" ", "_")
+        article_text = " ".join([p.text for p in soup.find_all('p')])
+        prompt = """You are an expert IT instructor. Now I will give you a complete article,
+        Read and analyze the article, Then I want you to create a step-by-step guide on \
+        how to complete the task described in the article.
+        Format your response as a JSON object with a 'steps' key containing an array of strings.
+        Each string should be a complete step, including the 'Step X:' prefix.
+        Do not include '''json in your response.
+        example output:
+        {
+            "steps": [
+                "Step 1: Do this",
+                "Step 2: Do that",
+                "Step 3: Finish"
+            ]
+        }
+
+        ## Article Content:
+        """ + article_text
+        prompt_summary = """You are an AI language model. Please summarize the following text \
+        in no more than one paragraph.
+
+        ## Article Content:
+        """ + article_text
+        summary = self.model.generate_content(prompt_summary)
+
+        task_prompt = """You are an AI language model. I'll provide you a summary of a text. \
+        Your task is to generate one short name for the task based on the summary.""" + summary.text
+
+        response = self.model.generate_content(prompt)
+        task_name = self.model.generate_content(task_prompt)
+        return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
+
 

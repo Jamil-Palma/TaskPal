@@ -53,7 +53,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, expanded, onExpandClick, onSe
     <Card variant="outlined">
       <CardContent>
         <Typography variant="h6" component="h3">
-          {task.title}
+          {task.content.task}
         </Typography>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Typography variant="body2" component="p">

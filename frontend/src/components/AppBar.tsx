@@ -6,7 +6,7 @@ const AppBarComponent: React.FC = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6">
-          Chatting with NVIDIA AI!
+          Chatting with GEMINI!
         </Typography>
       </Toolbar>
     </AppBar>

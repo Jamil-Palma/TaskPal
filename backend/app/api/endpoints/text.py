@@ -31,6 +31,7 @@ async def process_scraping(url: UserQuery):
         )
         return {"response": result, "file_path":file_path}
     except Exception as e:
+        print("error is: ", e)
         raise HTTPException(
             status_code=500, detail="An error occurred while processing the request")
 

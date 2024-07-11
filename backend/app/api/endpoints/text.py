@@ -3,11 +3,13 @@ from app.models.schemas import UserQuery, TaskQuery
 from app.services.text_service import TextService
 from app.services.json_service import JsonService
 from app.core.conversation_manager import ConversationManager
+import os
+import json
 
 router = APIRouter()
 text_service = TextService()
 json_service = JsonService()
-conversation_manager = ConversationManager()
+conversation_manager = ConversationManager(conversation_base_path="data/conversations")
 
 @router.post("/question")
 async def process_question(query: UserQuery):
@@ -53,7 +55,21 @@ async def ask_question(user_query: UserQuery):
         if user_query.conversation_id is None:
             raise HTTPException(status_code=400, detail="Conversation ID must be provided to continue a conversation.")
         
-        response = conversation_manager.process_query(user_query.conversation_id, user_query.input_text)
+        filename = user_query.filename
+        # Build the path to the JSON file
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        
+        json_path = os.path.join(base_dir, 'data', 'task', filename)
+        
+        # Load data from JSON file
+        with open(json_path, 'r') as file:
+            data = json.load(file)
+
+        # Get the task summary
+        campo = 'summary_task'
+        summary_task = data.get(campo)
+        
+        response = conversation_manager.process_query(user_query.conversation_id, user_query.input_text, summary_task)
         
         return response
     except ValueError as e:

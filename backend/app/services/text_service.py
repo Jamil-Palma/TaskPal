@@ -23,14 +23,15 @@ class TextService:
 
     #def confirm_response(self, user_response: str, system_question: str) -> bool:
     #    return "yes" in user_response.lower()
-    def confirm_response(self, user_response: str, task_details: str) -> bool:
+    def confirm_response(self, user_response: str, task_details: str, summary_task: str) -> bool:
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant specialized in evaluating user responses to confirm if a specific step in a task has been successfully completed.
-        -- Your task is determinar si el usuario ha completado con éxito el paso específico descrito.
-        -- If the user indicates they have successfully completed the step or uses phrases like "yes", "next", "next step", "next steps", "I can", "I have", "I did", respond with "yes".
+        -- Your task is to determine whether the user has successfully completed the specific step described.
+        -- analyzes the message {user_response}, if it fulfills or affirms that the current step {task_details} has been completed, that it fulfills the general task {summary_task}, respond with "yes"
+        -- If the user indicates they have successfully completed the step or uses phrases like "yes", "next", "next step", "next steps", "I can", "I have", "I did", "Great job", "Well done", "Excellent work", "You did it", "Mission accomplished", "Fantastic", "Nicely done", "Good job", "You nailed it", "Success", "Task completed successfully", "Outstanding", "You rock", "Bravo", "Perfect", "You've outdone yourself", "Impressive", "Way to go", "You're amazing", "ready", "good", "complete", "done", "that's it", "okey", "ok", respond with "yes".
         -- If the user has questions, shows errors, or expresses doubts, respond with "no".
-        
+            
         -- **Example Usage:**
 
         ### Example 1
@@ -82,12 +83,12 @@ class TextService:
         Response: yes
 
         -- **Current Task:**
-        Task: {task_details}
+        Task: {summary_task}
         Step: {task_details}
         User Response: {user_response}
 
         -- **Your Task:**
-        -- Determine if the user has successfully completed the specific step.
+        -- Determine if the user has successfully completed the specific task.
         -- Respond with "yes" if the step is completed successfully and "no" otherwise.
 
         Response:

@@ -28,7 +28,7 @@ class ConversationManager:
         return conversation_id
 
 
-    def process_query(self, conversation_id: str, input_text: str) -> Dict:
+    def process_query(self, conversation_id: str, input_text: str, summary_task: str) -> Dict:
         if conversation_id not in self.conversations:
             self.conversations[conversation_id] = self.json_service.read_conversation_json(conversation_id)
 
@@ -38,7 +38,7 @@ class ConversationManager:
         current_step_index = state["current_step_index"]
         system_question = state["messages"][-2]["content"]
 
-        is_correct = self.text_service.confirm_response(input_text, system_question)
+        is_correct = self.text_service.confirm_response(input_text, system_question, summary_task)
 
         if is_correct:
             all_steps_completed = current_step_index >= len(state["steps"]) - 1

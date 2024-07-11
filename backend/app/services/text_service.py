@@ -134,7 +134,6 @@ class TextService:
 
         -- **Example Usage:**
 
-```plaintext
 <EXAMPLE INPUT 1>
 -- **Additional Information:**
 Summary Task: Learn how to perform Create, Read, Update, and Delete (CRUD) operations on a database using Python. This involves understanding the basic concepts, choosing a database library, establishing a connection, creating tables, inserting, retrieving, updating, and deleting data, committing changes, and closing the connection.
@@ -267,7 +266,6 @@ Hint: To create a basic HTML webpage, follow these steps:
 3. **Save the file**: Save the `index.html` file in your desired directory.
 4. **Open the file in a browser**: Open your web browser and drag the `index.html` file into it, or use `File > Open` to view your webpage.
 </EXAMPLE OUTPUT 4>
-```
 
         System Question: {system_question}
         User Response: {user_response}

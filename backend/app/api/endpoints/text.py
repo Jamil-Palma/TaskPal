@@ -54,7 +54,7 @@ async def ask_question(user_query: UserQuery):
     try:
         if user_query.conversation_id is None:
             raise HTTPException(status_code=400, detail="Conversation ID must be provided to continue a conversation.")
-        
+        print("user query: ", user_query)
         filename = user_query.filename
         # Build the path to the JSON file
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -76,7 +76,7 @@ async def ask_question(user_query: UserQuery):
         print("error 1")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        print("error 2")
+        print("error 2", e)
         raise HTTPException(status_code=500, detail="An error occurred while processing your request.")
 
 @router.post("/start-conversation")

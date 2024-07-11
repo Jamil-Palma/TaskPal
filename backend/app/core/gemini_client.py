@@ -304,11 +304,12 @@ Article Content:
     def video_transcript_instructions(self, transcript: str, title: str):
         prompt = f"""
         -- **System Instructions:**
-        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the video transcript. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
-        If the task must use external sources like creating an API key, please provide the url link to complete that task, and enclose the link with ` `.
+        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
+        -- Your task is to provide a list of precise and clear steps for the given task described in the video transcript (use the information provided in the <video_transcript> section). Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
+        -- If the task must use external sources like creating an API key, please provide the url link to complete that task, and enclose the link with ` `.
 
         Context:
-        The user has provided a video transcript and a title. Your job is to extract the key tasks and convert them into a step-by-step guide. The steps should cover everything from setup to completion, including any relevant tools, commands, or code. Each step should be standalone and formatted as a complete sentence or set of sentences.
+        -- The user has provided a video transcript (<video_transcript> section) and a title. Your job is to extract the key tasks and convert them into a step-by-step guide. The steps should cover everything from setup to completion, including any relevant tools, commands, or code. Each step should be standalone and formatted as a complete sentence or set of sentences.
 
         Output format:
         Your output should be a JSON object with the following structure:
@@ -326,7 +327,7 @@ Article Content:
         -- **Example Usage:**
 
         <EXAMPLE INPUT 1>
-        -- Video Transcript: 
+        <video_transcript>
         "First, set up a new React project using `npx create-react-app hello-world-app` and navigate to the project directory by running `cd hello-world-app`. 
         Next, install Axios with `npm install axios`. 
         Then, create a new file named `HelloWorld.js` in the `src` directory and import Axios by adding `import axios from `axios`;` at the top. 
@@ -334,6 +335,7 @@ Article Content:
         Use the `useEffect` hook to fetch data from an API within `HelloWorld` by writing `useEffect(() => {{ axios.get(`https://api.example.com/data`).then(response => {{ console.log(response.data); }}); }}, []);`. 
         Finally, render the fetched data in the component`s return statement and export the `HelloWorld` component with `export default HelloWorld`. 
         Import and use the `HelloWorld` component in `App.js` by adding `import HelloWorld from `./HelloWorld`;` and including `<HelloWorld />` in the JSX returned by `App`."
+        </video_transcript>
 
         </EXAMPLE INPUT 1>
         <EXAMPLE OUTPUT 1>
@@ -355,8 +357,9 @@ Article Content:
         }}
         </EXAMPLE OUTPUT 1>
 
-        -- Video Transcript: 
-        "{transcript}"
+        <video_transcript>
+            {transcript}
+        </video_transcript>
 
         Task: {title}
         """

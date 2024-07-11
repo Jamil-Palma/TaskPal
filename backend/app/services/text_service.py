@@ -112,6 +112,9 @@ class TextService:
         2. Offers a step-by-step approach to complete the task if a direct answer is not feasible.
         3. Identifies and corrects any misconceptions in the user's response (if any).
         4. Encourages efficient problem-solving and task completion.
+        5. Avoid using titles or subtitles in one line, If there are cases where there are titles or subtitles, it includes everything in a single line.
+        6. If the topic is focused on programming or something where commands are required, insert correct code or commands in single-line format.
+        7. If you consult any page, put the link at the end of the line to consult it later.
 
         -- **Example Usage:**
 
@@ -180,7 +183,9 @@ class TextService:
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
-        Your task is to provide a list of precise and clear steps for the given task. 
+        -- Your task is to provide a list of precise and clear steps for the given task. 
+        -- If the topic is focused on programming or something where commands are required, insert correct commands in single-line format.
+        -- If you consult any page, put the link at the end of the line to consult it later
 
         Output format:
         Your output should be a JSON object with the following structure:
@@ -193,7 +198,10 @@ class TextService:
             ],
             "summary_task": "<Summary of the task>"
         }}
-        Ensure the steps are clear, detailed, and can be easily followed.
+        -- Ensure the steps are clear, detailed, and can be easily followed. 
+        -- If there is any explanation, put everything in a single line, where at the end there is an instruction, do not leave loose sentences, each line is a step that the user must follow.
+        -- Avoid using titles or subtitles in one line, If there are cases where there are titles or subtitles, it includes everything in a single line.
+        -- If you make an explanation that must use commands or code, with the explanation add an example of the code, all in a single line, repeating the line breaks and tabs for the order of the code. At the end of the instructions add the complete code that you explained with explanatory comments on each line of code.
 
         -- **Example Usage:**
 
@@ -204,8 +212,8 @@ class TextService:
         {{
             "task": "Create Hello World with Axios in React",
             "steps": [
-            "Set up React project using 'npx create-react-app hello-world-app' and navigate to the project directory",
-            "Install Axios with 'npm install axios'",
+            "Set up React project using `npx create-react-app hello-world-app` and navigate to the project directory",
+            "Install Axios with `npm install axios`",
             "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
             ],
             "summary_task": "Create a React component that fetches and displays data using Axios."
@@ -220,12 +228,12 @@ class TextService:
             "task": "Deploy a Node.js application on Heroku",
             "steps": [
             "Ensure you have a Heroku account and the Heroku CLI installed",
-            "Log in to your Heroku account using the command 'heroku login'",
+            "Log in to your Heroku account using the command `heroku login`",
             "Initialize a Git repository in your Node.js project directory if you haven't already",
-            "Create a new Heroku app using the command 'heroku create'",
+            "Create a new Heroku app using the command `heroku create`",
             "Define a 'Procfile' in the root of your project that specifies the command to run your app",
             "Add and commit all changes to your Git repository",
-            "Deploy your application to Heroku by pushing your code to the Heroku remote with 'git push heroku main'",
+            "Deploy your application to Heroku by pushing your code to the Heroku remote with `git push heroku main`",
             "Ensure that your application is running properly by visiting the Heroku URL provided"
             ],
             "summary_task": "Deploy a Node.js application to Heroku and ensure it is running correctly."
@@ -242,32 +250,48 @@ class TextService:
                 "Step 1: Sign up for a Google AI Studio account and create an API key by visiting ai.google.dev, clicking 'Gemini API', and then 'Get API key'.",
                 "Step 2: Sign into your Google account to access the API key creation page.",
                 "Step 3: Click 'Create API key' to generate a new API key.",
-                "Step 4: Explore the Gemini Playground by clicking 'Create new prompt' and then 'Chat prompt'.",
-                "Step 5: Experiment with different prompts and parameters in the Playground to customize the chatbot's persona, style, and tone.",
-                "Step 6: Instruct the model to take on a specific role, such as a formal assistant, an expert in a field, or a specific character.",
-                "Step 7: Set the model's parameters in the Playground, including the model selection (Gemini 1.5 Flash, Gemini 1.5 Pro), token count, temperature, safety settings, and output format.",
-                "Step 8: Access the code for integrating Gemini into an application by clicking 'Get code' in the Playground.",
-                "Step 9: Install the Google generative AI Library using 'pip install google-generative-ai'.",
+                "Step 4: Explore the Gemini Playground by clicking 'Create new prompt' and then 'Chat prompt'. Experiment with different prompts and parameters in the Playground to customize the chatbot's persona, style, and tone.",
+                "Step 5: Instruct the model to take on a specific role, such as a formal assistant, an expert in a field, or a specific character.",
+                "Step 6: Set the model's parameters in the Playground, including the model selection (Gemini 1.5 Flash, Gemini 1.5 Pro), token count, temperature, safety settings, and output format.",
+                "Step 7: Access the code for integrating Gemini into an application by clicking 'Get code' in the Playground.",
+                "Step 8: Install the Google generative AI Library using `pip install google-generative-ai`.",
                 "Step 10: Create and activate a virtual environment for best programming practice.",
-                "Step 11: Create a new Python file named 'chat.py'.",
-                "Step 12: Copy the code from the Playground into the 'chat.py' file.",
-                "Step 13: Load your API key from the Gemini console.",
-                "Step 14: Create a new file named '.env' to store your API key as an environment variable.",
-                "Step 15: Install the 'python-dotenv' library using 'pip install python-dotenv'.",
-                "Step 16: Import the 'python-dotenv' library in 'chat.py' and load the API key from the '.env' file.",
+                "Step 11: Create a new Python file named 'chat.py'. Copy the code from the Playground into the 'chat.py' file.",
+                "Step 13: Load your API key from the Gemini console. Create a new file named '.env' to store your API key as an environment variable.",
+                "Step 15: Install the 'python-dotenv' library using `pip install python-dotenv`. Import the 'python-dotenv' library in 'chat.py' and load the API key from the '.env' file.",
                 "Step 17: Adjust the parameters in the code, such as temperature, max tokens, response type, and safety settings.",
                 "Step 18: Create the model using 'gen.generative_model' with the desired model name, parameters, and system instructions.",
                 "Step 19: Start a chat session using 'model.start_chat' and provide an empty list as the 'history' parameter.",
                 "Step 20: Use a 'while' loop to continuously interact with the chatbot.",
                 "Step 21: Get user input and send it to the chatbot using 'chat_session.message'.",
                 "Step 22: Retrieve the chatbot's response using 'response.text'.",
-                "Step 23: Update the 'history' object to maintain a record of the conversation by appending dictionaries with user and model inputs and responses.",
-                "Step 24: Print the chatbot's response.",
-                "Step 25: Run the 'chat.py' file using 'python chat.py' to start a conversation with the chatbot."
+                "Step 23: Update the 'history' object to maintain a record of the conversation by appending dictionaries with user and model inputs and responses. Print the chatbot's response.",
+                "Step 25: Run the 'chat.py' file using `python chat.py` to start a conversation with the chatbot."
             ],
             "summary_task": "This video provides a step-by-step tutorial on using the Gemini API with Python to build a custom chatbot. It starts by explaining how to sign up for a Google AI Studio account and obtain an API key. The video then demonstrates using the Gemini Playground to experiment with different prompts and parameters, including setting the model's persona, style, and safety settings. It shows how to integrate the Gemini API into a Python application and create a simple chatbot that can hold a conversation. The tutorial emphasizes the importance of updating the conversation history to maintain context and create a more engaging experience. The video concludes by highlighting the potential for building more complex chatbots using the Gemini API and encourages viewers to experiment with different features. \n"
         }}
         </EXAMPLE OUTPUT 3>
+
+        <EXAMPLE INPUT 4>
+        -- User task: I want to learn the bubble sort algorithm in c++
+        </EXAMPLE INPUT 4>
+        <EXAMPLE OUTPUT 4>
+        {{
+            "task": "I want to learn the bubble sort algorithm in c++",
+            "steps": [
+                "Understand the basic concept of bubble sort: It repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The largest element bubbles up to the end of the list with each pass, hence the name 'bubble sort'.",
+                "Define a function in C++ that takes an array as input: ```void bubbleSort(int arr[], int n) {{ ... }}```",
+                "Iterate through the array: ```for (int i = 0; i < n - 1; i++) {{ ... }}```",
+                "For each pass, iterate through the array again but stop one element before the end: ```for (int j = 0; j < n - i - 1; j++) {{ ... }}```",
+                "Compare adjacent elements: ```if (arr[j] > arr[j + 1]) {{ ... }}```",
+                "Swap elements if they are in the wrong order: ```int temp = arr[j]; arr[j] = arr[j + 1]; arr[j + 1] = temp;```",
+                "Print the sorted array after the sorting process: ```for (int i = 0; i < n; i++) {{ cout << arr[i] << ' '; }}```",
+                "Test the bubble sort function with sample input and print the output"
+                "Test the bubble sort function with sample input and print the output, \nHere is the complete function with comments: ```/* void bubbleSort(int arr[], int n) {{ for (int i = 0; i < n - 1; i++) {{ // Iterate through the array for (int j = 0; n - i - 1; j++) {{ // For each pass, iterate again but stop one element before the end if (arr[j] > arr[j + 1]) {{ // Compare adjacent elements int temp = arr[j]; // Swap elements if they are in the wrong order arr[j] = arr[j + 1]; arr[j + 1] = temp; }} }} }} }} // Bubble Sort: Repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order */```"
+            ],
+            "summary_task": "Learn the bubble sort algorithm in C++ by understanding its concept, implementing it in a function, and testing it with sample input."        
+        }}
+        </EXAMPLE OUTPUT 4>
 
         -- **User Task:**
         -- {task}

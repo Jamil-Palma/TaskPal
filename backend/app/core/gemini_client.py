@@ -42,8 +42,22 @@ class GeminiChainClient:
         """
         Generate text based on input text.
         """
-        response = self.model.generate_content(input_text)
-        return response.text
+        try:
+            print("Input text received:", input_text)
+            
+            response = self.model.generate_content(input_text)
+            
+            print("Model response received:", response)
+            print("Generated text:", response.text)
+            
+            return response.text
+        except AttributeError as e:
+            print("AttributeError:", e)
+            return "An error occurred: Attribute not found."
+        except Exception as e:
+            print("An unexpected error occurred:", e)
+            return "An unexpected error occurred."
+
 
     def generate_text_from_image(self, filename: str, task: str, input_text: str):
         """

@@ -60,19 +60,23 @@ class ConversationManager:
                 response = "You have completed all the steps."
                 is_original_instruction = True
         else:
+            print("help hint 1")
             relevant_history = []
             for message in reversed(state["messages"]):
                 relevant_history.insert(0, message)
                 if message["is_original_instruction"]:
                     break
+            print("help hint 2")
 
             additional_info = {
                 "summary_task": state["summary_task"],
                 "current_step": state["steps"][current_step_index],
                 "relevant_history": relevant_history
             }
+            print("help hint 3")
 
             response = self.text_service.provide_hint(input_text, system_question, additional_info)
+            print("help hint 4")
             is_original_instruction = False
 
         state["messages"].append({

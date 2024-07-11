@@ -114,8 +114,9 @@ class TextService:
         history_text = "\n".join(
             [f"{msg['role'].capitalize()}: {msg['content']}" for msg in relevant_history]
         )
+        print("help hint into 1")
 
-        prompt = f"""
+        prompt = """
 -- **System Instructions:**
 -- Act as an assistant to help understand a task at a specific step. Users will come to you because they encountered an error or have questions in their resolution, and you must help solve their problems and, if possible, provide more examples. Focus on the technology and programming area.
 -- Your task is to provide a response that meets the following criteria:
@@ -128,10 +129,10 @@ class TextService:
 7. Remember the summary and current task, and that the user's question is about only one step of that task, but the final objective is that task.
         
         -- **Additional Information:**
-        Summary Task: {summary_task}
-        Current Step: {current_step}
+        Summary Task: """+summary_task+"""
+        Current Step: """+current_step+"""
         Relevant History:
-        {history_text}
+        """+history_text+"""
 
         -- **Example Usage:**
 
@@ -199,86 +200,21 @@ Hint: To install Node.js on your computer, follow these steps:
 8. **Verify the installation**: Open a terminal or command prompt and type `node -v` and `npm -v` to check that Node.js and npm were installed correctly.
 </EXAMPLE OUTPUT 2>
 
-<EXAMPLE INPUT 3>
--- **Additional Information:**
-Summary Task: Learn how to perform basic Git operations for version control.
-Current Step: Committing changes to a repository.
-Relevant History:
-{{
-    "role": "assistant",
-    "content": "First, initialize your repository using `git init`.",
-    "is_original_instruction": true
-}},
-{{
-    "role": "user",
-    "content": "I have initialized the repository. What's next?",
-    "is_original_instruction": false
-}},
-{{
-    "role": "assistant",
-    "content": "Hint: After initializing the repository, you need to add files to the staging area using `git add <file-name>` or `git add .` to add all files.",
-    "is_original_instruction": false
-}}
 
-System Question: How do I commit changes in Git?
-User Response: I'm not sure what to do after adding files.
-</EXAMPLE INPUT 3>
-<EXAMPLE OUTPUT 3>
-Hint: To commit changes in Git, follow these steps:
-1. **Ensure files are staged**: Use `git status` to verify that the files you want to commit are in the staging area.
-   ```bash
-   git status
-   ```
-2. **Commit the changes**: Use the `git commit` command with a meaningful message to save your changes.
-   ```bash
-   git commit -m "Your commit message"
-   ```
-3. **Verify the commit**: You can see the commit history using `git log`.
-   ```bash
-   git log
-   ```
-</EXAMPLE OUTPUT 3>
 
-<EXAMPLE INPUT 4>
--- **Additional Information:**
-Summary Task: Learn how to set up a simple HTML webpage.
-Current Step: Creating the HTML structure.
-Relevant History: N/A
-
-System Question: How do I create a basic HTML webpage?
-User Response: I need a simple example to start with.
-</EXAMPLE INPUT 4>
-<EXAMPLE OUTPUT 4>
-Hint: To create a basic HTML webpage, follow these steps:
-1. **Create an HTML file**: Open your text editor and create a new file named `index.html`.
-2. **Add the basic HTML structure**: Copy and paste the following code into your `index.html` file:
-   ```html
-   <!DOCTYPE html>
-   <html>
-   <head>
-       <title>My First Webpage</title>
-   </head>
-   <body>
-       <h1>Welcome to My First Webpage</h1>
-       <p>This is a paragraph on my webpage.</p>
-   </body>
-   </html>
-   ```
-3. **Save the file**: Save the `index.html` file in your desired directory.
-4. **Open the file in a browser**: Open your web browser and drag the `index.html` file into it, or use `File > Open` to view your webpage.
-</EXAMPLE OUTPUT 4>
-
-        System Question: {system_question}
-        User Response: {user_response}
+        System Question: """+system_question+"""
+        User Response: """+user_response+"""
 
         -- **Your Task:**
         -- Provide a detailed and helpful hint or direct answer for the user. Ensure the response adheres to the criteria outlined above.
 
         Hint:
         """
+        print("help hint into 2")
 
         response = self.gemini_client.generate_text(prompt)
-        
+        print("help hint into 3")
+
         if response:
             hint = response.strip()
         else:

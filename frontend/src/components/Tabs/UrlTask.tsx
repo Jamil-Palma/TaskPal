@@ -68,8 +68,14 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       const response = await axiosInstance.post(endpoint, { [input]: url });
       console.log("RESPONSE VIDEO: ", response.data);
       const filePath = response.data.file_path;
-      const cleanedFilePath = filePath.replace('data/task/', '');
-      console.log("data is : " , cleanedFilePath)
+      // const cleanedFilePath = filePath.replace('data/task/', '');
+      console.log("data ---------- : " , filePath);
+      let cleanedFilePath = filePath.slice(10);
+      console.log("data is UPDATE : " , cleanedFilePath);
+      // for(let i=0; i<cleanedFilePath.length;i++)
+      //   console.log("pos ", i," - ", cleanedFilePath[i]);
+      cleanedFilePath = cleanedFilePath.replace(/\\/g,'');
+      console.log("data is : " , cleanedFilePath);
       goToChat(cleanedFilePath);
     } catch (err) {
       setError('Failed to generate steps. Please try again.');

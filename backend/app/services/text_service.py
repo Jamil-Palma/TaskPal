@@ -112,6 +112,9 @@ class TextService:
         2. Offers a step-by-step approach to complete the task if a direct answer is not feasible.
         3. Identifies and corrects any misconceptions in the user's response (if any).
         4. Encourages efficient problem-solving and task completion.
+        5. Avoid using titles or subtitles in one line, If there are cases where there are titles or subtitles, it includes everything in a single line.
+        6. If the topic is focused on programming or something where commands are required, insert correct code or commands in single-line format.
+        7. If you consult any page, put the link at the end of the line to consult it later.
 
         -- **Example Usage:**
 
@@ -181,6 +184,8 @@ class TextService:
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
         Your task is to provide a list of precise and clear steps for the given task. 
+        If the topic is focused on programming or something where commands are required, insert correct commands in single-line format.
+        If you consult any page, put the link at the end of the line to consult it later
 
         Output format:
         Your output should be a JSON object with the following structure:
@@ -193,7 +198,8 @@ class TextService:
             ],
             "summary_task": "<Summary of the task>"
         }}
-        Ensure the steps are clear, detailed, and can be easily followed.
+        Ensure the steps are clear, detailed, and can be easily followed. 
+        Avoid using titles or subtitles in one line, If there are cases where there are titles or subtitles, it includes everything in a single line.
 
         -- **Example Usage:**
 

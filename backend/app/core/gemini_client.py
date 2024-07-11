@@ -140,23 +140,71 @@ class GeminiChainClient:
         title = soup.title.text
         title = title.replace("-", "").replace(" ", "_")
         article_text = " ".join([p.text for p in soup.find_all('p')])
-        prompt = """You are an expert IT instructor. Now I will give you a complete article,
-        Read and analyze the article, Then I want you to create a step-by-step guide on \
-        how to complete the task described in the article.
-        Format your response as a JSON object with a 'steps' key containing an array of strings.
-        Each string should be a complete step, including the 'Step X:' prefix.
-        Do not include '''json in your response.
-        example output:
+        prompt = f"""
+        -- **System Instructions:**
+        -- You are an expert IT instructor with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the article_text. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the text. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
+        If the task must use external sources like creating an API key, please provide the url link to complete that task.
+
+        Format your response as a JSON object with the following structure:
         {
+            "task": "<Task Description>",
             "steps": [
-                "Step 1: Do this",
-                "Step 2: Do that",
-                "Step 3: Finish"
-            ]
+                "<Step 1>",
+                "<Step 2>",
+                ...
+            ],
+            "summary_task": "<Summary of the task>"
         }
 
-        ## Article Content:
-        """ + article_text
+        Guidelines for creating steps:
+        1. Each step should be a complete, detailed instruction.
+        2. Include any relevant commands, enclosing them in backticks (`).
+        3. Include any relevant URLs, enclosing them in backticks (`).
+        4. For code snippets, use triple backticks (```) with the appropriate language specified, e.g., ```python for Python code.
+        5. Provide examples where appropriate.
+        6. Ensure each step can be followed without needing additional resources.
+
+        -- **Example Usage:**
+        -- article_text:
+        LangChain has a SQL Agent which provides a more flexible way of interacting with SQL Databases than a chain. The main advantages of using the SQL Agent are:
+        It can answer questions based on the databases' schema as well as on the databases' content (like describing a specific table).
+        It can recover from errors by running a generated query, catching the traceback and regenerating it correctly.
+        It can query the database as many times as needed to answer the user question.
+        It will save tokens by only retrieving the schema from relevant tables.
+        To initialize the agent we'll use the create_sql_agent constructor. This agent uses the SQLDatabaseToolkit which contains tools to:
+
+        Create and execute queries
+        Check query syntax
+        Retrieve table descriptions
+        ... and more
+        First, get required packages and set environment variables:
+        We default to OpenAI models in this guide, but you can swap them out for the model provider of your choice.
+        The below example will use a SQLite connection with Chinook database. Follow these installation steps to create Chinook.db in the same directory as this notebook:
+
+        Save this file as Chinook_Sqlite.sql
+        Run sqlite3 Chinook.db
+        Run .read Chinook_Sqlite.sql
+        Test SELECT * FROM Artist LIMIT 10;
+        Now, Chinhook.db is in our directory and we can interface with it using the SQLAlchemy-driven SQLDatabase class:
+        We'll use an OpenAI chat model and an "openai-tools" agent, which will use OpenAI's function-calling API to drive the agent's tool selection and invocations.
+
+        As we can see, the agent will first choose which tables are relevant and then add the schema for those tables and a few sample rows to the prompt.
+        etc...
+        -- Example output:
+        "steps": [
+            "Step 1: Install the required packages and set up the environment. You can use pip install langchain openai sqlalchemy.",
+            "Step 2: Create the Chinook.db file in the same directory as your notebook. You can download it from `https://github.com/lerocha/chinook-database.` You'll need to create a SQLite connection using the SQLAlchemy-driven SQLDatabase class. Here's an example: `db = SQLDatabase.from_uri(\"sqlite:///Chinook.db\")`",
+            "Step 3:  Create an OpenAI chat model and an \"openai-tools\" agent using the `create_sql_agent` constructor. Use the `SQLDatabaseToolkit` to help with table selection and schema inclusion. Here's an example: `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True)`",
+            "Step 4: To optimize performance, create a few-shot prompt with domain-specific knowledge. This will help the model make better queries by providing examples of queries and their corresponding results. First, gather a few user input-SQL query examples. Then, create a SemanticSimilarityExampleSelector to find the examples most similar to the user's input. Finally, create a FewShotPromptTemplate using the example selector, an example prompt, and a prefix and suffix for the formatted examples. Here's an example: `example_selector = SemanticSimilarityExampleSelector.from_examples(examples, retriever=ExampleRetriever(embedding_function=OpenAIEmbeddings()))`, `few_shot_prompt_template = FewShotPromptTemplate(example_selector=example_selector, example_prompt=\"\"\"{{user_input}} \nSQL Query: {{query}}\"\"\", prefix=\"Here are some example queries and their corresponding SQL statements:\n\", suffix=\"What is the SQL query for this question: {{user_input}}\")`",
+            "Step 5: Create a custom prompt with a human message template and an agent_scratchpad MessagesPlaceholder. Use the few-shot prompt template for the system message. This will provide the agent with context and examples for understanding the user's request. Here's an example: `prompt = ChatPromptTemplate.from_template(\"{{user_input}} \n\n{{agent_scratchpad}}\")`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True, prompt=prompt)`",
+            "Step 6: To filter data based on proper nouns like addresses, song names, or artists, create a vector store containing all the distinct proper nouns from the database. Use the `create_sql_agent` constructor to pass in the vector store as a tool for the agent. This will allow the agent to query the vector store for the correct spelling of a proper noun before building the SQL query. Here's an example: `retriever = VectorStore.from_embeddings(embeddings, OpenAIEmbeddings())`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=[SQLDatabaseToolkit(db), retriever], verbose=True)`"
+        ],
+
+        -- article_text: 
+        "{article_text}"
+
+        Article Content:
+        """
         prompt_summary = """You are an AI language model. Please summarize the following text \
         in no more than one paragraph.
 

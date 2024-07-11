@@ -1,13 +1,14 @@
 import uuid
-from typing import Dict
+from typing import Dict, List
 from app.services.json_service import JsonService
 from app.services.text_service import TextService
 
 class ConversationManager:
-    def __init__(self):
+    def __init__(self, conversation_base_path: str):
         self.json_service = JsonService()
         self.text_service = TextService()
         self.conversations = {}
+        self.conversation_base_path = conversation_base_path
 
     def initialize_conversation(self, filename: str) -> str:
         task = self.json_service.read_task_json(filename)
@@ -21,10 +22,14 @@ class ConversationManager:
             "summary_task": task["summary_task"],
             "support_tasks": ""
         }
-        self.conversations[conversation_id]["messages"].append({"role": "assistant", "content": task["steps"][0]})
+        self.conversations[conversation_id]["messages"].append({
+            "role": "assistant",
+            "content": task["steps"][0],
+            "is_original_instruction": True
+        })
         
         self.json_service.write_conversation_json(conversation_id, self.conversations[conversation_id])
-        
+        print("conversation_id", conversation_id)
         return conversation_id
 
 
@@ -33,7 +38,11 @@ class ConversationManager:
             self.conversations[conversation_id] = self.json_service.read_conversation_json(conversation_id)
 
         state = self.conversations[conversation_id]
-        state["messages"].append({"role": "user", "content": input_text})
+        state["messages"].append({
+            "role": "user",
+            "content": input_text,
+            "is_original_instruction": False
+        })
 
         current_step_index = state["current_step_index"]
         system_question = state["messages"][-2]["content"]
@@ -45,13 +54,32 @@ class ConversationManager:
             if not all_steps_completed:
                 state["current_step_index"] += 1
                 response = state["steps"][state["current_step_index"]]
+                is_original_instruction = True
             else:
                 state["all_steps_completed"] = True
                 response = "You have completed all the steps."
+                is_original_instruction = True
         else:
-            response = self.text_service.provide_hint(input_text, system_question)
+            relevant_history = []
+            for message in reversed(state["messages"]):
+                relevant_history.insert(0, message)
+                if message["is_original_instruction"]:
+                    break
 
-        state["messages"].append({"role": "assistant", "content": response})
+            additional_info = {
+                "summary_task": state["summary_task"],
+                "current_step": state["steps"][current_step_index],
+                "relevant_history": relevant_history
+            }
+
+            response = self.text_service.provide_hint(input_text, system_question, additional_info)
+            is_original_instruction = False
+
+        state["messages"].append({
+            "role": "assistant",
+            "content": response,
+            "is_original_instruction": is_original_instruction
+        })
 
         self.json_service.write_conversation_json(conversation_id, state)
 
@@ -64,3 +92,9 @@ class ConversationManager:
             "support_tasks": state["support_tasks"],
             "messages": state["messages"]
         }
+
+    def get_all_conversations(self) -> List[Dict]:
+        return self.json_service.get_all_conversations()
+    
+    def read_conversation_json(self, conversation_id: str) -> Dict:
+        return self.json_service.read_conversation_json(conversation_id)

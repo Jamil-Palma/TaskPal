@@ -163,33 +163,7 @@ class GeminiChainClient:
         4. For code snippets, use triple backticks (```) with the appropriate language specified, e.g., ```python for Python code.
         5. Provide examples where appropriate.
         6. Ensure each step can be followed without needing additional resources.
-
-        -- **Example Usage:**
-        -- article_text:
-        LangChain has a SQL Agent which provides a more flexible way of interacting with SQL Databases than a chain. The main advantages of using the SQL Agent are:
-        It can answer questions based on the databases' schema as well as on the databases' content (like describing a specific table).
-        It can recover from errors by running a generated query, catching the traceback and regenerating it correctly.
-        It can query the database as many times as needed to answer the user question.
-        It will save tokens by only retrieving the schema from relevant tables.
-        To initialize the agent we'll use the create_sql_agent constructor. This agent uses the SQLDatabaseToolkit which contains tools to:
-
-        Create and execute queries
-        Check query syntax
-        Retrieve table descriptions
-        ... and more
-        First, get required packages and set environment variables:
-        We default to OpenAI models in this guide, but you can swap them out for the model provider of your choice.
-        The below example will use a SQLite connection with Chinook database. Follow these installation steps to create Chinook.db in the same directory as this notebook:
-
-        Save this file as Chinook_Sqlite.sql
-        Run sqlite3 Chinook.db
-        Run .read Chinook_Sqlite.sql
-        Test SELECT * FROM Artist LIMIT 10;
-        Now, Chinhook.db is in our directory and we can interface with it using the SQLAlchemy-driven SQLDatabase class:
-        We'll use an OpenAI chat model and an "openai-tools" agent, which will use OpenAI's function-calling API to drive the agent's tool selection and invocations.
-
-        As we can see, the agent will first choose which tables are relevant and then add the schema for those tables and a few sample rows to the prompt.
-        etc...
+      
         -- Example output:
         "steps": [
             "Step 1: Install the required packages and set up the environment. You can use pip install langchain openai sqlalchemy.",

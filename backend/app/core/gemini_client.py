@@ -164,7 +164,21 @@ Guidelines for creating steps:
 6. Ensure each step can be followed without needing additional resources.
 
 -- Example output:
-<EXAMPLE INPUT 1>
+
+
+        -- Example output:
+        "steps": [
+            "Step 1: Install the required packages and set up the environment. You can use pip install langchain openai sqlalchemy.",
+            "Step 2: Create the Chinook.db file in the same directory as your notebook. You can download it from `https://github.com/lerocha/chinook-database.` You'll need to create a SQLite connection using the SQLAlchemy-driven SQLDatabase class. Here's an example: `db = SQLDatabase.from_uri(\"sqlite:///Chinook.db\")`",
+            "Step 3:  Create an OpenAI chat model and an \"openai-tools\" agent using the `create_sql_agent` constructor. Use the `SQLDatabaseToolkit` to help with table selection and schema inclusion. Here's an example: `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True)`",
+            "Step 4: To optimize performance, create a few-shot prompt with domain-specific knowledge. This will help the model make better queries by providing examples of queries and their corresponding results. First, gather a few user input-SQL query examples. Then, create a SemanticSimilarityExampleSelector to find the examples most similar to the user's input. Finally, create a FewShotPromptTemplate using the example selector, an example prompt, and a prefix and suffix for the formatted examples. Here's an example: `example_selector = SemanticSimilarityExampleSelector.from_examples(examples, retriever=ExampleRetriever(embedding_function=OpenAIEmbeddings()))`, `few_shot_prompt_template = FewShotPromptTemplate(example_selector=example_selector, example_prompt=\"\"\"{{user_input}} \nSQL Query: {{query}}\"\"\", prefix=\"Here are some example queries and their corresponding SQL statements:\n\", suffix=\"What is the SQL query for this question: {{user_input}}\")`",
+            "Step 5: Create a custom prompt with a human message template and an agent_scratchpad MessagesPlaceholder. Use the few-shot prompt template for the system message. This will provide the agent with context and examples for understanding the user's request. Here's an example: `prompt = ChatPromptTemplate.from_template(\"{{user_input}} \n\n{{agent_scratchpad}}\")`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True, prompt=prompt)`",
+            "Step 6: To filter data based on proper nouns like addresses, song names, or artists, create a vector store containing all the distinct proper nouns from the database. Use the `create_sql_agent` constructor to pass in the vector store as a tool for the agent. This will allow the agent to query the vector store for the correct spelling of a proper noun before building the SQL query. Here's an example: `retriever = VectorStore.from_embeddings(embeddings, OpenAIEmbeddings())`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=[SQLDatabaseToolkit(db), retriever], verbose=True)`"
+        ],
+
+        
+
+<EXAMPLE INPUT 2>
 -- **Article Text:**
 SQLite is famous for its great feature zero-configuration, which means no complex setup or administration is needed. This chapter will take you through the process of setting up SQLite on Windows, Linux and Mac OS X.
 
@@ -213,8 +227,8 @@ Install SQLite on Mac OS X
     sqlite>
 
 Finally, you have SQLite command prompt where you can issue SQLite commands for your exercises.
-</EXAMPLE INPUT 1>
-<EXAMPLE OUTPUT 1>
+</EXAMPLE INPUT 2>
+<EXAMPLE OUTPUT 2>
 {{
     "task": "Install SQLite on Windows, Linux, and Mac OS X",
     "steps": [
@@ -225,7 +239,7 @@ Finally, you have SQLite command prompt where you can issue SQLite commands for 
     ],
     "summary_task": "Install SQLite on Windows, Linux, and Mac OS X by downloading the binaries, extracting them, updating the PATH environment variable, and verifying the installation."
 }}
-</EXAMPLE OUTPUT 1>
+</EXAMPLE OUTPUT 2>
 
 
 -- article_text: 

@@ -213,7 +213,8 @@ class GeminiChainClient:
     def video_transcript_instructions(self, transcript: str, title: str):
         prompt = f"""
         -- **System Instructions:**
-        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the video transcript. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources.
+        -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the video transcript. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
+        If the task must use external sources like creating an API key, please provide the url link to complete that task.
 
         Context:
         The user has provided a video transcript and a title. Your job is to extract the key tasks and convert them into a step-by-step guide. The steps should cover everything from setup to completion, including any relevant tools, commands, or code. Each step should be standalone and formatted as a complete sentence or set of sentences.
@@ -273,7 +274,7 @@ class GeminiChainClient:
         instructions = self.fix_json(instructions.text)
         summary_prompt = f"Generate a concise summary of the video transcript. Transcript: {transcript}"
         summary = self.model.generate_content(summary_prompt)
-        name_prompt = f"Generate a concise name for the task from the title of the video. Title: {title}"
+        name_prompt = f"Generate one concise name for the task from the title of the video. Title: {title}"
         name = self.model.generate_content(name_prompt)
 
         return {"title": title, "instructions": instructions, "summary": summary.text, "name": name.text}

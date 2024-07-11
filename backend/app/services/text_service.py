@@ -238,6 +238,46 @@ class TextService:
         }}
         </EXAMPLE OUTPUT 2>
 
+        <EXAMPLE INPUT 3>
+        -- User task: Gemini API Chatbot with Python
+        </EXAMPLE INPUT 3>
+        <EXAMPLE OUTPUT 3>
+        {{
+            "task": "Gemini API Chatbot with Python  ",
+            "steps": [
+                "Step 1: Sign up for a Google AI Studio account and create an API key by visiting ai.google.dev, clicking 'Gemini API', and then 'Get API key'.",
+                "Step 2: Sign into your Google account to access the API key creation page.",
+                "Step 3: Click 'Create API key' to generate a new API key.",
+                "Step 4: Explore the Gemini Playground by clicking 'Create new prompt' and then 'Chat prompt'.",
+                "Step 5: Experiment with different prompts and parameters in the Playground to customize the chatbot's persona, style, and tone.",
+                "Step 6: Instruct the model to take on a specific role, such as a formal assistant, an expert in a field, or a specific character.",
+                "Step 7: Set the model's parameters in the Playground, including the model selection (Gemini 1.5 Flash, Gemini 1.5 Pro), token count, temperature, safety settings, and output format.",
+                "Step 8: Access the code for integrating Gemini into an application by clicking 'Get code' in the Playground.",
+                "Step 9: Install the Google generative AI Library using 'pip install google-generative-ai'.",
+                "Step 10: Create and activate a virtual environment for best programming practice.",
+                "Step 11: Create a new Python file named 'chat.py'.",
+                "Step 12: Copy the code from the Playground into the 'chat.py' file.",
+                "Step 13: Load your API key from the Gemini console.",
+                "Step 14: Create a new file named '.env' to store your API key as an environment variable.",
+                "Step 15: Install the 'python-dotenv' library using 'pip install python-dotenv'.",
+                "Step 16: Import the 'python-dotenv' library in 'chat.py' and load the API key from the '.env' file.",
+                "Step 17: Adjust the parameters in the code, such as temperature, max tokens, response type, and safety settings.",
+                "Step 18: Create the model using 'gen.generative_model' with the desired model name, parameters, and system instructions.",
+                "Step 19: Start a chat session using 'model.start_chat' and provide an empty list as the 'history' parameter.",
+                "Step 20: Use a 'while' loop to continuously interact with the chatbot.",
+                "Step 21: Get user input and send it to the chatbot using 'chat_session.message'.",
+                "Step 22: Retrieve the chatbot's response using 'response.text'.",
+                "Step 23: Update the 'history' object to maintain a record of the conversation by appending dictionaries with user and model inputs and responses.",
+                "Step 24: Print the chatbot's response.",
+                "Step 25: Run the 'chat.py' file using 'python chat.py' to start a conversation with the chatbot."
+            ],
+            "summary_task": "This video provides a step-by-step tutorial on using the Gemini API with Python to build a custom chatbot. It starts by explaining how to sign up for a Google AI Studio account and obtain an API key. The video then demonstrates using the Gemini Playground to experiment with different prompts and parameters, including setting the model's persona, style, and safety settings. It shows how to integrate the Gemini API into a Python application and create a simple chatbot that can hold a conversation. The tutorial emphasizes the importance of updating the conversation history to maintain context and create a more engaging experience. The video concludes by highlighting the potential for building more complex chatbots using the Gemini API and encourages viewers to experiment with different features. \n"
+        }}
+        </EXAMPLE OUTPUT 3>
+
+        -- **User Task:**
+        -- {task}
+
 
         Task: {task}
         """

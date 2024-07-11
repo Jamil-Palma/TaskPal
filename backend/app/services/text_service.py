@@ -323,7 +323,7 @@ Hint: To create a basic HTML webpage, follow these steps:
             "steps": [
             "Set up React project using `npx create-react-app hello-world-app` and navigate to the project directory",
             "Install Axios with `npm install axios`",
-            "Create a simple component to fetch data: create 'HelloWorld.js', import Axios, define component, use 'useEffect' to fetch data, render data in component"
+            "Create a simple component to fetch data: create `HelloWorld.js`, import Axios, define component, use `useEffect` to fetch data, render data in component"
             ],
             "summary_task": "Create a React component that fetches and displays data using Axios."
         }}
@@ -340,7 +340,7 @@ Hint: To create a basic HTML webpage, follow these steps:
             "Log in to your Heroku account using the command `heroku login`",
             "Initialize a Git repository in your Node.js project directory if you haven't already",
             "Create a new Heroku app using the command `heroku create`",
-            "Define a 'Procfile' in the root of your project that specifies the command to run your app",
+            "Define a `Procfile` in the root of your project that specifies the command to run your app",
             "Add and commit all changes to your Git repository",
             "Deploy your application to Heroku by pushing your code to the Heroku remote with `git push heroku main`",
             "Ensure that your application is running properly by visiting the Heroku URL provided"
@@ -356,26 +356,26 @@ Hint: To create a basic HTML webpage, follow these steps:
         {{
             "task": "Gemini API Chatbot with Python  ",
             "steps": [
-                "Step 1: Sign up for a Google AI Studio account and create an API key by visiting ai.google.dev, clicking 'Gemini API', and then 'Get API key'.",
+                "Step 1: Sign up for a Google AI Studio account and create an API key by visiting ai.google.dev, clicking `Gemini API`, and then `Get API key`.",
                 "Step 2: Sign into your Google account to access the API key creation page.",
-                "Step 3: Click 'Create API key' to generate a new API key.",
-                "Step 4: Explore the Gemini Playground by clicking 'Create new prompt' and then 'Chat prompt'. Experiment with different prompts and parameters in the Playground to customize the chatbot's persona, style, and tone.",
+                "Step 3: Click `Create API key` to generate a new API key.",
+                "Step 4: Explore the Gemini Playground by clicking `Create new prompt` and then `Chat prompt`. Experiment with different prompts and parameters in the Playground to customize the chatbot`s persona, style, and tone.",
                 "Step 5: Instruct the model to take on a specific role, such as a formal assistant, an expert in a field, or a specific character.",
-                "Step 6: Set the model's parameters in the Playground, including the model selection (Gemini 1.5 Flash, Gemini 1.5 Pro), token count, temperature, safety settings, and output format.",
-                "Step 7: Access the code for integrating Gemini into an application by clicking 'Get code' in the Playground.",
+                "Step 6: Set the model`s parameters in the Playground, including the model selection (Gemini 1.5 Flash, Gemini 1.5 Pro), token count, temperature, safety settings, and output format.",
+                "Step 7: Access the code for integrating Gemini into an application by clicking `Get code` in the Playground.",
                 "Step 8: Install the Google generative AI Library using `pip install google-generative-ai`.",
                 "Step 10: Create and activate a virtual environment for best programming practice.",
-                "Step 11: Create a new Python file named 'chat.py'. Copy the code from the Playground into the 'chat.py' file.",
-                "Step 13: Load your API key from the Gemini console. Create a new file named '.env' to store your API key as an environment variable.",
-                "Step 15: Install the 'python-dotenv' library using `pip install python-dotenv`. Import the 'python-dotenv' library in 'chat.py' and load the API key from the '.env' file.",
+                "Step 11: Create a new Python file named `chat.py`. Copy the code from the Playground into the `chat.py` file.",
+                "Step 13: Load your API key from the Gemini console. Create a new file named `.env` to store your API key as an environment variable.",
+                "Step 15: Install the `python-dotenv` library using `pip install python-dotenv`. Import the `python-dotenv` library in `chat.py` and load the API key from the `.env` file.",
                 "Step 17: Adjust the parameters in the code, such as temperature, max tokens, response type, and safety settings.",
-                "Step 18: Create the model using 'gen.generative_model' with the desired model name, parameters, and system instructions.",
-                "Step 19: Start a chat session using 'model.start_chat' and provide an empty list as the 'history' parameter.",
-                "Step 20: Use a 'while' loop to continuously interact with the chatbot.",
-                "Step 21: Get user input and send it to the chatbot using 'chat_session.message'.",
-                "Step 22: Retrieve the chatbot's response using 'response.text'.",
-                "Step 23: Update the 'history' object to maintain a record of the conversation by appending dictionaries with user and model inputs and responses. Print the chatbot's response.",
-                "Step 25: Run the 'chat.py' file using `python chat.py` to start a conversation with the chatbot."
+                "Step 18: Create the model using `gen.generative_model` with the desired model name, parameters, and system instructions.",
+                "Step 19: Start a chat session using `model.start_chat` and provide an empty list as the `history` parameter.",
+                "Step 20: Use a `while` loop to continuously interact with the chatbot.",
+                "Step 21: Get user input and send it to the chatbot using `chat_session.message`.",
+                "Step 22: Retrieve the chatbot's response using `response.text`.",
+                "Step 23: Update the `history` object to maintain a record of the conversation by appending dictionaries with user and model inputs and responses. Print the chatbot's response.",
+                "Step 25: Run the `chat.py` file using `python chat.py` to start a conversation with the chatbot."
             ],
             "summary_task": "This video provides a step-by-step tutorial on using the Gemini API with Python to build a custom chatbot. It starts by explaining how to sign up for a Google AI Studio account and obtain an API key. The video then demonstrates using the Gemini Playground to experiment with different prompts and parameters, including setting the model's persona, style, and safety settings. It shows how to integrate the Gemini API into a Python application and create a simple chatbot that can hold a conversation. The tutorial emphasizes the importance of updating the conversation history to maintain context and create a more engaging experience. The video concludes by highlighting the potential for building more complex chatbots using the Gemini API and encourages viewers to experiment with different features. \n"
         }}
@@ -401,6 +401,60 @@ Hint: To create a basic HTML webpage, follow these steps:
             "summary_task": "Learn the bubble sort algorithm in C++ by understanding its concept, implementing it in a function, and testing it with sample input."        
         }}
         </EXAMPLE OUTPUT 4>
+
+        <EXAMPLE INPUT 5>
+        -- User task: Node.js Crash Course Setup
+        </EXAMPLE INPUT 5>
+        <EXAMPLE OUTPUT 5>
+        {{
+            "task": "Node.js Crash Course Setup  ",
+            "steps": [
+                "Step 1: Open a terminal or command prompt on your computer.",
+                "Step 2: Check if Node.js is installed by typing `node -v` in the terminal. If you get a version number, Node.js is installed.",
+                "Step 3: If Node.js is not installed, download the latest version from the official Node.js website: `https://nodejs.org/.`",
+                "Step 4: Run the downloaded installer to install Node.js on your computer. This usually takes a couple of minutes.",
+                "Step 5: After installation, open a new terminal window and run `node -v` again to verify the installation.",
+                "Step 6: If you have an older version of Node.js, consider updating it to the latest version.",
+                "Step 7: Choose a text editor of your preference. The tutorial uses VS Code (Visual Studio Code), which is a free and popular editor available at `https://code.visualstudio.com/.`",
+                "Step 8: Download and install your chosen text editor.",
+                "Step 9: Create a new project folder in your chosen text editor. This tutorial creates a folder named `node-crash-course`.",
+                "Step 10: Navigate to the project folder using your terminal. You can use `cd Documents` (replace `Documents` with the appropriate path) to change directories.",
+                "Step 11: Use `mkdir node-crash-course` to create the project folder.",
+                "Step 12: Change to the project folder using `cd node-crash-course`.",
+                "Step 13: Open the project folder in your text editor. For VS Code, use `code .` in the terminal to open the current directory.",
+                "Step 14: Create a new file within the project folder and name it `test.js`.",
+                "Step 15: Write some basic JavaScript code in `test.js`. The example uses `const name = 'Mario'; console.log(name);`.",
+                "Step 16: Run the `test.js` file in your terminal using `node test`.",
+                "Step 17: Verify that the output `Mario` is displayed in the terminal, confirming that the JavaScript code is running.",
+                "Step 18: Modify the code in `test.js` and run `node test` again to see the updated output.",
+                "Step 19: For further learning, download the course files from the GitHub repository: `https://github.com/your-username/node-crash-course.`",
+                "Step 20: Explore the course files for each lesson by navigating to the corresponding branches on GitHub."
+            ],
+            "summary_task": "This video is an introduction to Node.js, a JavaScript runtime environment that allows developers to run JavaScript code outside of a web browser. The video explains how Node works by wrapping the V8 engine, which compiles JavaScript into machine code, enabling it to run directly on computers and servers. \n\nThe video then delves into the practical applications of Node.js in web development, specifically its role in handling backend requests and responses, creating dynamic websites, and interacting with databases. \n\nIt highlights the advantages of Node.js, such as using JavaScript for both frontend and backend development, a large community, and numerous third-party packages. \n\nThe video concludes by outlining the course curriculum, which covers installing Node, reading and writing files, creating servers, using Express for web development, working with MongoDB databases, and implementing EJS template engines. \n\nThe final project involves building a simple blog website using these technologies. The video emphasizes that prior knowledge of JavaScript, HTML, and CSS is recommended for this course. \n"
+        }}
+        </EXAMPLE OUTPUT 5>
+
+        <EXAMPLE INPUT 6>
+        -- User task: React App Setup
+        </EXAMPLE INPUT 6>
+        <EXAMPLE OUTPUT 6>
+        {{
+            "task": "React App Setup  ",
+            "steps": [
+                "Step 1: Ensure you have Node.js installed on your computer. You can check the version by opening your terminal and typing `node -v` and pressing enter. If you don't see a version number or your version is less than 5.2, download the latest version from `https://nodejs.org/.`",
+                "Step 2: Navigate to the directory where you want to create your project using the command `cd` followed by the directory path in your terminal. For example, you might use `cd Documents/tuts` to navigate to a `tuts` folder inside your Documents folder.",
+                "Step 3: Create your React project by running the command `npx create-react-app <project-name>` in your terminal, replacing `<project-name>` with the name you want for your project. For example, you might use `npx create-react-app dojo-blog`.",
+                "Step 4: Once the project creation is complete, navigate into your project directory using the command `cd <project-name>`. For example, you might use `cd dojo-blog`.",
+                "Step 5: Open your project in VS Code by running the command `code .` in your terminal.",
+                "Step 6: Get familiar with the project structure. The `node_modules` folder contains your project dependencies, including the React library. The `public` folder contains public files, including `index.html`, which is served to the browser. The `src` folder contains the majority of your code, including the `App.js` component.",
+                "Step 7:  Delete the `logo.svg`, `reportWebVitals.js`, and `setupTests.js` files as they are not necessary for this tutorial. Also, delete the imports related to those files from `index.js`.",
+                "Step 8: Run the command `npm run start` in your terminal to start the development server and preview your application in a browser. The address will be displayed in your terminal, typically `localhost:3000`.",
+                "Step 9: If you ever need to reinstall your project dependencies, run the command `npm install` in your terminal. This will create the `node_modules` folder and install all the necessary dependencies.",
+                "Step 10: Remember that project files downloaded from GitHub may not include the `node_modules` folder. If you download a project, you must run `npm install` to re-install the dependencies before you can start the project."
+            ],
+            "summary_task": "This video explains how to set up a React starter project using Create React App. It covers the following steps:\n\n1. **Installing Node.js:**  The tutorial emphasizes the importance of having Node.js (version 5.2 or later) installed, which is required for using `npx`.\n2. **Creating the React Project:**  The process of using `npx create-react-app` to generate a new React project is demonstrated. \n3. **Exploring the Project Structure:**  The video walks through the different folders and files in the created project, explaining their purpose. \n   * **`node_modules`:** Contains all project dependencies.\n   * **`public`:**  Holds public files, including `index.html`.\n   * **`src`:**  Contains the main React code, including the `app.js` component and `index.js` (which starts the application).\n4. **Running the Project:** The tutorial explains how to start a development server using `npm run start`, which previews the project in a browser.\n5. **Node Modules and Project Dependencies:** The video highlights that the `node_modules` folder might be missing when downloading projects from Github. It explains how to restore it using `npm install`.\n6. **Next Steps:** The video ends with a preview of what will be covered in the next tutorial, focusing on React components and templates.\n\nOverall, this video provides a solid foundation for beginners wanting to learn React by setting up their first project and understanding its basic structure. \n"
+        }}
+        </EXAMPLE OUTPUT 6>
 
         -- **User Task:**
         -- {task}

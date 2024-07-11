@@ -40,4 +40,5 @@ async def process_video_instructions(query: UserQuery):
         print(" ------- file_path - ", file_path)
         return {"response": result, "file_path": file_path}
     except Exception as e:
+        print("Error: ", e)
         raise HTTPException(status_code=500, detail="An error occurred while processing the video")

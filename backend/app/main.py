@@ -11,7 +11,8 @@ app.add_middleware(
         "http://localhost:3000", 
         "https://6312-181-115-171-218.ngrok-free.app", 
         "https://a789-181-115-171-218.ngrok-free.app",
-        "https://a8fa-181-115-171-218.ngrok-free.app"
+        "https://a8fa-181-115-171-218.ngrok-free.app",
+        "https://b4ef-181-115-171-218.ngrok-free.app"
     ], 
     allow_credentials=True,
     allow_methods=["*"],

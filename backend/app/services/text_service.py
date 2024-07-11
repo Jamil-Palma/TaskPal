@@ -282,7 +282,3 @@ class TextService:
         #print(" --- json ", json_response)
         file_path = self.json_service.write_task_json('task_steps.json', json_response)
         return json_response, file_path
-
-        self.json_service.write_task_json(task, json_response)
-
-        return json_response

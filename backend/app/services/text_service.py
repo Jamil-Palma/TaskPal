@@ -2,6 +2,7 @@ from app.core.query_processor import QueryProcessor
 from app.core.gemini_client import GeminiChainClient
 from app.services.json_service import JsonService  
 import json
+from typing import Dict
 
 class TextService:
     def __init__(self):
@@ -103,61 +104,170 @@ class TextService:
 
 
 
-    def provide_hint(self, user_response: str, system_question: str) -> str:
+
+    def provide_hint(self, user_response: str, system_question: str, additional_info: Dict) -> str:
+        summary_task = additional_info.get("summary_task", "No summary available")
+        current_step = additional_info.get("current_step", "No current step available")
+        relevant_history = additional_info.get("relevant_history", [])
+
+        history_text = "\n".join(
+            [f"{msg['role'].capitalize()}: {msg['content']}" for msg in relevant_history]
+        )
+
         prompt = f"""
-        -- **System Instructions:**
-        -- You are an AI assistant specialized in providing detailed guidance and direct answers to help users complete tasks effectively.
-        -- Your task is to provide a response that meets the following criteria:
-        1. Provides a direct answer if possible.
-        2. Offers a step-by-step approach to complete the task if a direct answer is not feasible.
-        3. Identifies and corrects any misconceptions in the user's response (if any).
-        4. Encourages efficient problem-solving and task completion.
-        5. Avoid using titles or subtitles in one line, If there are cases where there are titles or subtitles, it includes everything in a single line.
-        6. If the topic is focused on programming or something where commands are required, insert correct code or commands in single-line format.
-        7. If you consult any page, put the link at the end of the line to consult it later.
+-- **System Instructions:**
+-- Act as an assistant to help understand a task at a specific step. Users will come to you because they encountered an error or have questions in their resolution, and you must help solve their problems and, if possible, provide more examples. Focus on the technology and programming area.
+-- Your task is to provide a response that meets the following criteria:
+1. Provide a direct answer if possible.
+2. Offer a step-by-step approach to complete the task if a direct answer is not feasible or if the user requires more detail.
+3. Identify and correct any misconceptions in the user's response (if any). If necessary, provide examples or links (links should be enclosed in ``).
+4. Encourage efficient problem-solving and completion of this step.
+5. If the topic is focused on programming or something where commands are required, insert correct code or commands in a single-line format. For simple commands, they should be enclosed in ``. For code or something more complex, it should be enclosed in ```<code here>```.
+6. If you consult any web page, place the link/url at the end of the line for later consultation.
+7. Remember the summary and current task, and that the user's question is about only one step of that task, but the final objective is that task.
+        
+        -- **Additional Information:**
+        Summary Task: {summary_task}
+        Current Step: {current_step}
+        Relevant History:
+        {history_text}
 
         -- **Example Usage:**
 
-        <EXAMPLE INPUT 1>
-        System Question: How do I reset my email password?
-        User Response: I don't know where to start.
-        </EXAMPLE INPUT 1>
-        <EXAMPLE OUTPUT 1>
-        Hint: To reset your email password, follow these steps:
-        1. Go to the email provider's login page.
-        2. Click on the "Forgot Password" link.
-        3. Enter your email address and submit the form.
-        4. Check your email for a password reset link and follow the instructions.
-        5. Create a new password and save the changes.
-        </EXAMPLE OUTPUT 1>
+```plaintext
+<EXAMPLE INPUT 1>
+-- **Additional Information:**
+Summary Task: Learn how to perform Create, Read, Update, and Delete (CRUD) operations on a database using Python. This involves understanding the basic concepts, choosing a database library, establishing a connection, creating tables, inserting, retrieving, updating, and deleting data, committing changes, and closing the connection.
+Current Step: Understanding the "Read" operation in CRUD.
+Relevant History:
+Assistant: Start by understanding the CRUD acronym: C - Create, R - Read, U - Update, D - Delete. These are the fundamental operations performed on data in any database management system.
+User: what is read....read all or read a uniq?
+Assistant: Hint: "Read" in CRUD refers to retrieving data from the database. This can be done in various ways, such as: 
+- Reading all data: Fetching all records from a specific table. For example, you might want to read all customer records or all product details.
+- Reading specific data: Reading certain records by filtering based on specific criteria. For example, all customer records with a specific postal code or all products within a particular price range.
+- Reading data for a specific record: Retrieving data for a single record identified by its unique key or ID.
 
-        <EXAMPLE INPUT 2>
-        System Question: How can I install Python on my computer?
-        User Response: I tried downloading it but got confused.
-        </EXAMPLE INPUT 2>
-        <EXAMPLE OUTPUT 2>
-        Hint: To install Python on your computer, follow these steps:
-        1. Go to the official Python website (python.org).
-        2. Navigate to the Downloads section.
-        3. Choose the appropriate version for your operating system (Windows, macOS, or Linux).
-        4. Download the installer and run it.
-        5. Follow the installation prompts, ensuring you check the option to add Python to your PATH.
-        6. Verify the installation by opening a command prompt or terminal and typing `python --version`.
-        </EXAMPLE OUTPUT 2>
+System Question: How do I read data from a database using Python?
+User Response: I don't know where to start.
+</EXAMPLE INPUT 1>
+<EXAMPLE OUTPUT 1>
+Hint: To read data from a database using Python, follow these steps:
+1. **Install the required library**: Ensure you have `sqlite3` installed. For other databases like MySQL or PostgreSQL, you might need `mysql-connector-python` or `psycopg2`. You can install them using `pip install mysql-connector-python` or `pip install psycopg2`.
+2. **Connect to the database**: Use the library to connect to your database. For example, with SQLite:
+   ```python
+   import sqlite3
+   conn = sqlite3.connect('example.db')
+   ```
+3. **Create a cursor object**: This allows you to execute SQL queries.
+   ```python
+   cursor = conn.cursor()
+   ```
+4. **Execute a query to read data**: Use SQL `SELECT` statement to fetch data.
+   ```python
+   cursor.execute("SELECT * FROM table_name")
+   rows = cursor.fetchall()
+   for row in rows:
+       print(row)
+   ```
+5. **Close the connection**: Always close the database connection after your operations.
+   ```python
+   conn.close()
+   ```
+</EXAMPLE OUTPUT 1>
 
-        <EXAMPLE INPUT 3>
-        System Question: What is the process for photosynthesis?
-        User Response: I think it's when plants breathe.
-        </EXAMPLE INPUT 3>
-        <EXAMPLE OUTPUT 3>
-        Hint: Photosynthesis is the process by which plants convert light energy into chemical energy. Here are the steps:
-        1. Chlorophyll in the plant cells absorbs sunlight.
-        2. The plant takes in carbon dioxide from the air through its leaves.
-        3. Water is absorbed by the roots and transported to the leaves.
-        4. Using the sunlight's energy, the plant converts carbon dioxide and water into glucose and oxygen.
-        5. The glucose is used by the plant for energy and growth, and the oxygen is released into the atmosphere.
-        </EXAMPLE OUTPUT 3>
+<EXAMPLE INPUT 2>
+-- **Additional Information:**
+Summary Task: Learn how to set up a web server using Node.js.
+Current Step: Installing Node.js.
+Relevant History:
+Assistant: Start by downloading the Node.js installer from the official website.
+User: Which version should I download?
+Assistant: Hint: Download the LTS (Long Term Support) version as it is more stable and suitable for most users.
 
+System Question: How do I install Node.js on my computer?
+User Response: I downloaded the installer, but I'm not sure what to do next.
+</EXAMPLE INPUT 2>
+<EXAMPLE OUTPUT 2>
+Hint: To install Node.js on your computer, follow these steps:
+1. **Run the installer**: Locate the downloaded Node.js installer file and double-click to run it.
+2. **Follow the setup wizard**: The setup wizard will guide you through the installation process. Click "Next" to proceed.
+3. **Accept the license agreement**: Read through the license agreement and click "I agree" if you accept the terms.
+4. **Choose the installation path**: You can use the default installation path or choose a custom one. Click "Next" to continue.
+5. **Select components**: The default components are usually sufficient. Click "Next" to proceed.
+6. **Begin the installation**: Click "Install" to start installing Node.js on your computer.
+7. **Finish the setup**: Once the installation is complete, click "Finish" to close the setup wizard.
+8. **Verify the installation**: Open a terminal or command prompt and type `node -v` and `npm -v` to check that Node.js and npm were installed correctly.
+</EXAMPLE OUTPUT 2>
+
+<EXAMPLE INPUT 3>
+-- **Additional Information:**
+Summary Task: Learn how to perform basic Git operations for version control.
+Current Step: Committing changes to a repository.
+Relevant History:
+{{
+    "role": "assistant",
+    "content": "First, initialize your repository using `git init`.",
+    "is_original_instruction": true
+}},
+{{
+    "role": "user",
+    "content": "I have initialized the repository. What's next?",
+    "is_original_instruction": false
+}},
+{{
+    "role": "assistant",
+    "content": "Hint: After initializing the repository, you need to add files to the staging area using `git add <file-name>` or `git add .` to add all files.",
+    "is_original_instruction": false
+}}
+
+System Question: How do I commit changes in Git?
+User Response: I'm not sure what to do after adding files.
+</EXAMPLE INPUT 3>
+<EXAMPLE OUTPUT 3>
+Hint: To commit changes in Git, follow these steps:
+1. **Ensure files are staged**: Use `git status` to verify that the files you want to commit are in the staging area.
+   ```bash
+   git status
+   ```
+2. **Commit the changes**: Use the `git commit` command with a meaningful message to save your changes.
+   ```bash
+   git commit -m "Your commit message"
+   ```
+3. **Verify the commit**: You can see the commit history using `git log`.
+   ```bash
+   git log
+   ```
+</EXAMPLE OUTPUT 3>
+
+<EXAMPLE INPUT 4>
+-- **Additional Information:**
+Summary Task: Learn how to set up a simple HTML webpage.
+Current Step: Creating the HTML structure.
+Relevant History: N/A
+
+System Question: How do I create a basic HTML webpage?
+User Response: I need a simple example to start with.
+</EXAMPLE INPUT 4>
+<EXAMPLE OUTPUT 4>
+Hint: To create a basic HTML webpage, follow these steps:
+1. **Create an HTML file**: Open your text editor and create a new file named `index.html`.
+2. **Add the basic HTML structure**: Copy and paste the following code into your `index.html` file:
+   ```html
+   <!DOCTYPE html>
+   <html>
+   <head>
+       <title>My First Webpage</title>
+   </head>
+   <body>
+       <h1>Welcome to My First Webpage</h1>
+       <p>This is a paragraph on my webpage.</p>
+   </body>
+   </html>
+   ```
+3. **Save the file**: Save the `index.html` file in your desired directory.
+4. **Open the file in a browser**: Open your web browser and drag the `index.html` file into it, or use `File > Open` to view your webpage.
+</EXAMPLE OUTPUT 4>
+```
 
         System Question: {system_question}
         User Response: {user_response}
@@ -306,7 +416,3 @@ class TextService:
         #print(" --- json ", json_response)
         file_path = self.json_service.write_task_json('task_steps.json', json_response)
         return json_response, file_path
-
-        self.json_service.write_task_json(task, json_response)
-
-        return json_response

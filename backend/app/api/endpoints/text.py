@@ -7,7 +7,7 @@ from app.core.conversation_manager import ConversationManager
 router = APIRouter()
 text_service = TextService()
 json_service = JsonService()
-conversation_manager = ConversationManager()
+conversation_manager = ConversationManager(conversation_base_path="data/conversations")
 
 @router.post("/question")
 async def process_question(query: UserQuery):

@@ -4,15 +4,15 @@ from app.api.endpoints import text, audio, image, video
 
 app = FastAPI()
 
+origin =[
+    "https://80c4-181-188-179-21.ngrok-free.app",
+    "http://localhost:3000"
+]
+
 # Configuración CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "https://6312-181-115-171-218.ngrok-free.app", 
-        "https://a789-181-115-171-218.ngrok-free.app",
-        "https://a8fa-181-115-171-218.ngrok-free.app"
-    ], 
+    allow_origins=origin, 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

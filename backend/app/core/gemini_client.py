@@ -214,7 +214,7 @@ class GeminiChainClient:
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. Your task is to provide a list of precise and clear steps for the given task described in the video transcript. Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
-        If the task must use external sources like creating an API key, please provide the url link to complete that task.
+        If the task must use external sources like creating an API key, please provide the url link to complete that task, and enclose the link with ` `.
 
         Context:
         The user has provided a video transcript and a title. Your job is to extract the key tasks and convert them into a step-by-step guide. The steps should cover everything from setup to completion, including any relevant tools, commands, or code. Each step should be standalone and formatted as a complete sentence or set of sentences.
@@ -236,29 +236,29 @@ class GeminiChainClient:
 
         <EXAMPLE INPUT 1>
         -- Video Transcript: 
-        "First, set up a new React project using 'npx create-react-app hello-world-app' and navigate to the project directory by running 'cd hello-world-app'. 
-        Next, install Axios with 'npm install axios'. 
-        Then, create a new file named 'HelloWorld.js' in the 'src' directory and import Axios by adding 'import axios from 'axios';' at the top. 
-        Define a functional component named 'HelloWorld' with 'const HelloWorld = () => {{}}'. 
-        Use the 'useEffect' hook to fetch data from an API within 'HelloWorld' by writing 'useEffect(() => {{ axios.get('https://api.example.com/data').then(response => {{ console.log(response.data); }}); }}, []);'. 
-        Finally, render the fetched data in the component's return statement and export the 'HelloWorld' component with 'export default HelloWorld'. 
-        Import and use the 'HelloWorld' component in 'App.js' by adding 'import HelloWorld from './HelloWorld';' and including '<HelloWorld />' in the JSX returned by 'App'."
+        "First, set up a new React project using `npx create-react-app hello-world-app` and navigate to the project directory by running `cd hello-world-app`. 
+        Next, install Axios with `npm install axios`. 
+        Then, create a new file named `HelloWorld.js` in the `src` directory and import Axios by adding `import axios from `axios`;` at the top. 
+        Define a functional component named `HelloWorld` with `const HelloWorld = () => {{}}`. 
+        Use the `useEffect` hook to fetch data from an API within `HelloWorld` by writing `useEffect(() => {{ axios.get(`https://api.example.com/data`).then(response => {{ console.log(response.data); }}); }}, []);`. 
+        Finally, render the fetched data in the component`s return statement and export the `HelloWorld` component with `export default HelloWorld`. 
+        Import and use the `HelloWorld` component in `App.js` by adding `import HelloWorld from `./HelloWorld`;` and including `<HelloWorld />` in the JSX returned by `App`."
 
         </EXAMPLE INPUT 1>
         <EXAMPLE OUTPUT 1>
         {{
             "task": "Create a Hello World application with Axios in React",
             "steps": [
-                "Step 1: Set up a new React project using 'npx create-react-app hello-world-app'.",
-                "Step 2: Navigate to the project directory by running 'cd hello-world-app'.",
-                "Step 3: Install Axios with 'npm install axios'.",
-                "Step 4: Create a new file named 'HelloWorld.js' in the 'src' directory.",
-                "Step 5: Import Axios in 'HelloWorld.js' by adding 'import axios from 'axios';' at the top of the file.",
-                "Step 6: Define a React functional component named 'HelloWorld' using 'const HelloWorld = () => {{}}'.",
-                "Step 7: Use the 'useEffect' hook to fetch data from an API within the 'HelloWorld' component by writing 'useEffect(() => {{ axios.get('https://api.example.com/data').then(response => {{ console.log(response.data); }}); }}, []);'.",
-                "Step 8: Render the fetched data in the component's return statement by adding appropriate JSX.",
-                "Step 9: Export the 'HelloWorld' component using 'export default HelloWorld;'.",
-                "Step 10: Import and use the 'HelloWorld' component in 'App.js' by adding 'import HelloWorld from './HelloWorld';' and including '<HelloWorld />' in the JSX returned by 'App'."
+                "Step 1: Set up a new React project using `npx create-react-app hello-world-app`.",
+                "Step 2: Navigate to the project directory by running `cd hello-world-app`.",
+                "Step 3: Install Axios with `npm install axios`.",
+                "Step 4: Create a new file named `HelloWorld.js` in the `src` directory.",
+                "Step 5: Import Axios in `HelloWorld.js` by adding `import axios from `axios`;` at the top of the file.",
+                "Step 6: Define a React functional component named `HelloWorld` using `const HelloWorld = () => {{}}`.",
+                "Step 7: Use the `useEffect` hook to fetch data from an API within the `HelloWorld` component by writing `useEffect(() => {{ axios.get(`https://api.example.com/data`).then(response => {{ console.log(response.data); }}); }}, []);`.",
+                "Step 8: Render the fetched data in the component`s return statement by adding appropriate JSX.",
+                "Step 9: Export the `HelloWorld` component using `export default HelloWorld;`.",
+                "Step 10: Import and use the `HelloWorld` component in `App.js` by adding `import HelloWorld from `./HelloWorld`;` and including `<HelloWorld />` in the JSX returned by `App`."
             ],
             "summary_task": "Create a React component that fetches and displays data using Axios."
         }}
@@ -298,10 +298,10 @@ class GeminiChainClient:
         chain = validate_prompt_template | self.langchain_model | output_parser
         validate_result = chain.invoke({"json_input": json_input})
         
-        json_result = json.dumps(validate_result)
-        print("json_result: ", json_result)
+        # json_result = json.dumps(validate_result)
+        # print("json_result: ", json_result)
 
-        print("validate_result: ", validate_result)
+        # print("validate_result: ", validate_result)
         return validate_result
     
     def process_scraping(self, url: str):

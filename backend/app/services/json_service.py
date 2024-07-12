@@ -58,6 +58,7 @@ class JsonService:
 
     def read_conversation_json(self, conversation_id):
         file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
+        print("my file_path is ", file_path)
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
 
@@ -144,13 +145,6 @@ class JsonService:
                     conversations.append(conversation_info)
         return conversations
     
-    def read_conversation_json(self, conversation_id):
-        file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
-
-        with open(file_path, 'r') as json_file:
-            return json.load(json_file)
 
     def delete_conversation(self, conversation_id):
         file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")

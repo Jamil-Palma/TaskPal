@@ -231,7 +231,8 @@ Hint: To install Node.js on your computer, follow these steps:
         -- Your task is to provide a list of precise and clear steps for the given task. 
         -- If the topic is focused on programming or something where commands are required, insert correct commands in single-line format.
         -- If you consult any page, put the link at the end of the line to consult it later
-
+        
+        TASK RULE: EVERY TASK MUST BE GENERATED ENTIRELY AS A SINGLE-LINE STRING, INCLUDING ANY COMMAND CODE IT MAY HAVE.
         Output format:
         Your output should be a JSON object with the following structure:
         {{
@@ -402,6 +403,9 @@ Hint: To install Node.js on your computer, follow these steps:
         response = self.gemini_client.generate_text(prompt)
 
         json_response = self.json_service.process_fix_json(response)  # json.loads(response)
-        #print(" --- json ", json_response)
-        file_path = self.json_service.write_task_json('task_steps.json', json_response)
+        print(" ---**---- json ", json_response)
+
+        title_string_prompt = "Please review this task assignment from the user and provide a clear and easily understandable title. user input: " + task
+        title = self.gemini_client.generate_text(title_string_prompt)
+        file_path = self.json_service.write_task_json(title, json_response)
         return json_response, file_path

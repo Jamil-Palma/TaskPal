@@ -20,7 +20,8 @@ class ConversationManager:
             "current_step_index": 0,
             "all_steps_completed": False,
             "summary_task": task["summary_task"],
-            "support_tasks": ""
+            "support_tasks": "",
+            "file_path": filename
         }
         self.conversations[conversation_id]["messages"].append({
             "role": "assistant",

@@ -7,7 +7,8 @@ app = FastAPI()
 origin =[
     "https://80c4-181-188-179-21.ngrok-free.app",
     "http://localhost:3000",
-    "https://9b00-181-115-171-218.ngrok-free.app"
+    "https://9b00-181-115-171-218.ngrok-free.app",
+    "https://3c29-181-115-171-218.ngrok-free.app"
 ]
 
 # Configuración CORS

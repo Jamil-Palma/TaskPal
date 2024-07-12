@@ -14,6 +14,7 @@ interface StartConversationResponse {
   current_step_index: number;
   all_steps_completed: boolean;
   messages: Message[];
+  file_path: string;
 }
 
 interface SendMessageResponse {
@@ -33,6 +34,7 @@ interface GetConversationResponse {
   current_step_index: number;
   all_steps_completed: boolean;
   messages: Message[];
+  file_path: string;
 }
 
 

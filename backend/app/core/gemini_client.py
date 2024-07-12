@@ -178,19 +178,14 @@ Guidelines for creating steps:
 6. Ensure each step can be followed without needing additional resources.
 
 -- Example output:
-
-
-        -- Example output:
-        "steps": [
-            "Step 1: Install the required packages and set up the environment. You can use pip install langchain openai sqlalchemy.",
-            "Step 2: Create the Chinook.db file in the same directory as your notebook. You can download it from `https://github.com/lerocha/chinook-database.` You'll need to create a SQLite connection using the SQLAlchemy-driven SQLDatabase class. Here's an example: `db = SQLDatabase.from_uri(\"sqlite:///Chinook.db\")`",
-            "Step 3:  Create an OpenAI chat model and an \"openai-tools\" agent using the `create_sql_agent` constructor. Use the `SQLDatabaseToolkit` to help with table selection and schema inclusion. Here's an example: `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True)`",
-            "Step 4: To optimize performance, create a few-shot prompt with domain-specific knowledge. This will help the model make better queries by providing examples of queries and their corresponding results. First, gather a few user input-SQL query examples. Then, create a SemanticSimilarityExampleSelector to find the examples most similar to the user's input. Finally, create a FewShotPromptTemplate using the example selector, an example prompt, and a prefix and suffix for the formatted examples. Here's an example: `example_selector = SemanticSimilarityExampleSelector.from_examples(examples, retriever=ExampleRetriever(embedding_function=OpenAIEmbeddings()))`, `few_shot_prompt_template = FewShotPromptTemplate(example_selector=example_selector, example_prompt=\"\"\"{{user_input}} \nSQL Query: {{query}}\"\"\", prefix=\"Here are some example queries and their corresponding SQL statements:\n\", suffix=\"What is the SQL query for this question: {{user_input}}\")`",
-            "Step 5: Create a custom prompt with a human message template and an agent_scratchpad MessagesPlaceholder. Use the few-shot prompt template for the system message. This will provide the agent with context and examples for understanding the user's request. Here's an example: `prompt = ChatPromptTemplate.from_template(\"{{user_input}} \n\n{{agent_scratchpad}}\")`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True, prompt=prompt)`",
-            "Step 6: To filter data based on proper nouns like addresses, song names, or artists, create a vector store containing all the distinct proper nouns from the database. Use the `create_sql_agent` constructor to pass in the vector store as a tool for the agent. This will allow the agent to query the vector store for the correct spelling of a proper noun before building the SQL query. Here's an example: `retriever = VectorStore.from_embeddings(embeddings, OpenAIEmbeddings())`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=[SQLDatabaseToolkit(db), retriever], verbose=True)`"
-        ],
-
-        
+    "steps": [
+        "Step 1: Install the required packages and set up the environment. You can use pip install langchain openai sqlalchemy.",
+        "Step 2: Create the Chinook.db file in the same directory as your notebook. You can download it from `https://github.com/lerocha/chinook-database.` You'll need to create a SQLite connection using the SQLAlchemy-driven SQLDatabase class. Here's an example: `db = SQLDatabase.from_uri(\"sqlite:///Chinook.db\")`",
+        "Step 3:  Create an OpenAI chat model and an \"openai-tools\" agent using the `create_sql_agent` constructor. Use the `SQLDatabaseToolkit` to help with table selection and schema inclusion. Here's an example: `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True)`",
+        "Step 4: To optimize performance, create a few-shot prompt with domain-specific knowledge. This will help the model make better queries by providing examples of queries and their corresponding results. First, gather a few user input-SQL query examples. Then, create a SemanticSimilarityExampleSelector to find the examples most similar to the user's input. Finally, create a FewShotPromptTemplate using the example selector, an example prompt, and a prefix and suffix for the formatted examples. Here's an example: `example_selector = SemanticSimilarityExampleSelector.from_examples(examples, retriever=ExampleRetriever(embedding_function=OpenAIEmbeddings()))`, `few_shot_prompt_template = FewShotPromptTemplate(example_selector=example_selector, example_prompt=\"\"\"{{user_input}} \nSQL Query: {{query}}\"\"\", prefix=\"Here are some example queries and their corresponding SQL statements:\n\", suffix=\"What is the SQL query for this question: {{user_input}}\")`",
+        "Step 5: Create a custom prompt with a human message template and an agent_scratchpad MessagesPlaceholder. Use the few-shot prompt template for the system message. This will provide the agent with context and examples for understanding the user's request. Here's an example: `prompt = ChatPromptTemplate.from_template(\"{{user_input}} \n\n{{agent_scratchpad}}\")`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=SQLDatabaseToolkit(db), verbose=True, prompt=prompt)`",
+        "Step 6: To filter data based on proper nouns like addresses, song names, or artists, create a vector store containing all the distinct proper nouns from the database. Use the `create_sql_agent` constructor to pass in the vector store as a tool for the agent. This will allow the agent to query the vector store for the correct spelling of a proper noun before building the SQL query. Here's an example: `retriever = VectorStore.from_embeddings(embeddings, OpenAIEmbeddings())`, `agent = create_sql_agent(db, llm=ChatOpenAI(temperature=0), tools=[SQLDatabaseToolkit(db), retriever], verbose=True)`"
+    ],
 
 <EXAMPLE INPUT 2>
 -- **Article Text:**
@@ -199,9 +194,9 @@ SQLite is famous for its great feature zero-configuration, which means no comple
 Install SQLite on Windows
     Step 1 - Go to SQLite download page, and download precompiled binaries from Windows section.
     Step 2 - Download sqlite-shell-win32-*.zip and sqlite-dll-win32-*.zip zipped files.
-    Step 3 - Create a folder C:\>sqlite and unzip above two zipped files in this folder, which will give you sqlite3.def, sqlite3.dll and sqlite3.exe files.
-    Step 4 - Add C:\>sqlite in your PATH environment variable and finally go to the command prompt and issue sqlite3 command, which should display the following result.
-    C:\>sqlite3
+    Step 3 - Create a folder C:\\sqlite and unzip above two zipped files in this folder, which will give you sqlite3.def, sqlite3.dll and sqlite3.exe files.
+    Step 4 - Add C:\\sqlite in your PATH environment variable and finally go to the command prompt and issue sqlite3 command, which should display the following result.
+    C:\\sqlite3
     SQLite version 3.7.15.2 2013-01-09 11:53:05
     Enter ".help" for instructions
     Enter SQL statements terminated with a ";"
@@ -247,8 +242,8 @@ Finally, you have SQLite command prompt where you can issue SQLite commands for 
     "task": "Install SQLite on Windows, Linux, and Mac OS X",
     "steps": [
         "Step 1: Download SQLite binaries: Go to the SQLite download page at `https://www.sqlite.org/download.html` and download the precompiled binaries for Windows, the `sqlite-shell-win32-*.zip` and `sqlite-dll-win32-*.zip` files. For Linux and Mac OS X, download the `sqlite-autoconf-*.tar.gz` from the source code section.",
-        "Step 2: Extract the files: On Windows, create a directory `C:\\sqlite` and unzip the downloaded files into this folder. For Linux and Mac OS X, use the following commands to extract and prepare the files: ```\ntar xvfz sqlite-autoconf-3071502.tar.gz\ncd sqlite-autoconf-3071502\n./configure --prefix=/usr/local\nmake\nsudo make install\n```",
-        "Step 3: Update PATH environment variable: On Windows, add `C:\\sqlite` to your PATH environment variable. On Linux and Mac OS X, the installation process typically handles this step, but you can verify by checking your environment settings.",
+        "Step 2: Extract the files: On Windows, create a directory `C:\\\\sqlite` and unzip the downloaded files into this folder. For Linux and Mac OS X, use the following commands to extract and prepare the files: ```\ntar xvfz sqlite-autoconf-3071502.tar.gz\ncd sqlite-autoconf-3071502\n./configure --prefix=/usr/local\nmake\nsudo make install\n```",
+        "Step 3: Update PATH environment variable: On Windows, add `C:\\\\sqlite` to your PATH environment variable. On Linux and Mac OS X, the installation process typically handles this step, but you can verify by checking your environment settings.",
         "Step 4: Verify the installation: Open a terminal or command prompt and type `sqlite3` to verify the installation. You should see the SQLite version information displayed, such as: ```\nSQLite version 3.7.15.2 2013-01-09 11:53:05\nEnter \".help\" for instructions\nEnter SQL statements terminated with a \";\"\nsqlite>\n```"
     ],
     "summary_task": "Install SQLite on Windows, Linux, and Mac OS X by downloading the binaries, extracting them, updating the PATH environment variable, and verifying the installation."
@@ -316,7 +311,7 @@ Article Content:
         return {"transcript": transcript, "title": title}
     
     def video_transcript_instructions(self, transcript: str, title: str):
-        prompt = f"""
+        prompt = """
         -- **System Instructions:**
         -- You are an AI assistant with expertise in generating detailed task instructions in JSON format. 
         -- Your task is to provide a list of precise and clear steps for the given task described in the video transcript (use the information provided in the <video_transcript> section). Ensure the steps are very detailed, providing all necessary information, including any commands, code snippets, or technical details mentioned in the transcript. Each step must be a complete string, ensuring the user can follow the instructions without needing additional resources. \
@@ -327,7 +322,7 @@ Article Content:
 
         Output format:
         Your output should be a JSON object with the following structure:
-        {{
+        {
             "task": "<Task Description>",
             "steps": [
                 "<Step 1>",
@@ -335,7 +330,7 @@ Article Content:
                 ...
             ],
             "summary_task": "<Summary of the task>"
-        }}
+        }
         Ensure the steps are clear, detailed, and can be easily followed.
 
         -- **Example Usage:**
@@ -353,7 +348,7 @@ Article Content:
 
         </EXAMPLE INPUT 1>
         <EXAMPLE OUTPUT 1>
-        {{
+        {
             "task": "Create a Hello World application with Axios in React",
             "steps": [
                 "Step 1: Set up a new React project using `npx create-react-app hello-world-app`.",
@@ -368,15 +363,14 @@ Article Content:
                 "Step 10: Import and use the `HelloWorld` component in `App.js` by adding `import HelloWorld from `./HelloWorld`;` and including `<HelloWorld />` in the JSX returned by `App`."
             ],
             "summary_task": "Create a React component that fetches and displays data using Axios."
-        }}
+        }
         </EXAMPLE OUTPUT 1>
 
         <video_transcript>
-            {transcript}
+        """+transcript+"""
         </video_transcript>
 
-        Task: {title}
-        """
+        Task: """+title
 
         instructions = self.model.generate_content(prompt)
         instructions = self.fix_json(instructions.text)

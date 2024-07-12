@@ -309,10 +309,15 @@ Article Content:
         soup = BeautifulSoup(page.text, 'html.parser')
         title = soup.find("meta", itemprop="name")['content']
         title = title.replace("-", "").replace(" ", "_")
-        video_id = video_path.split("v=")[-1]
+
+        if ("youtu.be" in video_path):
+            video_id = video_path.split('be/')[1].split('?')[0]
+        else:
+            video_id = video_path.split('v=')[-1]
+
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
         transcript = ' '.join([d['text']
-                             for d in transcript_list]).replace('\n', ' ')
+                            for d in transcript_list]).replace('\n', ' ')
         return {"transcript": transcript, "title": title}
     
     def video_transcript_instructions(self, transcript: str, title: str):

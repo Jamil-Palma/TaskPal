@@ -24,6 +24,7 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [filePaht, setFilePath] = useState("");
 
   useEffect(() => {
     if (selectedTaskFilename) {
@@ -37,10 +38,12 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
           const response = await startConversation(selectedTaskFilename);
           console.log("   start video conversations is : " , response)
           const { conversation_id, current_step_index, all_steps_completed, messages } = response;
+          console.log("conversation; id is : ", conversation_id)
           setConversationId(conversation_id);
           setMessages(messages);
           setCurrentStepIndex(current_step_index);
           setAllTasksCompleted(all_steps_completed);
+          setFilePath(selectedTaskFilename);
         } catch (error) {
           console.error("Error starting task:", error);
           setMessages([]);
@@ -55,14 +58,15 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
   }, [selectedTaskFilename]);
 
   const handleSendMessage = async (message: string | File, inputText?: string) => {
+    console.log("   -+-+ handleSendMessage conversation id:" , conversationId)
     if (!conversationId) return;
 
     try {
       let response;
       if (typeof message === 'string') {
-        response = await sendMessage(message, conversationId, selectedTaskFilename || undefined);
+        response = await sendMessage(message, conversationId, filePaht || undefined);
       } else {
-        response = await sendImageMessage(message, inputText || '', conversationId, selectedTaskFilename || undefined);
+        response = await sendImageMessage(message, inputText || '', conversationId, filePaht || undefined);
       }
 
       const { response: botResponse, current_step_index, all_steps_completed } = response;
@@ -82,10 +86,12 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
   const handleSelectConversation = async (conversationId: string) => {
     try {
       const conversation = await getConversation(conversationId);
+      console.log("conversation is : ", conversation)
       setMessages(conversation.messages);
       setConversationId(conversationId);
       setCurrentStepIndex(conversation.current_step_index);
       setAllTasksCompleted(conversation.all_steps_completed);
+      setFilePath(conversation.file_path);
     } catch (error) {
       console.error('Error loading conversation:', error);
     }

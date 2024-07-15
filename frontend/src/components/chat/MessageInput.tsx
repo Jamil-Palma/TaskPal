@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Paper, TextField, Box, Typography, Button } from "@mui/material";
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import MicIcon from '@mui/icons-material/Mic';
@@ -19,6 +19,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
   const [isRecording, setIsRecording] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -74,19 +76,80 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
     }
   };
 
+  // const handleRecordClick = async () => {
+  //   setIsRecording(true);
+
+  //   try {
+  //     const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/audio/upload_process`);
+  //     console.log("Response: ", response.data)
+  //     const transcribedText = response.data.transcription;
+  //     setInputText(transcribedText);
+  //   } catch (error) {
+  //     console.error("Error recording audio:", error);
+  //     setInputText("Error occurred while recording audio");
+  //   } finally {
+  //     setIsRecording(false);
+  //   }
+  // };
   const handleRecordClick = async () => {
+    if (isRecording) {
+      handleStopRecording();
+    } else {
+      handleStartRecording();
+    }
+  };
+
+  const handleStartRecording = () => {
     setIsRecording(true);
+    setInputText("");
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        audioStreamRef.current = stream;
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+
+        const audioChunks: BlobPart[] = [];
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          await handleUpload(audioBlob);
+        };
+
+        mediaRecorder.start();
+      })
+      .catch(error => {
+        console.error("Error accessing microphone:", error);
+      });
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+
+      if (audioStreamRef.current) {
+        audioStreamRef.current.getTracks().forEach(track => track.stop());
+        audioStreamRef.current = null;
+      }
+    }
+  };
+
+  const handleUpload = async (audioBlob: Blob) => {
+    const formData = new FormData();
+    formData.append('file', audioBlob, 'audio.wav');
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/audio/audio`);
-      console.log("Response: ", response.data)
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/audio/upload_process`, formData);
       const transcribedText = response.data.transcription;
       setInputText(transcribedText);
+      speakText(transcribedText);
     } catch (error) {
-      console.error("Error recording audio:", error);
+      console.error("Error uploading audio:", error);
       setInputText("Error occurred while recording audio");
-    } finally {
-      setIsRecording(false);
     }
   };
 
@@ -133,8 +196,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
       </Box>
       <SendButton onClick={handleSendMessage} />
       <Button
-        onClick={handleRecordClick}
-        disabled={isRecording}
+        onClick={isRecording ? handleStopRecording : handleStartRecording}
+        // disabled={isRecording}
         style={{ marginTop: '8px' }}
         color="secondary"
         endIcon={isRecording ? <RecordVoiceOverIcon /> : <MicIcon />}

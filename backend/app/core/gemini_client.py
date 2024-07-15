@@ -151,8 +151,11 @@ class GeminiChainClient:
         """
         page = requests.get(url.input_text)
         soup = BeautifulSoup(page.content, 'html.parser')
-        title = soup.title.text
-        title = title.replace("-", "").replace(" ", "_")
+        title_string_prompt = "Review this user-assigned task and provide a clear, easily understandable title of no more than 5 words, you use alfabets characters and no line breaks. user input:" + url.input_text
+        title = self.generate_text(title_string_prompt)
+        print("TITULO QUE GENERA ", title)
+        # title = soup.title.text
+        # title = title.replace("-", "").replace(" ", "_")
         article_text = " ".join([p.text for p in soup.find_all('p')])
         prompt = f"""
 -- **System Instructions:**

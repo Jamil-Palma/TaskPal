@@ -5,7 +5,7 @@ from app.api.endpoints import text, audio, image, video
 app = FastAPI()
 
 origin =[
-    "https://b1e5-181-188-179-21.ngrok-free.app",
+    "https://6298-181-188-179-21.ngrok-free.app",
     "http://localhost:3000",
     "https://9b00-181-115-171-218.ngrok-free.app",
     "https://3c29-181-115-171-218.ngrok-free.app"

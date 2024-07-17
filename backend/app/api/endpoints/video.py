@@ -31,7 +31,7 @@ async def process_video_instructions(query: UserQuery):
     try:
         print("- video step 1")
         transcript_res = video_service.process_transcript(query.input_text)
-        print("- video step 2")
+        print("- video step 2 , ", transcript_res)
         instructions_res = video_service.process_instructions(transcript_res["transcript"], transcript_res["title"])
         print("- video step 3")
         result,file_path = json_service.process_save_video_instructions(instructions_res["title"], 

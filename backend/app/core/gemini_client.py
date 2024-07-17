@@ -274,31 +274,6 @@ Article Content:
         task_name = self.model.generate_content(task_prompt)
         return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
 
-    def upload_media(self, media_url: str):
-        """
-        Upload media from URL.
-        """
-        image_ext = ['.png', '.jpeg', '.webp', '.heic', '.heif']
-        audio_ext = ['.wav', '.mp3', '.aiff', '.aac', '.ogg', '.flac']
-        video_ext = ['.mp4', '.mpeg', '.mov', '.avi',
-                     '.FLV', '.mpg', '.webm', '.wmv', '.3gpp']
-        text_ext = ['.txt', '.html', '.css', '.js',
-                    '.ts', '.csv', '.py', '.json', '.xml', '.rtf']
-        media_file_name = media_url.split("/")[-1].replace("%20", "_")
-
-        if any(ext in media_file_name for ext in image_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/image/{media_file_name}")
-            return "./data/image/" + media_file_name
-        if any(ext in media_file_name for ext in audio_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/audio/{media_file_name}")
-            return "./data/audio/" + media_file_name
-        if any(ext in media_file_name for ext in video_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/video/{media_file_name}")
-            return "./data/video/" + media_file_name
-        if any(ext in media_file_name for ext in text_ext):
-            os.system(f"wget -O {media_file_name} {media_url} && mv {media_file_name} ./data/text/{media_file_name}")
-            return "./data/text/" + media_file_name
-
     def video_transcript(self, video_path: str):
         """
         Get transcript from YouTube url.

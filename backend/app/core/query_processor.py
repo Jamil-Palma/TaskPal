@@ -23,12 +23,8 @@ class QueryProcessor:
         response = self.gemini_client.process_scraping(url)
         return response
 
-    def process_media_url(self, media_url):
-        response = self.gemini_client.upload_media(media_url)
-        return response
-
-    def process_video_transcript(self, video_path):
-        response = self.gemini_client.video_transcript(video_path)
+    def process_video_transcript(self, video_url):
+        response = self.gemini_client.video_transcript(video_url)
         return response
     
     def process_transcript_instructions(self, transcript, title):
@@ -37,4 +33,8 @@ class QueryProcessor:
     
     def process_fix_json(self, json):
         response = self.gemini_client.fix_json(json)
+        return response
+    
+    def process_audio_transcript(self, audio_path):
+        response = self.gemini_client.audio_to_text(audio_path)
         return response

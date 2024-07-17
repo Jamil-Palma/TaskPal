@@ -8,7 +8,10 @@ origin =[
     "https://80c4-181-188-179-21.ngrok-free.app",
     "http://localhost:3000",
     "https://9b00-181-115-171-218.ngrok-free.app",
-    "https://3c29-181-115-171-218.ngrok-free.app"
+    "https://3c29-181-115-171-218.ngrok-free.app",
+    "https://e2ca-181-115-171-218.ngrok-free.app",
+    "https://671a-181-115-171-218.ngrok-free.app",
+    "https://339b-181-115-171-218.ngrok-free.app"
 ]
 
 # Configuración CORS

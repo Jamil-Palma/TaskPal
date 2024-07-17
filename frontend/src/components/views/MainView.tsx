@@ -7,6 +7,8 @@ import InstructionsTask from '../Tabs/InstructionsTask';
 import TestTask from '../Tabs/TestTask';
 import MessageBar from '../chat/MessageBar';
 import Sidebar from '../Sidebar';
+import GeminiWelcome from '../Tabs/HomePage';
+
 const MainView: React.FC = () => {
   const [selectedTaskFilename, setSelectedTaskFilename] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -22,19 +24,19 @@ const MainView: React.FC = () => {
   };
 
   return (
-    <Box display="flex">
+    <Box display="flex" width="100vw" height="100vh" margin={0} padding={0}>
       <CssBaseline />
-      <Box flex={1} p={2}>
+      <Box flex={1} margin={0} padding={0}>
         <Routes>
           <Route
             path="/"
-            element={<PredefinedTasks setSelectedTaskFilename={handleTaskSelect} />}
+            element={<GeminiWelcome />}
           />
           <Route
             path="/predefined-tasks"
             element={<PredefinedTasks setSelectedTaskFilename={handleTaskSelect} />}
           />
-          <Route path="/url-task" element={<UrlTask goToChat={handleTaskSelect}/>} />
+          <Route path="/url-task" element={<UrlTask goToChat={handleTaskSelect} />} />
           <Route path="/instructions-task" element={<InstructionsTask />} />
           <Route path="/test-task" element={<TestTask />} />
           <Route

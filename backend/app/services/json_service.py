@@ -23,6 +23,7 @@ class JsonService:
     def _sanitize_filename(self, filename):
         try:
             sanitized = filename.replace(" ", "_")
+            sanitized = re.sub(r'[^a-zA-Z0-9_]', '', sanitized)
             return sanitized
         except Exception as e:
             print(f"Error sanitizing filename: {e}")
@@ -32,13 +33,14 @@ class JsonService:
         if base_path is None:
             base_path = self.base_path
         filename = self._sanitize_filename(base_filename)
+        if filename is None:
+            return None
         file_path = os.path.join(base_path, f"{filename}.json")
         counter = 1
         while os.path.exists(file_path):
             file_path = os.path.join(base_path, f"{filename}_{counter}.json")
             counter += 1
         return file_path
-
     def read_task_json(self, filename):
         file_path = os.path.join(self.base_path, filename)
         if not os.path.exists(file_path):

@@ -274,19 +274,19 @@ Article Content:
         task_name = self.model.generate_content(task_prompt)
         return {"Title": title, "Response": response.text, "Task Name": task_name.text, "Summary": summary.text}
 
-    def video_transcript(self, video_path: str):
+    def video_transcript(self, video_url: str):
         """
         Get transcript from YouTube url.
         """
-        page = requests.get(video_path)
+        page = requests.get(video_url)
         soup = BeautifulSoup(page.text, 'html.parser')
         title = soup.find("meta", itemprop="name")['content']
         title = title.replace("-", "").replace(" ", "_")
 
-        if ("youtu.be" in video_path):
-            video_id = video_path.split('be/')[1].split('?')[0]
+        if ("youtu.be" in video_url):
+            video_id = video_url.split('be/')[1].split('?')[0]
         else:
-            video_id = video_path.split('v=')[-1]
+            video_id = video_url.split('v=')[-1]
 
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
         transcript = ' '.join([d['text']
@@ -389,3 +389,27 @@ Article Content:
         # print("validate_result: ", validate_result)
         return validate_result
     
+    def audio_to_text(self, audio_path: str):
+        """
+        Convert audio file to text.
+        """
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError("Audio file not found!")
+
+        with open(audio_path, 'rb') as audio_file:
+            audio_data = audio_file.read()
+
+        audio = {
+            "inline_data": {
+                "data": audio_data,
+                "mime_type": mimetypes.guess_type(audio_path)[0]
+            }
+        }
+        prompt = "Extract text from this audio."
+        response = self.model.generate_content([audio, prompt])
+
+        title_prompt = f"Generate one concise title name that sums up the audio transcript. Transcript: {response.text}"
+        title = self.model.generate_content(title_prompt)
+        title = title.replace("-", "").replace(" ", "_")
+
+        return {"transcript": response.text, "title": title}

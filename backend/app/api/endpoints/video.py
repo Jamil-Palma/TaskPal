@@ -2,10 +2,12 @@ from fastapi import APIRouter, HTTPException
 from app.models.schemas import UserQuery
 from app.services.video_service import VideoService
 from app.services.json_service import JsonService
+from app.services.audio_service import AudioService
 
 router = APIRouter()
 video_service = VideoService()
 json_service = JsonService()
+audio_service = AudioService()
 
 @router.post("/process")
 async def process_video(query: UserQuery):
@@ -42,3 +44,25 @@ async def process_video_instructions(query: UserQuery):
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=500, detail="An error occurred while processing the video")
+    
+@router.post("/test")
+async def test(query: UserQuery):
+    try:
+        # First: download the video as an audio file from a URL
+        audio_filename = video_service.process_video_download_as_audio(query.input_text)
+
+        # Second: check if audio format is .m4a, if so, convert it to .mp3
+        if '.m4a' in audio_filename:
+            audio_filename = audio_service.audio_conversion(audio_filename)
+
+        # Third: Get the transcript from the audio file
+        audio_transcript = audio_service.process_audio_transcript(audio_filename)
+
+        # Fourth: Get the instructions from the transcript
+        response = video_service.process_instructions(audio_transcript["transcript"], audio_transcript["title"])
+
+        print("------ ", response)
+
+        return {"response": response}
+    except Exception as e:
+        return str(e)

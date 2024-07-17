@@ -41,7 +41,6 @@ class JsonService:
             file_path = os.path.join(base_path, f"{filename}_{counter}.json")
             counter += 1
         return file_path
-
     def read_task_json(self, filename):
         file_path = os.path.join(self.base_path, filename)
         if not os.path.exists(file_path):

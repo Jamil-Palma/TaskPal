@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Card, Typography, Button, CardMedia } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import exploreNow from '../../assets/images/Button.png';
 
 interface TaskCardProps {
@@ -7,9 +8,16 @@ interface TaskCardProps {
   description: string;
   imageSrc: string;
   titleBackgroundSrc: string;
+  url: string;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, titleBackgroundSrc }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, titleBackgroundSrc, url }) => {
+  const navigate = useNavigate();
+
+  const handleExploreNowClick = () => {
+    navigate(url);
+  };
+
   return (
     <Card sx={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', height: '500px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <CardMedia
@@ -37,7 +45,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, title
             src={titleBackgroundSrc}
             sx={{
               position: 'absolute',
-              top: '-10px',  // Ajusta esto según sea necesario
+              top: '-10px',  
               left: '50%',
               transform: 'translateX(-50%)',
               width: '100%',
@@ -56,10 +64,27 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, title
           </Box>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center', paddingBottom: 2 }}>
-          <Button variant="contained" sx={{ width: '80%' }}>
+          <Button 
+            variant="contained" 
+            sx={{ 
+              background: 'transparent',
+              color: 'white', 
+              '&:hover': { background: 'rgba(255, 255, 255, 0.1)' }, 
+              width: 'auto',
+              boxShadow: 'none',
+              border: 'none', 
+              alignSelf: 'flex-start', 
+              marginLeft: '10px' 
+            }}
+          >
             Select Task
           </Button>
-          <Button color="primary" sx={{ width: '60%', height: '40%' }} startIcon={<img src={exploreNow} alt="explore now" />} />
+          <Button 
+            color="primary" 
+            sx={{ width: '60%', height: '40%' }} 
+            startIcon={<img src={exploreNow} alt="explore now" />} 
+            onClick={handleExploreNowClick}
+          />
         </Box>
       </Box>
     </Card>

@@ -45,23 +45,17 @@ async def process_video_instructions(query: UserQuery):
         print("Error: ", e)
         raise HTTPException(status_code=500, detail="An error occurred while processing the video")
     
-@router.post("/test")
+@router.post("/more-video-instructions")
 async def test(query: UserQuery):
     try:
         # First: download the video as an audio file from a URL
         audio_filename = video_service.process_video_download_as_audio(query.input_text)
 
-        # Second: check if audio format is .m4a, if so, convert it to .mp3
-        if '.m4a' in audio_filename:
-            audio_filename = audio_service.audio_conversion(audio_filename)
-
-        # Third: Get the transcript from the audio file
+        # Second: Get the transcript from the audio file
         audio_transcript = audio_service.process_audio_transcript(audio_filename)
 
-        # Fourth: Get the instructions from the transcript
+        # Third: Get the instructions from the transcript
         response = video_service.process_instructions(audio_transcript["transcript"], audio_transcript["title"])
-
-        print("------ ", response)
 
         return {"response": response}
     except Exception as e:

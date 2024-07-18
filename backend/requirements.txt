@@ -12,3 +12,4 @@ pyaudio
 langchain
 langchain-google-genai
 yt-dlp
+cloudconvert

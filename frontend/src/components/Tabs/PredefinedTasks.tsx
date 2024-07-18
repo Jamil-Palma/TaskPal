@@ -8,7 +8,8 @@ import {
   Box,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import TaskCard from "../TaskCard";
+//import TaskCard from "../TaskCard";
+import PredefinedTaskCard from "../Predefined_Task_Card";
 import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 
 interface TaskContent {
@@ -78,6 +79,19 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
 
   return (
     <Box sx={{ padding: 2 }}>
+      {/* <Box 
+        component="img" 
+        src={backgroundImage}
+        alt="" 
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: 'auto',
+          objectFit: 'cover',
+        }}
+      /> */}
       <TextField
         variant="outlined"
         placeholder="Search tasks"
@@ -93,6 +107,17 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
         }}
         sx={{ marginBottom: 2 }}
       />
+      <PredefinedTaskCard />
+    </Box>
+
+  );
+};
+
+export default PredefinedTasks;
+
+
+/*
+
       <Grid container spacing={2}>
         {filteredTasks && filteredTasks.length > 0 ? (
           filteredTasks.map((task, index) => (
@@ -116,8 +141,4 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
           </Grid>
         )}
       </Grid>
-    </Box>
-  );
-};
-
-export default PredefinedTasks;
+*/

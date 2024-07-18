@@ -13,10 +13,10 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
       component="section" 
       position="relative" 
       display="flex" 
-      justifyContent="center" 
+      justifyContent="left" 
       alignItems="center" 
       width="100vw" 
-      height="100vh" 
+      height="150vh" 
       margin={0} 
       padding={0} 
       overflow="hidden"
@@ -31,8 +31,8 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%',
-          objectFit: 'cover'
+          height: 'auto',
+          objectFit: 'cover',
         }}
       />
       {/* Overlay Effect */}

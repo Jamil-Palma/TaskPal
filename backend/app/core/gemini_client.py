@@ -409,7 +409,7 @@ Article Content:
         response = self.model.generate_content([audio, prompt])
 
         title_prompt = f"Generate one concise title name that sums up the audio transcript. Transcript: {response.text}"
-        title = self.model.generate_content(title_prompt)
+        title = self.generate_text(title_prompt)
         title = title.replace("-", "").replace(" ", "_")
 
         return {"transcript": response.text, "title": title}

@@ -32,7 +32,7 @@ class VideoService:
         try:
             ydl_opts = {
                 'format': 'bestaudio',
-                'outtmpl': f'data/audio/%(title)s.%(ext)s'
+                'outtmpl': f'data/audio/%(title)s.mp3'
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:

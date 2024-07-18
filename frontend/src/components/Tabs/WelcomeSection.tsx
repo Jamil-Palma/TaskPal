@@ -58,8 +58,8 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
         {/* Logo Image */}
         <Box 
           component="img" 
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/b2c7c8f93ae23b715f31b08846de1ce531a824852afa345c6d2b5e6c7f7823d8?apiKey=85ed67fc5e9240cebf026c7e934f100c&" 
-          alt="" 
+          src="/images/upgrade.png" 
+          alt="xxxx" 
           mx="auto"
           width="174px"
         />

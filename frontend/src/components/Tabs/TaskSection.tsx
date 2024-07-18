@@ -6,7 +6,7 @@ interface TaskData {
   title: string;
   description: string;
   imageSrc: string;
-  titleBackgroundSrc: string; // Añadimos la nueva propiedad aquí
+  titleBackgroundSrc: string;
 }
 
 const taskData: TaskData[] = [
@@ -14,19 +14,19 @@ const taskData: TaskData[] = [
     title: "Predefined Tasks",
     description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
     imageSrc: "/images/Predefiend_task_compressed.jpg",
-    titleBackgroundSrc: "/images/title_3.png" // Ruta de la imagen del título para esta tarjeta
+    titleBackgroundSrc: "/images/title_3.png" 
   },
   {
     title: "URL Tasks",
     description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
     imageSrc: "/images/URL_Task_compressed.jpg",
-    titleBackgroundSrc: "/images/title_3.png" // Ruta de la imagen del título para esta tarjeta
+    titleBackgroundSrc: "/images/title_3.png"
   },
   {
     title: "Chat",
     description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
     imageSrc: "/images/chat_compressed.jpg",
-    titleBackgroundSrc: "/images/title_3.png" // Ruta de la imagen del título para esta tarjeta
+    titleBackgroundSrc: "/images/title_3.png" 
   }
 ];
 
@@ -49,7 +49,7 @@ const TaskSection: React.FC = () => {
               title={task.title}
               description={task.description}
               imageSrc={task.imageSrc}
-              titleBackgroundSrc={task.titleBackgroundSrc} // Pasamos la nueva propiedad a TaskCard
+              titleBackgroundSrc={task.titleBackgroundSrc} 
             />
           </Grid>
         ))}

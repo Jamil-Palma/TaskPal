@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Card, Typography, Button, CardMedia } from '@mui/material';
+import exploreNow from '../../assets/images/Button.png';
 
 interface TaskCardProps {
   title: string;
@@ -10,7 +11,7 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, titleBackgroundSrc }) => {
   return (
-    <Card sx={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', height: '600px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Card sx={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', height: '500px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <CardMedia
         component="img"
         image={imageSrc}
@@ -55,12 +56,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, imageSrc, title
           </Box>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center', paddingBottom: 2 }}>
-          <Button variant="contained" color="primary" sx={{ width: '80%' }}>
+          <Button variant="contained" sx={{ width: '80%' }}>
             Select Task
           </Button>
-          <Button variant="outlined" color="primary" sx={{ width: '80%' }}>
-            Explore Now
-          </Button>
+          <Button color="primary" sx={{ width: '60%', height: '40%' }} startIcon={<img src={exploreNow} alt="explore now" />} />
         </Box>
       </Box>
     </Card>

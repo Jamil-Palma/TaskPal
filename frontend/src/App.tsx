@@ -15,7 +15,7 @@ const theme = createTheme({
       main: '#cfd8dc',
     },
     background: {
-      default: '#263238', 
+      default: '#0a0913', 
       paper: '#37474f', 
     },
     text: {
@@ -27,14 +27,15 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#37474f',
+          background: 'rgba(0, 0, 0, 0.2)',
+          backdropFilter: 'blur(10px)'
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#37474f',
+          background: 'rgba(0, 0, 0, 0.2)',
           color: '#ffffff',
         },
       },

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import TaskCard from "../TaskCard";
+import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 
 interface TaskContent {
   task: string;

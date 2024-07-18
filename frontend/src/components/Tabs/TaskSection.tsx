@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import TaskCard from './TaskCard';
-
+import arrow from '../../assets/images/upgrade.png';
 interface TaskData {
   title: string;
   description: string;
@@ -32,7 +32,13 @@ const taskData: TaskData[] = [
 
 const TaskSection: React.FC = () => {
   return (
-    <Box component="section" py={5} px={2} maxWidth="1200px" mx="auto">
+    <Box component="section" py={5} px={2} maxWidth="1200px" mx="auto" >
+      <Box
+        component="img"
+        src={arrow} 
+        alt="arrow" 
+        style={{ display: 'block', margin: '0 auto' }}
+      />
       <Typography variant="h4" component="h2" textAlign="center" mb={4}>
         Select a task to start
       </Typography>

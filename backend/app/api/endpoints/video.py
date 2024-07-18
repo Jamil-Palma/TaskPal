@@ -55,8 +55,12 @@ async def test(query: UserQuery):
         audio_transcript = audio_service.process_audio_transcript(audio_filename)
 
         # Third: Get the instructions from the transcript
-        response = video_service.process_instructions(audio_transcript["transcript"], audio_transcript["title"])
+        instructions_res = video_service.process_instructions(audio_transcript["transcript"], audio_transcript["title"])
 
-        return {"response": response}
+        result,file_path = json_service.process_save_video_instructions(instructions_res["title"], 
+                                                              instructions_res["instructions"], 
+                                                              instructions_res["name"], 
+                                                              instructions_res["summary"])
+        return {"response": result, "file_path": file_path}
     except Exception as e:
         return str(e)

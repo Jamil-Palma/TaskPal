@@ -24,7 +24,7 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
   };
 
   const getUrlType = (url: string): string => {
-    const videoPlatforms = ["youtube.com", "vimeo.com"];
+    const videoPlatforms = ["youtube.com", "youtu.be", "vimeo.com", "instagram.com", "facebook.com"];
 
     try {
       const urlObj = new URL(url);
@@ -58,7 +58,11 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       }
 
       if (urlType === "video") {
-        endpoint = "/video/video-instructions";
+        if (url.includes("youtube.com") || url.includes("youtu.be")) {
+          endpoint = "/video/video-instructions";
+        } else {
+          endpoint = "/video/more-video-instructions";
+        }
       } else {
         endpoint = "/text/scraping";
       }

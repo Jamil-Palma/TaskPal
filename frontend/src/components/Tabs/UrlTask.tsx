@@ -1,18 +1,39 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
 import axiosInstance from "../../axiosConfig";
-import background from "../../assets/images/Background_for_other_pages.jpg";
+import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 import GenerateButton from "../../assets/images/Generate_Task_Btn.png";
 import GenerateButtonHover from "../../assets/images/Generate_Task_Btn_Hover.png";
+import { styled } from "@mui/system";
 
 interface UrlTaskProps {
   goToChat: (filename: string) => void;
 }
 
+const BackgroundImage = styled(Box)({
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundSize: 'auto',
+  backgroundPosition: '-50px -50px',
+  backgroundRepeat: 'repeat',
+  position: 'absolute',
+  top: '-50px',
+  left: '-50px',
+  width: 'calc(100% + 100px)',
+  height: 'calc(100% + 100px)',
+  zIndex: -1,
+});
+
+const ContentContainer = styled(Box)({
+  padding: '2rem',
+  position: 'relative',
+  zIndex: 1,
+});
+
 const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isUrl = (text: string): boolean => {
     try {
@@ -41,12 +62,7 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
 
   const handleGenerateSteps = async () => {
     setError(null);
-
-    // const urlType = getUrlType(url);
-    // if (urlType === 'unknown') {
-    //   setError('Invalid URL. Please enter a valid URL.');
-    //   return;
-    // }
+    setIsLoading(true);
 
     let endpoint = "";
     let input = "";
@@ -54,6 +70,7 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       const urlType = getUrlType(url);
       if (urlType === "unknown") {
         setError("Invalid URL. Please enter a valid URL.");
+        setIsLoading(false);
         return;
       }
 
@@ -73,7 +90,6 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       const response = await axiosInstance.post(endpoint, { [input]: url });
       console.log("RESPONSE VIDEO: ", response.data);
       const filePath = response.data.file_path;
-      // //const cleanedFilePath = filePath.replace('data/task/', '');
       let cleanedFilePath = filePath.slice(10);
 
       cleanedFilePath = cleanedFilePath.replace(/\\/g, "");
@@ -81,79 +97,71 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
       goToChat(cleanedFilePath);
     } catch (err) {
       setError("Failed to generate steps. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        padding: 2,
-        backgroundColor: "background.default",
-        borderRadius: 2,
-      }}
-    >
-      <Box
-        component="img"
-        src={background}
-        alt=""
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "auto",
-          objectFit: "cover",
-        }}
-      />
-      <Typography variant="h4" gutterBottom>
-        URL Task
-      </Typography>
-      <TextField
-        label="Enter URL"
-        variant="outlined"
-        fullWidth
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-        <Button
-          color="primary"
-          onClick={handleGenerateSteps}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          sx={{ position: "relative", padding: 0 }}
-        >
-          <img
-            src={isHovered ? GenerateButtonHover : GenerateButton}
-            alt="Generate Task"
-            style={{ width: "100%", height: "100%" }}
-          />
-          <Typography
-            sx={{
-              position: "absolute",
-              top: "22%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              fontWeight: "bold",
-              color: "white",
-            }}
-          >
-            Generate Task
-          </Typography>
-        </Button>
-      </Box>
-      {error && (
-        <Typography color="error" sx={{ marginTop: 2 }}>
-          {error}
+    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+      <BackgroundImage />
+      <ContentContainer>
+        <Typography variant="h4" gutterBottom>
+          URL Task
         </Typography>
-      )}
-      {/* <Box sx={{ marginTop: 2 }}>
-        {steps.map((step, index) => (
-          <Typography key={index}>
-            {index + 1}. {step}
+        <TextField
+          label="Enter URL"
+          variant="outlined"
+          fullWidth
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+          <Button
+            color="primary"
+            onClick={handleGenerateSteps}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            sx={{ position: "relative", padding: 0 }}
+            disabled={isLoading}
+          >
+            <img
+              src={isHovered ? GenerateButtonHover : GenerateButton}
+              alt="Generate Task"
+              style={{ width: "100%", height: "100%" }}
+            />
+            <Typography
+              sx={{
+                position: "absolute",
+                top: "22%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                fontWeight: "bold",
+                color: "white",
+              }}
+            >
+              Generate Task
+            </Typography>
+          </Button>
+        </Box>
+        {isLoading && (
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+            <CircularProgress />
+          </Box>
+        )}
+        {error && (
+          <Typography color="error" sx={{ marginTop: 2 }}>
+            {error}
           </Typography>
-        ))}
-      </Box> */}
+        )}
+        {/* <Box sx={{ marginTop: 2 }}>
+          {steps.map((step, index) => (
+            <Typography key={index}>
+              {index + 1}. {step}
+            </Typography>
+          ))}
+        </Box> */}
+      </ContentContainer>
     </Box>
   );
 };

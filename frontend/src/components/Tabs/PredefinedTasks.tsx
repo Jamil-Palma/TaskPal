@@ -10,6 +10,7 @@ import {
 import { Search } from "@mui/icons-material";
 import TaskCard from "../TaskCard";
 import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
+import { styled } from "@mui/system";
 
 interface TaskContent {
   task: string;
@@ -18,13 +19,38 @@ interface TaskContent {
 
 interface Task {
   title: string;
+  content?: TaskContent;
+  file_name: string;
+}
+
+interface TaskWithContent {
+  title: string;
   content: TaskContent;
-  file_name: string
+  file_name: string;
 }
 
 interface PredefinedTasksProps {
   setSelectedTaskFilename: (filename: string) => void;
 }
+
+const BackgroundImage = styled(Box)({
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center center',
+  backgroundRepeat: 'no-repeat',
+  position: 'absolute',
+  top: '-50px', // Ajusta este valor según sea necesario
+  left: '-50px', // Ajusta este valor según sea necesario
+  width: 'calc(100% + 100px)', // Ajusta este valor según sea necesario
+  height: 'calc(100% + 100px)', // Ajusta este valor según sea necesario
+  zIndex: -1,
+});
+
+const ContentContainer = styled(Box)({
+  padding: '2rem',
+  position: 'relative',
+  zIndex: 1,
+});
 
 const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilename }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -36,9 +62,8 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     const fetchTasks = async () => {
       try {
         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/text/tasks`);
-        console.log("RESPONSE: ",response.data);
+        console.log("RESPONSE: ", response.data);
         setTasks(response.data);
-        console.log("TASK ", tasks);
         setFilteredTasks(response.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -61,61 +86,66 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     setFilteredTasks(
       tasks.filter((task) =>
         task.title.toLowerCase().includes(query) ||
-        task.content.task.toLowerCase().includes(query) ||
-        task.content.summary_task.toLowerCase().includes(query)
+        task.content?.task?.toLowerCase().includes(query) ||
+        task.content?.summary_task?.toLowerCase().includes(query)
       )
     );
   };
 
-  const defaultTask: Task = {
+  const defaultTask: TaskWithContent = {
     title: "install_visual_studio_code.json",
     content: {
       task: "Default Task",
-      summary_task: "his is a default task shown when no tasks are available, default task install vs code."
+      summary_task: "This is a default task shown when no tasks are available, default task install vs code."
     },
     file_name: "install_visual_studio_code.json"
   };
 
+  const tasksWithContent = filteredTasks.filter((task): task is TaskWithContent => task.content !== undefined);
+
   return (
-    <Box sx={{ padding: 2 }}>
-      <TextField
-        variant="outlined"
-        placeholder="Search tasks"
-        fullWidth
-        value={searchQuery}
-        onChange={handleSearch}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Search />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ marginBottom: 2 }}
-      />
-      <Grid container spacing={2}>
-        {filteredTasks && filteredTasks.length > 0 ? (
-          filteredTasks.map((task, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+    <Box sx={{ position: 'relative' }}>
+      <BackgroundImage />
+      <ContentContainer>
+        <TextField
+          variant="outlined"
+          placeholder="Search tasks"
+          fullWidth
+          value={searchQuery}
+          onChange={handleSearch}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ marginBottom: 2 }}
+        />
+        <Grid container spacing={2}>
+          {tasksWithContent.length > 0 ? (
+            tasksWithContent.map((task, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <TaskCard
+                  task={task}
+                  expanded={expanded[index] || false}
+                  onExpandClick={() => handleExpandClick(index)}
+                  onSelectTask={setSelectedTaskFilename}
+                />
+              </Grid>
+            ))
+          ) : (
+            <Grid item xs={12}>
               <TaskCard
-                task={task}
-                expanded={expanded[index] || false}
-                onExpandClick={() => handleExpandClick(index)}
+                task={defaultTask}
+                expanded={expanded[0] || false}
+                onExpandClick={() => handleExpandClick(0)}
                 onSelectTask={setSelectedTaskFilename}
               />
             </Grid>
-          ))
-        ) : (
-          <Grid item xs={12}>
-            <TaskCard
-              task={defaultTask}
-              expanded={expanded[0] || false}
-              onExpandClick={() => handleExpandClick(0)}
-              onSelectTask={setSelectedTaskFilename}
-            />
-          </Grid>
-        )}
-      </Grid>
+          )}
+        </Grid>
+      </ContentContainer>
     </Box>
   );
 };

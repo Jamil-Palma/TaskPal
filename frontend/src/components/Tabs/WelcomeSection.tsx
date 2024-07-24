@@ -54,7 +54,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
   color="white" 
   px={2} 
   maxWidth="800px"
-  mt={-60} 
+  mt={-40} 
 >
   {/* Title */}
 <Typography 

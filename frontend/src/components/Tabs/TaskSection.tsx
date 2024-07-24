@@ -21,7 +21,7 @@ const taskData: TaskData[] = [
   },
   {
     title: "URL Tasks",
-    description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
+    description: "Data technology futuristic i3333333333llustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
     imageSrc: "/images/URL_Task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/url-task"

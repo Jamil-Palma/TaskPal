@@ -1,0 +1,123 @@
+.glow-on-hover {
+    width: 120px;
+    height: 40px;
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #313a5b;
+    /* background: linear-gradient(135deg, rgba(255, 0, 255, 0.3), rgba(0, 0, 255, 0.3)); */
+    /* cursor: pointer; */
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+    content: '';
+    /* background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); */
+    background: linear-gradient(90deg, #002bff, #ff00c8);
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 1s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #000;
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #313a5b;
+    /* background: linear-gradient(135deg, rgba(255, 0, 255, 0.3), rgba(0, 0, 255, 0.3)); */
+    /* backdrop: blur(10px); */
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+}
+
+
+/* buttonStyles.css */
+.explorenow {
+    width: 220px;
+    height: 40px;
+    outline: none;    
+    /* background: linear-gradient(0deg, rgba(255, 0, 255, 0.3), rgba(0, 0, 255, 0.3)); */
+    background: #313a5b;
+    border: none; /* Sin borde */
+    padding: 16px 20px;
+    border-radius: 20px; /* Redondear bordes */
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 16px;
+}
+.explorenow:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: #313a5b; */
+
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.3),#313a5b);
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+.explorenow:hover {
+    background: #313a5b;
+    color: #ffffff; /* color de fuente hover */
+}
+
+.explorenow:active::after{
+    /* background: linear-gradient(145deg, #C977D6, #ded9df);  */
+    box-shadow: 0 5px 10px #000000;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(242, 73, 248, 0.3));
+}
+
+.explorenow:hover .icon {
+    transform: scale(1.5); /* Aumenta el tamaño del icono */
+    color: #C977D6;
+    margin-right: 10px; /* Desplaza el texto a la derecha */
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out, margin-right 0.3s ease-in-out;
+}
+
+/* .explorenow:active .icon {
+    color: #ff00ff; 
+} */
+
+.icon {
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    margin-right: 5px; 
+}

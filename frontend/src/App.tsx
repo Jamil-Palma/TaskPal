@@ -5,6 +5,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { BrowserRouter as Router } from 'react-router-dom';
 import MainView from './components/views/MainView';
 import Sidebar from './components/Sidebar';
+import { Link } from 'react-router-dom';
+import './components/styles/styles.css';
 
 const theme = createTheme({
   palette: {
@@ -28,6 +30,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           background: 'rgba(0, 0, 0, 0.2)',
+          // border: 'red', // Add border color
+          // borderStyle: 'solid', // Specify border style
+          // borderWidth: '2px', // Specify border width
           backdropFilter: 'blur(10px)'
         },
       },
@@ -68,19 +73,22 @@ const App: React.FC = () => {
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
-              Chatting with GEMINI!
-            </Typography>
+            <Link to="/" style={{ textDecoration: 'none', color:'white'}}>
+              <Typography variant="h6" noWrap>
+                Chatting with GEMINI!
+              </Typography>
+            </Link>
           </Toolbar>
         </MuiAppBar>
-        <Box display="flex" onClick={handleClickOutside}>
-          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Box display="flex" onClick={handleClickOutside} >
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle}/>
           <Box
             component="main"
             flex={1}
             ml={open ? `${drawerWidth}px` : '0px'}
             sx={{ transition: 'margin 0.3s' }}
-            p={3}
+            p={0}
+            // style={{ border: '2px solid red' }}
           >
             <Toolbar />
             <MainView />

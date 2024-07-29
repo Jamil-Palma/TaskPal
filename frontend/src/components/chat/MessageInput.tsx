@@ -1,11 +1,15 @@
+
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Paper, TextField, Box, Typography, Button } from "@mui/material";
+import { Paper, TextField, Box, Typography, IconButton, InputAdornment, Select, MenuItem } from "@mui/material";
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import MicIcon from '@mui/icons-material/Mic';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import ImageIcon from '@mui/icons-material/Image';
+import SendIcon from '@mui/icons-material/Send';
 import { useDropzone } from 'react-dropzone';
-import SendButton from "../Buttons/SendButton";
 import axios from "axios";
+import { SelectChangeEvent } from "@mui/material";
+import "../styles/MessageInput.css"; 
 
 interface MessageInputProps {
   onSendMessage: (message: string | File, inputText?: string) => void;
@@ -31,13 +35,9 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
       }
     };
 
-    // Load voices when component mounts
     loadVoices();
-
-    // Add event listener for voices changed
     window.speechSynthesis.onvoiceschanged = loadVoices;
 
-    // Clean up event listener on unmount
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
     };
@@ -76,21 +76,6 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
     }
   };
 
-  // const handleRecordClick = async () => {
-  //   setIsRecording(true);
-
-  //   try {
-  //     const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/audio/upload_process`);
-  //     console.log("Response: ", response.data)
-  //     const transcribedText = response.data.transcription;
-  //     setInputText(transcribedText);
-  //   } catch (error) {
-  //     console.error("Error recording audio:", error);
-  //     setInputText("Error occurred while recording audio");
-  //   } finally {
-  //     setIsRecording(false);
-  //   }
-  // };
   const handleRecordClick = async () => {
     if (isRecording) {
       handleStopRecording();
@@ -156,14 +141,14 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
   const speakText = (text: string) => {
     if (!selectedVoice) return;
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1; // Velocidad de la voz (0.1 a 10)
-    utterance.pitch = 1; // Tono de la voz (0 a 2)
-    utterance.volume = 1; // Volumen (0 a 1)
-    utterance.voice = selectedVoice; // Voz seleccionada
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    utterance.voice = selectedVoice;
     window.speechSynthesis.speak(utterance);
   };
 
-  const handleVoiceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleVoiceChange = (event: SelectChangeEvent<string>) => {
     const selectedVoiceName = event.target.value;
     const voice = voices.find(v => v.name === selectedVoiceName);
     setSelectedVoice(voice || null);
@@ -176,7 +161,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
   };
 
   return (
-    <Paper style={{ display: 'flex', alignItems: 'center', padding: '8px', marginTop: '16px', flexDirection: 'column' }}>
+    <div className="message-input-container">
       <TextField
         fullWidth
         placeholder="Enter a message..."
@@ -184,45 +169,68 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessa
         onChange={(e) => setInputText(e.target.value)}
         onKeyPress={(e) => (e.key === "Enter" ? handleSendMessage() : null)}
         variant="outlined"
-        style={{ marginBottom: '8px' }}
+        className="message-input"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton onClick={handleReadClick} className="icon-button">
+                <VolumeUpIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={handleRecordClick} className="icon-button">
+                {isRecording ? <RecordVoiceOverIcon /> : <MicIcon />}
+              </IconButton>
+              <IconButton {...getRootProps()} className="icon-button">
+                <input {...getInputProps()} onChange={handleFileChange} style={{ display: 'none' }} />
+                <ImageIcon />
+              </IconButton>
+              <IconButton onClick={handleSendMessage} className="icon-button">
+                <SendIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'transparent', 
+            },
+            '&:hover fieldset': {
+              borderColor: 'transparent',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'transparent', 
+            },
+          },
+        }}
       />
-      <Box {...getRootProps()} border="2px dashed grey" padding="16px" marginBottom="8px" width="100%" textAlign="center">
+      {/* <Box {...getRootProps()} className="dropzone">
         <input {...getInputProps()} onChange={handleFileChange} />
         {preview ? (
-          <img src={preview} alt="preview" style={{ maxWidth: '100%', maxHeight: '150px' }} />
+          <img src={preview} alt="preview" className="preview-image" />
         ) : (
-          <Typography>Drag & drop an image here, or click to select one</Typography>
+          <Typography className="dropzone-text">Drag & drop an image here, or click to select one</Typography>
         )}
       </Box>
-      <SendButton onClick={handleSendMessage} />
-      <Button
-        onClick={isRecording ? handleStopRecording : handleStartRecording}
-        // disabled={isRecording}
-        style={{ marginTop: '8px' }}
-        color="secondary"
-        endIcon={isRecording ? <RecordVoiceOverIcon /> : <MicIcon />}
-      >
-        {isRecording ? "Recording..." : "Record Audio"}
-      </Button>
-      <Button
-        onClick={handleReadClick}
-        style={{ marginTop: '8px' }}
-        color="secondary"
-        startIcon={<VolumeUpIcon />}
-      >
-        Read Last Bot Message
-      </Button>
-      <div style={{ marginTop: '8px' }}>
-        <label htmlFor="voiceSelect">Choose Voice: </label>
-        <select id="voiceSelect" onChange={handleVoiceChange} value={selectedVoice?.name}>
+      <div className="voice-select-container">
+        <label htmlFor="voiceSelect" className="voice-select-label">Choose Voice: </label>
+        <Select
+          id="voiceSelect"
+          value={selectedVoice?.name || ""}
+          onChange={handleVoiceChange}
+          className="voice-select"
+        >
           {voices.map((voice, index) => (
-            <option key={index} value={voice.name}>
+            <MenuItem key={index} value={voice.name}>
               {voice.name} ({voice.lang})
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </div>
-    </Paper>
+        </Select>
+      </div> */}
+    </div>
   );
 };
 

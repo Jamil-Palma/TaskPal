@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import TaskCard from './TaskCard';
-import arrow from '../../assets/images/upgrade.png';
+import arrow from '../../../public/images/flecha.gif';
 
 interface TaskData {
   title: string;
@@ -21,7 +21,7 @@ const taskData: TaskData[] = [
   },
   {
     title: "URL Tasks",
-    description: "Data technology futuristic i3333333333llustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
+    description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
     imageSrc: "/images/URL_Task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/url-task"
@@ -38,12 +38,15 @@ const taskData: TaskData[] = [
 const TaskSection: React.FC = () => {
   return (
     <Box component="section" py={5} px={2} maxWidth="1200px" mx="auto" mt={-50} sx={{ position: 'relative', zIndex: 1 }}>
-      <Box
-        component="img"
-        src={arrow} 
-        alt="arrow" 
-        style={{ display: 'block', margin: '0 auto' }}
-      />
+      
+      <Box 
+  component="img" 
+  src="/images/flecha.gif" 
+  alt="" 
+  ml={70} 
+  mt={10} 
+  width="50px" 
+/>
       <Typography variant="h4" component="h2" textAlign="center" mb={4}>
         Select a task to start
       </Typography>

@@ -1,23 +1,41 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import backgroundImage from "../../assets/images/background_home_page_compressed_v2.jpg";
+import { styled } from "@mui/system";
 
 interface WelcomeSectionProps {
   title: string;
   description: string;
 }
+const BackgroundImage = styled(Box)`
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-position: center;
+
+  // background-repeat: no-repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  // height: 210%;
+  height: 100vh;
+  z-index: -1;
+`;
 
 const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) => {
   return (
+    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+      <BackgroundImage />
     <Box 
       component="section" 
       position="relative" 
       display="flex" 
       justifyContent="left" 
       alignItems="center" 
-      width="100vw" 
+      width="100%" 
       height="150vh" 
-      margin={0} 
+      marginTop={'-5%'}
       padding={0} 
       overflow="hidden"
     >
@@ -31,7 +49,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
           top: 0,
           left: 0,
           width: '100%',
-          height: 'auto',
+          height: '250vh',
           objectFit: 'cover',
         }}
       />
@@ -42,8 +60,8 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%',
-          bgcolor: 'rgba(0, 0, 0, 0.5)'
+          height: '67%',
+          bgcolor: '#2a2a2b36'
         }} 
       />
 {/* Text Container */}
@@ -54,7 +72,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
   color="white" 
   px={2} 
   maxWidth="800px"
-  mt={-40} 
+  mt={-35} 
 >
   {/* Title */}
 <Typography 
@@ -86,18 +104,15 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
 
   {/* Logo Image */}
   <Box 
-  component="img" 
-  src="/images/upgrade.png" 
-  alt="" 
-  mr={55} // Ajusta la flecha más a la izquierda
-  mt={4} // Agrega margen superior para mover la flecha hacia abajo
-  width="80px" // Cambié el ancho a 80px para que sea más pequeña
-/>
-
-
-
-</Box>
-
+    component="img" 
+    src="/images/flecha.gif" 
+    alt="" 
+    mr={55} 
+    mt={4} 
+    width="50px" 
+  />
+  </Box>
+    </Box>
     </Box>
   );
 };

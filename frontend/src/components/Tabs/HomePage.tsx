@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 
 const GeminiWelcome: React.FC = () => {
   return (
-    <Box width="100vw" height="auto" margin={0} padding={0} position="relative">
+    <Box margin={0} padding={0} position="relative">
       {/* <MouseTrail /> */}
       <WelcomeSection
         title="Welcome to Google Gemini!"
@@ -16,10 +16,10 @@ const GeminiWelcome: React.FC = () => {
       <Box
         sx={{
           width: '100%',
-          height: '3px', 
-          bgcolor: 'rgba(211, 211, 211, 0.5)', 
+          height: '2px', 
+          bgcolor: '#9c58c1', 
           position: 'absolute',
-          top: '105vh', 
+          top: '100vh', 
           zIndex: 1,
           borderRadius: '500px 500px 10px 10px',
         }}

@@ -1,5 +1,6 @@
 import uuid
 from typing import Dict, List
+from datetime import datetime
 from app.services.json_service import JsonService
 from app.services.text_service import TextService
 
@@ -21,7 +22,8 @@ class ConversationManager:
             "all_steps_completed": False,
             "summary_task": task["summary_task"],
             "support_tasks": "",
-            "file_path": filename
+            "file_path": filename,
+            "registration_date": datetime.now().isoformat()
         }
         self.conversations[conversation_id]["messages"].append({
             "role": "assistant",

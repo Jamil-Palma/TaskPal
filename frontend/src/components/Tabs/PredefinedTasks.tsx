@@ -33,18 +33,18 @@ interface PredefinedTasksProps {
   setSelectedTaskFilename: (filename: string) => void;
 }
 
-const BackgroundImage = styled(Box)({
-  backgroundImage: `url(${backgroundImage})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center center',
-  backgroundRepeat: 'no-repeat',
-  position: 'absolute',
-  top: '-50px', // Ajusta este valor según sea necesario
-  left: '-50px', // Ajusta este valor según sea necesario
-  width: 'calc(100% + 100px)', // Ajusta este valor según sea necesario
-  height: 'calc(100% + 100px)', // Ajusta este valor según sea necesario
-  zIndex: -1,
-});
+const BackgroundImage = styled(Box)`
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+`;
 
 const ContentContainer = styled(Box)({
   padding: '2rem',

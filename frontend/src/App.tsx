@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { CssBaseline, Box, IconButton, AppBar as MuiAppBar, Toolbar, Typography } from '@mui/material';
+import { CssBaseline, Box, IconButton, AppBar as MuiAppBar, Toolbar, Typography, Modal, Fade, Backdrop } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
+import HelpIcon from '@mui/icons-material/Help';
 import { BrowserRouter as Router } from 'react-router-dom';
 import MainView from './components/views/MainView';
 import Sidebar from './components/Sidebar';
+import { Link } from 'react-router-dom';
+import './components/styles/styles.css';
 
 const theme = createTheme({
+
   palette: {
     primary: {
       main: '#37474f', 
@@ -28,6 +32,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           background: 'rgba(0, 0, 0, 0.2)',
+          // border: 'red', // Add border color
+          // borderStyle: 'solid', // Specify border style
+          // borderWidth: '2px', // Specify border width
           backdropFilter: 'blur(10px)'
         },
       },
@@ -48,6 +55,10 @@ const drawerWidth = 240;
 
 const App: React.FC = () => {
   const [open, setOpen] = useState(false);
+  
+  const [openHelp, setOpenHelp] = useState(false);
+  const handleOpen = () => setOpenHelp(true);
+  const handleClose = () => setOpenHelp(false);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -68,26 +79,57 @@ const App: React.FC = () => {
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
-              Chatting with GEMINI!
-            </Typography>
+            <Box sx={{ flexGrow: 1, textAlign: 'rigth' }}>
+              <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+                <Typography variant="h6" noWrap>
+                  Chatting with GEMINI!
+                </Typography>
+              </Link>
+            </Box>
+            <IconButton edge="end" className="helpIcon" aria-label="help" onClick={handleOpen}>
+              <HelpIcon />
+            </IconButton>
           </Toolbar>
         </MuiAppBar>
-        <Box display="flex" onClick={handleClickOutside}>
-          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Box display="flex" onClick={handleClickOutside} >
+          <Sidebar open={open} handleDrawerToggle={handleDrawerToggle}/>
           <Box
             component="main"
             flex={1}
             ml={open ? `${drawerWidth}px` : '0px'}
             sx={{ transition: 'margin 0.3s' }}
-            p={3}
+            p={0}
+            // style={{ border: '2px solid red' }}
           >
             <Toolbar />
             <MainView />
           </Box>
         </Box>
       </Router>
+      <Modal
+        aria-labelledby="help-modal-title"
+        aria-describedby="help-modal-description"
+        open={openHelp}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openHelp}>
+          <Box className="modalStyle">
+            <Typography id="help-modal-title" variant="h6" component="h2">
+              Help
+            </Typography>
+            <Typography id="help-modal-description" sx={{ mt: 2 }}>
+              Place help information to be displayed to users according to the design
+            </Typography>
+          </Box>
+        </Fade>
+      </Modal>
     </ThemeProvider>
+
   );
 };
 

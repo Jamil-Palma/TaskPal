@@ -10,18 +10,18 @@ interface UrlTaskProps {
   goToChat: (filename: string) => void;
 }
 
-const BackgroundImage = styled(Box)({
-  backgroundImage: `url(${backgroundImage})`,
-  backgroundSize: 'auto',
-  backgroundPosition: '-50px -50px',
-  backgroundRepeat: 'repeat',
-  position: 'absolute',
-  top: '-50px',
-  left: '-50px',
-  width: 'calc(100% + 100px)',
-  height: 'calc(100% + 100px)',
-  zIndex: -1,
-});
+const BackgroundImage = styled(Box)`
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+`;
 
 const ContentContainer = styled(Box)({
   padding: '2rem',

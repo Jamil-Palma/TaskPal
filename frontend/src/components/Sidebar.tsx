@@ -9,6 +9,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import DescriptionIcon from '@mui/icons-material/Description';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import ChatIcon from '@mui/icons-material/Chat';
+import '../components/styles/styles.css'
 
 const useStyles = makeStyles((theme: Theme) => ({
   sidebar: {
@@ -60,17 +61,23 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerToggle }) => {
           <MenuIcon />
         </IconButton>
       </Toolbar>
-      <List className={classes.sidebar}>
+      <List >
         {menuItems.map((item) => (
           <ListItem
+            className={'glow-on-hover'}
             button
             key={item.path}
             component={Link}
             to={item.path}
             onClick={handleDrawerToggle}
-            className={`${classes.listItem} ${location.pathname === item.path && classes.listItemActive}`}
+            // className={`${classes.listItem} ${location.pathname === item.path && classes.listItemActive}`}
+            sx={{
+              width:'200px',
+              height:'50px',
+              margin:'20px'
+            }}
           >
-            <ListItemIcon className={classes.listItemIcon}>{item.icon}</ListItemIcon>
+            {/* <ListItemIcon className={classes.listItemIcon}>{item.icon}</ListItemIcon> */}
             <ListItemText primary={item.label} />
           </ListItem>
         ))}

@@ -143,6 +143,7 @@ class JsonService:
                         'conversation_id': filename.replace('.json', ''),
                         'all_steps_completed': content.get('all_steps_completed', False),
                         'summary_task': content.get('summary_task', ''),
+                        "registration_date": content.get('registration_date','')
                     }
                     conversations.append(conversation_info)
         return conversations

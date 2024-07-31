@@ -187,10 +187,24 @@ const MessageBar: React.FC<MessageBarProps> = ({
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(true);
   const [filePaht, setFilePath] = useState("");
+  const [historyBoxWidth, setHistoryBoxWidth] = useState(window.innerWidth);
 
   const isSmallScreen = useMediaQuery((theme: any) =>
     theme.breakpoints.down("md")
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setHistoryBoxWidth(window.innerWidth - 50);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedTaskFilename) {
@@ -306,7 +320,13 @@ const MessageBar: React.FC<MessageBarProps> = ({
         mt={2}
       >
         {showHistory && (
-          <Box className="history-box">
+          <Box
+            className="history-box"
+            sx={{
+              width: `${historyBoxWidth}px`,
+              maxWidth: isSmallScreen ? "70%" : "30%",
+            }}
+          >
             <ConversationHistory
               onSelectConversation={handleSelectConversation}
             />

@@ -134,18 +134,23 @@
 
 // export default MessageBar;
 
-
 import React, { useState, useEffect } from "react";
+import { useMediaQuery } from "@mui/material";
 import { Container, Box, Typography, Button } from "@mui/material";
 import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
-import { startConversation, sendMessage, sendImageMessage, getConversation } from "../../utils/api";
+import {
+  startConversation,
+  sendMessage,
+  sendImageMessage,
+  getConversation,
+} from "../../utils/api";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import ConversationHistory from "./ConversationHistory";
 import MouseTrail from "../Tabs/welcome/MouseTrail";
 import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 import { styled } from "@mui/system";
-import "../styles/MessageBar.css"; 
+import "../styles/MessageBar.css";
 
 interface Message {
   role: string;
@@ -171,8 +176,10 @@ const BackgroundImage = styled(Box)`
   z-index: -1;
 `;
 
-
-const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelectedTaskFilename }) => {
+const MessageBar: React.FC<MessageBarProps> = ({
+  selectedTaskFilename,
+  setSelectedTaskFilename,
+}) => {
   console.log("==== ingress in message bar : ", selectedTaskFilename);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -180,6 +187,10 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(true);
   const [filePaht, setFilePath] = useState("");
+
+  const isSmallScreen = useMediaQuery((theme: any) =>
+    theme.breakpoints.down("md")
+  );
 
   useEffect(() => {
     if (selectedTaskFilename) {
@@ -192,7 +203,12 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
         try {
           const response = await startConversation(selectedTaskFilename);
           console.log("   start video conversations is : ", response);
-          const { conversation_id, current_step_index, all_steps_completed, messages } = response;
+          const {
+            conversation_id,
+            current_step_index,
+            all_steps_completed,
+            messages,
+          } = response;
           console.log("conversation; id is : ", conversation_id);
           setConversationId(conversation_id);
           setMessages(messages);
@@ -212,24 +228,47 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
     }
   }, [selectedTaskFilename]);
 
-  const handleSendMessage = async (message: string | File, inputText?: string) => {
+  const handleSendMessage = async (
+    message: string | File,
+    inputText?: string
+  ) => {
     console.log("   -+-+ handleSendMessage conversation id:", conversationId);
     if (!conversationId) return;
 
     try {
       let response;
-      if (typeof message === 'string') {
-        response = await sendMessage(message, conversationId, filePaht || undefined);
+      if (typeof message === "string") {
+        response = await sendMessage(
+          message,
+          conversationId,
+          filePaht || undefined
+        );
       } else {
-        response = await sendImageMessage(message, inputText || '', conversationId, filePaht || undefined);
+        response = await sendImageMessage(
+          message,
+          inputText || "",
+          conversationId,
+          filePaht || undefined
+        );
       }
 
-      const { response: botResponse, current_step_index, all_steps_completed } = response;
+      const {
+        response: botResponse,
+        current_step_index,
+        all_steps_completed,
+      } = response;
 
-      setMessages(prevMessages => [
+      setMessages((prevMessages) => [
         ...prevMessages,
-        { role: "user", content: typeof message === 'string' ? message : URL.createObjectURL(message), type: typeof message === 'string' ? 'text' : 'image' },
-        { role: "assistant", content: botResponse }
+        {
+          role: "user",
+          content:
+            typeof message === "string"
+              ? message
+              : URL.createObjectURL(message),
+          type: typeof message === "string" ? "text" : "image",
+        },
+        { role: "assistant", content: botResponse },
       ]);
       setCurrentStepIndex(current_step_index);
       setAllTasksCompleted(all_steps_completed);
@@ -248,11 +287,12 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
       setAllTasksCompleted(conversation.all_steps_completed);
       setFilePath(conversation.file_path);
     } catch (error) {
-      console.error('Error loading conversation:', error);
+      console.error("Error loading conversation:", error);
     }
   };
 
-  const lastBotMessage = messages.filter(msg => msg.role === 'assistant').pop()?.content || '';
+  const lastBotMessage =
+    messages.filter((msg) => msg.role === "assistant").pop()?.content || "";
 
   return (
     <Container>
@@ -260,14 +300,27 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
       {/* <Button onClick={() => setShowHistory(!showHistory)} className="toggle-history-button">
         {showHistory ? 'Hide History' : 'Show History'}
       </Button> */}
-      <Box display="flex" mt={2}>
+      <Box
+        display="flex"
+        flexDirection={isSmallScreen ? "column" : "row"}
+        mt={2}
+      >
         {showHistory && (
           <Box className="history-box">
-            <ConversationHistory onSelectConversation={handleSelectConversation} />
+            <ConversationHistory
+              onSelectConversation={handleSelectConversation}
+            />
           </Box>
         )}
-        <Box className={`input-and-chat ${showHistory ? "with-history" : "without-history"}`}>
-          <MessageInput onSendMessage={handleSendMessage} lastBotMessage={lastBotMessage} />
+        <Box
+          className={`input-and-chat ${
+            showHistory ? "with-history" : "without-history"
+          }`}
+        >
+          <MessageInput
+            onSendMessage={handleSendMessage}
+            lastBotMessage={lastBotMessage}
+          />
           <Box className="chat-box">
             {/* <MouseTrail /> */}
             {/* {!selectedTaskFilename && !allTasksCompleted && <CustomAppBar title="Chat" />}
@@ -275,12 +328,16 @@ const MessageBar: React.FC<MessageBarProps> = ({ selectedTaskFilename, setSelect
             <MessageContainer messageList={messages} />
             {!allTasksCompleted && messages[currentStepIndex] && (
               <Box mt={2}>
-                <Typography variant="h6" className="current-step">Current Step: {messages[currentStepIndex].content}</Typography>
+                <Typography variant="h6" className="current-step">
+                  Current Step: {messages[currentStepIndex].content}
+                </Typography>
               </Box>
             )}
             {allTasksCompleted && (
               <Box mt={2}>
-                <Typography variant="h6" className="all-tasks-completed">You have completed all tasks.</Typography>
+                <Typography variant="h6" className="all-tasks-completed">
+                  You have completed all tasks.
+                </Typography>
               </Box>
             )}
             <MouseTrail />

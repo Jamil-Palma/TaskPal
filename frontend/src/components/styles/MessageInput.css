@@ -1,98 +1,97 @@
 .message-input-container {
-    display: flex !important;
-    align-items: center !important;
-    padding-bottom: 20px !important;
-    /* margin-top: 16px !important; */
-    flex-direction: column !important;
-    /* background: #3831495e !important; */
-    /* border: 2px solid rgba(255, 255, 255, 0.3) !important; 
+  display: flex !important;
+  align-items: center !important;
+  padding-bottom: 20px !important;
+  margin-top: 20px !important;
+  flex-direction: column !important;
+  /* background: #3831495e !important; */
+  /* border: 2px solid rgba(255, 255, 255, 0.3) !important; 
     border-radius: 60px !important; */
-    /* backdrop-filter: blur(10px) !important; */
+  /* backdrop-filter: blur(10px) !important; */
 }
 
 .message-input {
-    margin-bottom: 8px !important;
-    /* color: white; */
-    /* border: 1px solid rgba(255, 255, 255, 0.3) !important; */
-    /* border: 1px solid #3f89a4 !important; */
-    background: linear-gradient(90deg, #5e417618, #2d203ae7) !important; 
-    border-radius: 15px !important;
-    caret-color: #9c58c1; 
+  margin-bottom: 8px !important;
+  /* color: white; */
+  /* border: 1px solid rgba(255, 255, 255, 0.3) !important; */
+  /* border: 1px solid #3f89a4 !important; */
+  background: linear-gradient(90deg, #5e417618, #2d203ae7) !important;
+  border-radius: 15px !important;
+  caret-color: #9c58c1;
 }
 
-.message-input:hover{
-    /* background: linear-gradient(180deg, #8f6bb8e0, #3b24545d) !important; */
-    background: #703f8da8 !important;
-    border: 1px solid #9c58c1 !important;
-    box-shadow: 0 0 5px 2px #9c58c1 !important;
+.message-input:hover {
+  /* background: linear-gradient(180deg, #8f6bb8e0, #3b24545d) !important; */
+  background: #703f8da8 !important;
+  border: 1px solid #9c58c1 !important;
+  box-shadow: 0 0 5px 2px #9c58c1 !important;
 }
 
 .message-input .MuiOutlinedInput-root {
-    color: white;
+  color: white;
 }
 
-
 .message-input:focus {
-    background: none; 
-    border: 1px solid #9c58c1; 
+  background: none;
+  border: 1px solid #9c58c1;
 }
 
 .message-input:focus-within {
-    border: 1px solid #9c58c1;
+  border: 1px solid #9c58c1;
 }
 
 .icon-button {
-    color: rgba(255, 255, 255, 0.534) !important;
+  color: rgba(255, 255, 255, 0.534) !important;
 }
 
 .icon-button:hover {
-    color: rgb(255, 255, 255) !important;
-    cursor: pointer; 
+  color: rgb(255, 255, 255) !important;
+  cursor: pointer;
 }
 
 .dropzone {
-    border: 2px dashed rgba(255, 255, 255, 0.3) !important;
-    padding: 16px !important;
-    margin-bottom: 8px !important;
-    width: 100% !important;
-    text-align: center !important;
-    color: white !important;
-    border-radius: 10px !important;
+  border: 2px dashed rgba(255, 255, 255, 0.3) !important;
+  padding: 16px !important;
+  margin-bottom: 8px !important;
+  width: 100% !important;
+  text-align: center !important;
+  color: white !important;
+  border-radius: 10px !important;
 }
 
 .dropzone-text {
-    color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .preview-image {
-    max-width: 100% !important;
-    max-height: 150px !important;
-    border-radius: 50px !important;
+  max-width: 100% !important;
+  max-height: 150px !important;
+  border-radius: 50px !important;
 }
 
 .voice-select-container {
-    margin-top: 8px !important;
-    color: white !important;
+  margin-top: 8px !important;
+  color: white !important;
 }
 
 .voice-select-label {
-    margin-right: 8px !important;
+  margin-right: 8px !important;
 }
 
 .voice-select .MuiSelect-select {
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 10px !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 10px !important;
 }
 
 .voice-select .MuiSelect-icon {
-    color: white !important;
+  color: white !important;
 }
 
 .voice-select .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .voice-select .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }

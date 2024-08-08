@@ -12,8 +12,6 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FolderIcon from '@mui/icons-material/HistoryEdu';
 import axiosInstance from '../../axiosConfig';
@@ -26,6 +24,7 @@ interface Conversation {
   all_steps_completed: boolean;
   summary_task: string;
   registration_date: string;
+  pinned: boolean;
 }
 
 interface ConversationHistoryProps {
@@ -47,8 +46,13 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     const fetchConversations = async () => {
       try {
         const response = await axiosInstance.post('/text/conversations');
-        console.log('response history', response?.data);
-        setConversations(response.data.conversations);
+        const conversations: Conversation[] = response.data.conversations.map(
+          (conversation: any) => ({
+            ...conversation,
+            pinned: conversation.pinned || false, // Ensure pinned status is included
+          })
+        );
+        setConversations(conversations);
       } catch (error) {
         console.error('Error fetching conversations:', error);
       }
@@ -68,6 +72,23 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
       handleCloseMenu();
     } catch (error) {
       console.error('Error deleting conversation:', error);
+    }
+  };
+
+  const handleTogglePinConversation = async (conversationId: string) => {
+    try {
+      await axiosInstance.post(
+        `/text/conversations/${conversationId}/toggle-pin`
+      );
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.conversation_id === conversationId
+            ? { ...conversation, pinned: !conversation.pinned }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error('Error toggling pin status:', error);
     }
   };
 
@@ -93,21 +114,8 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     if (action === 'delete' && selectedConversation) {
       handleDeleteConversation(selectedConversation);
     }
-    if (action === 'pin' && selectedConversation) {
-      setConversations((prevConversations) => {
-        const conversationIndex = prevConversations.findIndex(
-          (conversation) =>
-            conversation.conversation_id === selectedConversation
-        );
-        if (conversationIndex !== -1) {
-          const [pinnedConversation] = prevConversations.splice(
-            conversationIndex,
-            1
-          );
-          return [pinnedConversation, ...prevConversations];
-        }
-        return prevConversations;
-      });
+    if (action === 'togglePin' && selectedConversation) {
+      handleTogglePinConversation(selectedConversation);
     }
     if (action === 'rename') {
       console.log('Rename conversation');
@@ -115,9 +123,11 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     handleCloseMenu();
   };
 
-  const filteredConversations = conversations.filter((conversation) =>
-    conversation.summary_task.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredConversations = conversations
+    .filter((conversation) =>
+      conversation.summary_task.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
   const toggleScroll = () => {
     setShowScroll(!showScroll);
@@ -192,7 +202,13 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
           },
         }}
       >
-        <MenuItem onClick={() => handleMenuItemClick('pin')}>Pin</MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('togglePin')}>
+          {selectedConversation &&
+          conversations.find((c) => c.conversation_id === selectedConversation)
+            ?.pinned
+            ? 'Unpin'
+            : 'Pin'}
+        </MenuItem>
         <MenuItem onClick={() => handleMenuItemClick('rename')}>
           Rename
         </MenuItem>

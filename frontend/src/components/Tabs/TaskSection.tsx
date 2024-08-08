@@ -14,21 +14,21 @@ interface TaskData {
 const taskData: TaskData[] = [
   {
     title: "Predefined Tasks",
-    description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
+    description: "Select through a list of predefined tasks",
     imageSrc: "/images/Predefiend_task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/predefined-tasks"
   },
   {
     title: "URL Tasks",
-    description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
+    description: "Generate tasks from URLs and videos",
     imageSrc: "/images/URL_Task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/url-task"
   },
   {
     title: "Chat",
-    description: "Data technology futuristic illustration. A wave of bright particles. Technological 3D landscape. Big data visualization. Network of dots connected by lines. Abstract digital background. 3d rendering 8k, hyperrealistic, dark blue to baby pink, ultra-realistic, high resolution, very detailed, very sharpen",
+    description: "Start a conversation with AI",
     imageSrc: "/images/chat_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/empty-chat"
@@ -37,7 +37,7 @@ const taskData: TaskData[] = [
 
 const TaskSection: React.FC = () => {
   return (
-    <Box component="section" py={5} px={2} maxWidth="1200px" mx="auto" mt={-50} sx={{ position: 'relative', zIndex: 1 }}>
+    <Box id="task-section" component="section" py={5} px={2} maxWidth="1200px" mx="auto" mt={-50} sx={{ position: 'relative', zIndex: 1 }}>
       
       <Box 
   component="img" 
@@ -47,7 +47,7 @@ const TaskSection: React.FC = () => {
   mt={10} 
   width="50px" 
 />
-      <Typography variant="h4" component="h2" textAlign="center" mb={4}>
+      <Typography variant="h2" component="h2" textAlign="center" mb={4} sx={{ fontWeight: 'bold', background: 'linear-gradient(to right, #CC51D6, #5A68E8, #E1B1FF)', backgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 4px 4px #FF3CD45E)' }}>
         Select a task to start
       </Typography>
       <Grid container spacing={4}>

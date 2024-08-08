@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FolderIcon from '@mui/icons-material/HistoryEdu';
+import PushPinIcon from '@mui/icons-material/PushPin'; // Import the PushPinIcon
 import axiosInstance from '../../axiosConfig';
 import '../styles/ConversationHistory.css';
 import { format } from 'date-fns';
@@ -171,7 +172,16 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
               <FolderIcon className="listItemIcon" />
             </ListItemIcon>
             <ListItemText
-              primary={conversation.summary_task}
+              primary={
+                <Box display="flex" alignItems="center">
+                  {conversation.pinned && (
+                    <PushPinIcon
+                      sx={{ marginRight: 1, color: 'secondary.main' }}
+                    />
+                  )}
+                  {conversation.summary_task}
+                </Box>
+              }
               secondary={`New Feature - ${formatDate(
                 conversation.registration_date
               )}`}

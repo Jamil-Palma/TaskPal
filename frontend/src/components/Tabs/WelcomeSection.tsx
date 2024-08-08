@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import backgroundImage from "../../assets/images/background_home_page_compressed_v2.jpg";
 import { styled } from "@mui/system";
+import AnchorLink from "react-anchor-link-smooth-scroll";
 
 interface WelcomeSectionProps {
   title: string;
@@ -103,6 +105,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
   </Typography>
 
   {/* Logo Image */}
+  <AnchorLink href="#task-section" style={{ textDecoration: 'none' }}>
   <Box 
     component="img" 
     src="/images/flecha.gif" 
@@ -111,6 +114,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ title, description }) =
     mt={4} 
     width="50px" 
   />
+  </AnchorLink>
   </Box>
     </Box>
     </Box>

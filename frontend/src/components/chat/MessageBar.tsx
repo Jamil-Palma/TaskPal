@@ -331,9 +331,9 @@ const MessageBar: React.FC<MessageBarProps> = ({
           <Box
             className="history-box"
             sx={{
-              width: showHistory ? (isSmallScreen ? '70%' : '30%') : '0px',
+              width: `${historyBoxWidth}px`,
               transition: 'width 0.3s',
-              overflow: 'hidden',
+              maxWidth: isSmallScreen ? '90%' : '30%',
             }}
           >
             {showHistory && (

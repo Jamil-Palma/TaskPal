@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, Typography, CircularProgress } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import axiosInstance from "../../axiosConfig";
 import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 import GenerateButton from "../../assets/images/Generate_Task_Btn.png";
@@ -24,8 +30,8 @@ const BackgroundImage = styled(Box)`
 `;
 
 const ContentContainer = styled(Box)({
-  padding: '2rem',
-  position: 'relative',
+  padding: "2rem",
+  position: "relative",
   zIndex: 1,
 });
 
@@ -103,7 +109,7 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
   };
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+    <Box sx={{ position: "relative", minHeight: "100vh" }}>
       <BackgroundImage />
       <ContentContainer>
         <Typography variant="h4" gutterBottom>
@@ -134,10 +140,12 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
               sx={{
                 position: "absolute",
                 top: "22%",
-                left: "50%",
+                left: "57%",
                 transform: "translate(-50%, -50%)",
                 fontWeight: "bold",
                 color: "white",
+                whiteSpace: "nowrap",
+                fontSize: "0.85rem",
               }}
             >
               Generate Task

@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerToggle }) => {
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Predefined Tasks', icon: <AssignmentIcon />, path: '/predefined-tasks' },
+    //{ label: 'Predefined Tasks', icon: <AssignmentIcon />, path: '/predefined-tasks' },
     { label: 'Generate your Task!', icon: <LinkIcon />, path: '/url-task' },
     { label: 'Chat', icon: <ChatIcon />, path: '/empty-chat' },
   ];

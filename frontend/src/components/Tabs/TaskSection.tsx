@@ -12,13 +12,13 @@ interface TaskData {
 }
 
 const taskData: TaskData[] = [
-  {
+  /*{
     title: "Predefined Tasks",
     description: "Select through a list of predefined tasks",
     imageSrc: "/images/Predefiend_task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/predefined-tasks"
-  },
+  },*/
   {
     title: "URL Tasks",
     description: "Generate tasks from URLs and videos",

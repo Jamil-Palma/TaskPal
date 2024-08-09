@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMediaQuery } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import { Container, Box, Typography, Button } from "@mui/material";
 import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
@@ -16,6 +16,7 @@ import backgroundImage from '../../assets/images/Background_for_other_pages.jpg'
 import { styled } from '@mui/system';
 import '../styles/MessageBar.css';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
+import axiosInstance from "../../axiosConfig";
 
 interface Message {
   role: string;
@@ -26,6 +27,7 @@ interface Message {
 interface MessageBarProps {
   selectedTaskFilename: string | null;
   setSelectedTaskFilename: (filename: string | null) => void;
+  goToChat: (filename: string) => void;
 }
 
 const BackgroundImage = styled(Box)`
@@ -44,6 +46,7 @@ const BackgroundImage = styled(Box)`
 const MessageBar: React.FC<MessageBarProps> = ({
   selectedTaskFilename,
   setSelectedTaskFilename,
+  goToChat,
 }) => {
   console.log('==== ingress in message bar : ', selectedTaskFilename);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -54,6 +57,82 @@ const MessageBar: React.FC<MessageBarProps> = ({
   const [filePaht, setFilePath] = useState('');
   const [historyBoxWidth, setHistoryBoxWidth] = useState(window.innerWidth);
 
+  const [inputValue, setInputValue] = useState('');
+
+
+  /* start section */
+  const [url, setUrl] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isUrl = (text: string): boolean => {
+    try {
+      new URL(text);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const getUrlType = (url: string): string => {
+    const videoPlatforms = ["youtube.com", "vimeo.com"];
+
+    try {
+      const urlObj = new URL(url);
+      if (
+        videoPlatforms.some((platform) => urlObj.hostname.includes(platform))
+      ) {
+        return "video";
+      }
+      return "page";
+    } catch (error) {
+      return "unknown";
+    }
+  };
+
+  const handleGenerateSteps = async (urlInput: string) => {
+    setError(null);
+    setIsLoading(true);
+
+    let endpoint = "";
+    let input = "";
+    if (isUrl(urlInput)) {
+      const urlType = getUrlType(urlInput);
+      if (urlType === "unknown") {
+        setError("Invalid URL. Please enter a valid URL.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (urlType === "video") {
+        endpoint = "/video/video-instructions";
+      } else {
+        endpoint = "/text/scraping";
+      }
+      input = "input_text";
+    } else {
+      endpoint = "/text/generate-steps";
+      input = "task";
+    }
+
+    try {
+      console.log("URL: ", input, " - ", urlInput);
+      const response = await axiosInstance.post(endpoint, { [input]: urlInput });
+      console.log("RESPONSE VIDEO: ", response.data);
+      const filePath = response.data.file_path;
+      let cleanedFilePath = filePath.slice(10);
+
+      cleanedFilePath = cleanedFilePath.replace(/\\/g, "");
+      console.log("data is : ", cleanedFilePath);
+      goToChat(cleanedFilePath);
+    } catch (err) {
+      setError("Failed to generate steps. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  /*end section */
   const isSmallScreen = useMediaQuery((theme: any) =>
     theme.breakpoints.down('md')
   );
@@ -112,7 +191,12 @@ const MessageBar: React.FC<MessageBarProps> = ({
     inputText?: string
   ) => {
     console.log('   -+-+ handleSendMessage conversation id:', conversationId);
-    if (!conversationId) return;
+    if (!conversationId) {
+      console.log("my message is: " , message)
+      console.log("my inputText is: " , inputText)
+      handleGenerateSteps(message as string)
+      return;
+    }
 
     try {
       let response;
@@ -176,71 +260,154 @@ const MessageBar: React.FC<MessageBarProps> = ({
 
   const lastBotMessage =
     messages.filter((msg) => msg.role === 'assistant').pop()?.content || '';
-
-  return (
-    <Container>
-      <Button sx={{ color: 'white' }} onClick={toggleHistoryVisibility}>
-        <ViewSidebarIcon />
-      </Button>
-      <BackgroundImage />
-      {/* <Button onClick={() => setShowHistory(!showHistory)} className="toggle-history-button">
-        {showHistory ? 'Hide History' : 'Show History'}
-      </Button> */}
-      <Box
-        display="flex"
-        flexDirection={isSmallScreen ? 'column' : 'row'}
-        mt={2}
-      >
-        {showHistory && (
-          <Box
-            className="history-box"
-            sx={{
-              width: `${historyBoxWidth}px`,
-              transition: 'width 0.3s',
-              maxWidth: isSmallScreen ? '90%' : '30%',
-            }}
-          >
-            {showHistory && (
-              <ConversationHistory
-                onSelectConversation={handleSelectConversation}
-              />
-            )}
-          </Box>
-        )}
-        <Box
-          className={`input-and-chat ${
-            showHistory ? 'with-history' : 'without-history'
-          }`}
-        >
-          <MessageInput
-            onSendMessage={handleSendMessage}
-            lastBotMessage={lastBotMessage}
-          />
-            {/* <MouseTrail /> */}
-            {/* {!selectedTaskFilename && !allTasksCompleted && <CustomAppBar title="Chat" />}
-            {selectedTaskFilename && !allTasksCompleted && <CustomAppBar title={selectedTaskFilename} />} */}
-            <MessageContainer messageList={messages} />
-            <Box className="chat-box">
-            {!allTasksCompleted && messages[currentStepIndex] && (
+  const handleQuickResponse = (message: string) => {
+    handleSendMessage(message);
+  };
+        {/*!allTasksCompleted && messages[currentStepIndex] && (
               <Box mt={2}>
                 <Typography variant="h6" className="current-step">
                   Current Step: {messages[currentStepIndex].content}
                 </Typography>
               </Box>
-            )}
-            {allTasksCompleted && (
-              <Box mt={2}>
-                <Typography variant="h6" className="all-tasks-completed">
-                  You have completed all tasks.
-                </Typography>
-              </Box>
-            )}
-            <MouseTrail />
-          </Box>
-        </Box>
-      </Box>
-    </Container>
-  );
+            )*/}
+
+            
+            return (
+              <Container>
+                <Button sx={{ color: 'white' }} onClick={toggleHistoryVisibility}>
+                  <ViewSidebarIcon />
+                </Button>
+                <BackgroundImage />
+                {/* Indicador de carga */}
+                {isLoading && (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="100vh"
+                    zIndex={9999}
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    width="100%"
+                    bgcolor="rgba(0, 0, 0, 0.5)"
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
+                <Box
+                  display="flex"
+                  flexDirection={isSmallScreen ? 'column' : 'row'}
+                  mt={2}
+                >
+                  {showHistory && (
+                    <Box
+                      className="history-box"
+                      sx={{
+                        width: `${historyBoxWidth}px`,
+                        transition: 'width 0.3s',
+                        maxWidth: isSmallScreen ? '90%' : '30%',
+                      }}
+                    >
+                      {showHistory && (
+                        <ConversationHistory
+                          onSelectConversation={handleSelectConversation}
+                        />
+                      )}
+                    </Box>
+                  )}
+                  <Box
+                    className={`input-and-chat ${
+                      showHistory ? 'with-history' : 'without-history'
+                    }`}
+                    sx={{
+                      flex: 1, // Permite que el contenedor ocupe más espacio
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {/* Cuadro superior que contiene los mensajes */}
+                    {conversationId && <Box
+                      sx={{
+                        flex: 2, // Este cuadro ocupa más espacio
+                        overflowY: 'auto', // Para que los mensajes puedan desplazarse si son muchos
+                      }}
+                    >
+                      <MessageContainer messageList={messages} />
+                    </Box>}
+                    
+                    {/* Cuadro inferior que contiene el input y los botones */}
+                    <Box
+                      sx={{
+                        flex: 1, // Este cuadro ocupa menos espacio
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <Box sx={{ marginBottom: '16px' }}>
+                        {!conversationId && "Don't have any tasks? Create a new task now!"}
+                        <MessageInput
+                          onSendMessage={handleSendMessage}
+                          lastBotMessage={lastBotMessage}
+
+                          inputText={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          setInputText={setInputValue} 
+                        />
+                      </Box>
+                      {allTasksCompleted && (
+                        <Box mt={2}>
+                          <Typography variant="h6" className="all-tasks-completed">
+                            You have completed all tasks.
+                          </Typography>
+                        </Box>
+                      )}
+            
+                      <Box
+                        mt={2}
+                        display="flex"
+                        justifyContent="center"
+                        gap={2}
+                      >
+                        <Button
+                          variant="contained"
+                          sx={{
+                            bgcolor: '#9c27b0',
+                            '&:hover': {
+                              bgcolor: '#7b1fa2',
+                            },
+                            color: 'white',
+                          }}
+                          onClick={() => handleQuickResponse("Ok")}
+                        >
+                          Step Completed
+                        </Button>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            bgcolor: '#ab47bc',
+                            '&:hover': {
+                              bgcolor: '#8e24aa',
+                            },
+                            color: 'white',
+                          }}
+                          onClick={() => setInputValue("I need help because   ")} 
+                        >
+                          I Need Help with This Step
+                        </Button>
+
+                      </Box>
+            
+                      <MouseTrail />
+                    </Box>
+                  </Box>
+                </Box>
+              </Container>
+            );
+            
+            
+            
 };
 
 export default MessageBar;

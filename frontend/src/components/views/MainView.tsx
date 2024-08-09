@@ -41,11 +41,11 @@ const MainView: React.FC = () => {
           <Route path="/test-task" element={<TestTask />} />
           <Route
             path="/message-bar"
-            element={<MessageBar selectedTaskFilename={selectedTaskFilename} setSelectedTaskFilename={setSelectedTaskFilename} />}
+            element={<MessageBar selectedTaskFilename={selectedTaskFilename} setSelectedTaskFilename={setSelectedTaskFilename} goToChat={handleTaskSelect}/>}
           />
           <Route
             path="/empty-chat"
-            element={<MessageBar selectedTaskFilename={null} setSelectedTaskFilename={setSelectedTaskFilename} />}
+            element={<MessageBar selectedTaskFilename={null} setSelectedTaskFilename={setSelectedTaskFilename} goToChat={handleTaskSelect}/>}
           />
         </Routes>
       </Box>

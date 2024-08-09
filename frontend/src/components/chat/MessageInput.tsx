@@ -14,10 +14,13 @@ import "../styles/MessageInput.css";
 interface MessageInputProps {
   onSendMessage: (message: string | File, inputText?: string) => void;
   lastBotMessage: string;
+  inputText: string; 
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; 
+  setInputText: (text: string) => void;  
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessage }) => {
-  const [inputText, setInputText] = useState("");
+const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, lastBotMessage, inputText, onChange, setInputText }) => {
+  //const [inputText, setInputText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);

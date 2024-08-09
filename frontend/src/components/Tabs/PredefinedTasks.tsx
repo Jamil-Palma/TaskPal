@@ -84,10 +84,10 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     setFilteredTasks(
-      tasks.filter((task) =>
-        task.title.toLowerCase().includes(query) ||
-        task.content?.task?.toLowerCase().includes(query) ||
-        task.content?.summary_task?.toLowerCase().includes(query)
+      tasks?.filter((task) =>
+        task?.title.toLowerCase().includes(query) ||
+        task?.content?.task?.toLowerCase().includes(query) ||
+        task?.content?.summary_task?.toLowerCase().includes(query)
       )
     );
   };

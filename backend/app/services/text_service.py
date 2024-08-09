@@ -25,6 +25,8 @@ class TextService:
     #def confirm_response(self, user_response: str, system_question: str) -> bool:
     #    return "yes" in user_response.lower()
     def confirm_response(self, user_response: str, task_details: str, summary_task: str) -> bool:
+        if user_response == "Ok":
+            return True
         prompt = f"""
         -- **System Instructions:**
         -- You are an AI assistant specialized in evaluating user responses to confirm if a specific step in a task has been successfully completed.

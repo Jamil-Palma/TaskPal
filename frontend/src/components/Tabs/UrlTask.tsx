@@ -148,10 +148,11 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
                 fontSize: "0.85rem",
               }}
             >
-              Generate Task
+              Start your Task
             </Typography>
           </Button>
         </Box>
+        Enter a video URL, a web page, or simply write the task you want to do!
         {isLoading && (
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <CircularProgress />

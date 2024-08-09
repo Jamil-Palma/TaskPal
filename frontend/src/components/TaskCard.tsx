@@ -99,7 +99,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, expanded, onExpandClick, onSe
 
   const handleSelectTask = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    onSelectTask(task.file_name);
+    onSelectTask(task?.file_name);
   };
 
   React.useEffect(() => {
@@ -121,14 +121,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, expanded, onExpandClick, onSe
           <img src={buttonImage} alt="Button icon" className="icon" />
           <div className="text-container">
             <Typography variant="h6" component="h3">
-              {task.content.task}
+              {task?.content?.task}
             </Typography>
             <span className="select-task-text" onClick={handleSelectTask}>
               Select Task
             </span>
             {expanded && (
               <Typography variant="body2" component="p" className="details-text">
-                {task.content.summary_task}
+                {task?.content?.summary_task}
               </Typography>
             )}
           </div>

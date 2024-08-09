@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FolderIcon from '@mui/icons-material/HistoryEdu';
-import PushPinIcon from '@mui/icons-material/PushPin'; 
+import PushPinIcon from '@mui/icons-material/PushPin';
 import axiosInstance from '../../axiosConfig';
 import '../styles/ConversationHistory.css';
 import { format } from 'date-fns';
@@ -37,7 +37,7 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
 }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showScroll, setShowScroll] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedConversation, setSelectedConversation] = useState<
     string | null
@@ -50,7 +50,7 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
         const conversations: Conversation[] = response.data.conversations.map(
           (conversation: any) => ({
             ...conversation,
-            pinned: conversation.pinned || false, // Ensure pinned status is included
+            pinned: conversation.pinned || false,
           })
         );
         setConversations(conversations);
@@ -101,7 +101,6 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
       await axiosInstance.post(`/text/conversations/${conversationId}/rename`, {
         new_name: newName,
       });
-      // Update the local state to reflect the new name
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.conversation_id === conversationId
@@ -145,15 +144,15 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     handleCloseMenu();
   };
 
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
+  };
+
   const filteredConversations = conversations
     .filter((conversation) =>
       conversation.summary_task.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-
-  const toggleScroll = () => {
-    setShowScroll(!showScroll);
-  };
 
   return (
     <Box>
@@ -182,7 +181,7 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
           }}
         />
       </Box>
-      <List className={`list ${showScroll ? '' : 'no-scroll'}`}>
+      <List className={`list ${showAll ? 'expanded' : 'collapsed'}`}>
         {filteredConversations.map((conversation) => (
           <ListItem
             key={conversation.conversation_id}
@@ -248,8 +247,8 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
         </MenuItem>
       </Menu>
       <Box display="flex" justifyContent="center">
-        <Button className="viewMoreButton" onClick={toggleScroll}>
-          {showScroll ? 'Hide scroll' : 'View more'}
+        <Button className="viewMoreButton" onClick={toggleShowAll}>
+          {showAll ? 'Show Less' : 'View More'}
         </Button>
       </Box>
     </Box>

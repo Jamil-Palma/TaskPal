@@ -200,11 +200,6 @@ z-index: 1;
 }
 
 
-.list {
-max-height: 400px;
-overflow-y: auto;
-transition: overflow 0.5s ease;
-}
 
 .list::-webkit-scrollbar {
 width: 10px;
@@ -224,3 +219,17 @@ border-radius: 10px;
 .list.no-scroll {
 overflow-y: hidden;
 } 
+
+.list {
+  transition: max-height 0.5s ease;
+}
+
+.list.collapsed {
+  max-height: 400px;
+  overflow-y: hidden;
+}
+
+.list.expanded {
+  max-height: none;
+  overflow-y: visible;
+}

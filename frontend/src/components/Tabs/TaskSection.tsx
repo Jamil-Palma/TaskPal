@@ -21,14 +21,14 @@ const taskData: TaskData[] = [
   },*/
   {
     title: "URL Tasks",
-    description: "Generate tasks from URLs and videos",
+    description: "Generate tasks from videos using URLs",
     imageSrc: "/images/URL_Task_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/url-task"
   },
   {
     title: "Chat",
-    description: "Start a conversation with AI",
+    description: "Continue your tasks by chatting with Gemini AI",
     imageSrc: "/images/chat_compressed.jpg",
     titleBackgroundSrc: "/images/title_3.png",
     url: "/empty-chat"

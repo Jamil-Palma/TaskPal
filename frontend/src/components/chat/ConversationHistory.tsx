@@ -1,9 +1,20 @@
-
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, List, ListItem, ListItemText, IconButton, TextField, Button, ListItemIcon } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  TextField,
+  Button,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FolderIcon from '@mui/icons-material/HistoryEdu';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import axiosInstance from '../../axiosConfig';
 import '../styles/ConversationHistory.css';
 import { format } from 'date-fns';
@@ -14,23 +25,35 @@ interface Conversation {
   all_steps_completed: boolean;
   summary_task: string;
   registration_date: string;
+  pinned: boolean;
 }
 
 interface ConversationHistoryProps {
   onSelectConversation: (conversationId: string) => void;
 }
 
-const ConversationHistory: React.FC<ConversationHistoryProps> = ({ onSelectConversation }) => {
+const ConversationHistory: React.FC<ConversationHistoryProps> = ({
+  onSelectConversation,
+}) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showScroll, setShowScroll] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedConversation, setSelectedConversation] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const response = await axiosInstance.post('/text/conversations');
-        console.log("response history", response?.data);
-        setConversations(response.data.conversations);
+        const conversations: Conversation[] = response.data.conversations.map(
+          (conversation: any) => ({
+            ...conversation,
+            pinned: conversation.pinned || false,
+          })
+        );
+        setConversations(conversations);
       } catch (error) {
         console.error('Error fetching conversations:', error);
       }
@@ -42,29 +65,101 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({ onSelectConve
   const handleDeleteConversation = async (conversationId: string) => {
     try {
       await axiosInstance.delete(`/text/conversations/${conversationId}`);
-      setConversations(prevConversations => prevConversations.filter(conversation => conversation.conversation_id !== conversationId));
+      setConversations((prevConversations) =>
+        prevConversations.filter(
+          (conversation) => conversation.conversation_id !== conversationId
+        )
+      );
+      handleCloseMenu();
     } catch (error) {
       console.error('Error deleting conversation:', error);
     }
   };
+
+  const handleTogglePinConversation = async (conversationId: string) => {
+    try {
+      await axiosInstance.post(
+        `/text/conversations/${conversationId}/toggle-pin`
+      );
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.conversation_id === conversationId
+            ? { ...conversation, pinned: !conversation.pinned }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error('Error toggling pin status:', error);
+    }
+  };
+
+  const handleRenameConversation = async (conversationId: string) => {
+    const newName = prompt('Enter new name for the conversation:');
+    if (!newName) return;
+
+    try {
+      await axiosInstance.post(`/text/conversations/${conversationId}/rename`, {
+        new_name: newName,
+      });
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.conversation_id === conversationId
+            ? { ...conversation, summary_task: newName }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error('Error renaming conversation:', error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, 'MMM d, yyyy');
   };
 
-  const filteredConversations = conversations.filter(conversation =>
-    conversation.summary_task.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const toggleScroll = () => {
-    setShowScroll(!showScroll);
+  const handleClickMenu = (
+    event: React.MouseEvent<HTMLElement>,
+    conversationId: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedConversation(conversationId);
   };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSelectedConversation(null);
+  };
+
+  const handleMenuItemClick = (action: string) => {
+    if (action === 'delete' && selectedConversation) {
+      handleDeleteConversation(selectedConversation);
+    }
+    if (action === 'togglePin' && selectedConversation) {
+      handleTogglePinConversation(selectedConversation);
+    }
+    if (action === 'rename' && selectedConversation) {
+      handleRenameConversation(selectedConversation);
+    }
+    handleCloseMenu();
+  };
+
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
+  };
+
+  const filteredConversations = conversations
+    .filter((conversation) =>
+      conversation.summary_task.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
   return (
     <Box>
-      <Typography variant="h6" style={{ padding: '15px' }}>History</Typography>
+      <Typography variant="h6" style={{ padding: '15px' }}>
+        History
+      </Typography>
       <Box className="searchBox">
-        {/* <SearchIcon className="searchIcon" /> */}
         <TextField
           variant="outlined"
           placeholder="Search here!"
@@ -74,54 +169,86 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({ onSelectConve
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: 'transparent', 
+                borderColor: 'transparent',
               },
               '&:hover fieldset': {
-                borderColor: 'transparent', 
+                borderColor: 'transparent',
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'transparent', 
+                borderColor: 'transparent',
               },
             },
           }}
         />
       </Box>
-      <List className={`list ${showScroll ? '' : 'no-scroll'}`}>
+      <List className={`list ${showAll ? 'expanded' : 'collapsed'}`}>
         {filteredConversations.map((conversation) => (
-          
           <ListItem
             key={conversation.conversation_id}
             className="listItem"
             onClick={() => onSelectConversation(conversation.conversation_id)}
           >
-            
-            <ListItemIcon className="listItemIcon1" >
+            <ListItemIcon className="listItemIcon1">
               <FolderIcon className="listItemIcon" />
             </ListItemIcon>
             <ListItemText
-              primary={conversation.summary_task}
-              // secondary={conversation.conversation_id}
-              secondary ={`New Feature - ${formatDate(conversation.registration_date)}`}
+              primary={
+                <Box display="flex" alignItems="center">
+                  {conversation.pinned && (
+                    <PushPinIcon
+                      sx={{ marginRight: 1, color: 'secondary.main' }}
+                    />
+                  )}
+                  {conversation.summary_task}
+                </Box>
+              }
+              secondary={`New Feature - ${formatDate(
+                conversation.registration_date
+              )}`}
               className="listItemText"
             />
             <IconButton
               edge="end"
-              aria-label="delete"
+              aria-label="more"
               className="deleteButton"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteConversation(conversation.conversation_id);
+                handleClickMenu(e, conversation.conversation_id);
               }}
             >
-              <DeleteIcon />
+              <MoreVertIcon />
             </IconButton>
-            
           </ListItem>
         ))}
       </List>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+        PaperProps={{
+          style: {
+            maxHeight: 48 * 4.5,
+            width: '20ch',
+          },
+        }}
+      >
+        <MenuItem onClick={() => handleMenuItemClick('togglePin')}>
+          {selectedConversation &&
+          conversations.find((c) => c.conversation_id === selectedConversation)
+            ?.pinned
+            ? 'Unpin'
+            : 'Pin'}
+        </MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('rename')}>
+          Rename
+        </MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick('delete')}>
+          Delete
+        </MenuItem>
+      </Menu>
       <Box display="flex" justifyContent="center">
-        <Button className="viewMoreButton" onClick={toggleScroll}>
-          {showScroll ? 'Hide scroll' : 'View more'}
+        <Button className="viewMoreButton" onClick={toggleShowAll}>
+          {showAll ? 'Show Less' : 'View More'}
         </Button>
       </Box>
     </Box>

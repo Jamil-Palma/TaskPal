@@ -143,7 +143,9 @@ class JsonService:
                         'conversation_id': filename.replace('.json', ''),
                         'all_steps_completed': content.get('all_steps_completed', False),
                         'summary_task': content.get('summary_task', ''),
-                        "registration_date": content.get('registration_date','')
+                        'registration_date': content.get('registration_date', ''),
+                        # Include pinned status
+                        'pinned': content.get('pinned', False)
                     }
                     conversations.append(conversation_info)
         return conversations
@@ -155,3 +157,35 @@ class JsonService:
             raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
 
         os.remove(file_path)
+
+    def toggle_pin_conversation(self, conversation_id):
+        file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
+
+        # Load the conversation data
+        with open(file_path, 'r') as file:
+            conversation_data = json.load(file)
+
+        # Toggle the pinned status
+        conversation_data['pinned'] = not conversation_data.get('pinned', False)
+
+        # Save the updated data
+        with open(file_path, 'w') as file:
+            json.dump(conversation_data, file)
+
+    def rename_conversation(self, conversation_id, new_name):
+        file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
+
+        # Load the conversation data
+        with open(file_path, 'r') as file:
+            conversation_data = json.load(file)
+
+        # Update the summary_task or relevant field
+        conversation_data['summary_task'] = new_name
+
+        # Save the updated data
+        with open(file_path, 'w') as file:
+            json.dump(conversation_data, file)

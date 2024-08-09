@@ -32,7 +32,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
         position: "relative",
         borderRadius: "20px",
         overflow: "visible",
-        height: "400px",
+        width: "360px",
+        height: "280px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",
@@ -51,7 +52,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         component="img"
         image={imageSrc}
         title={title}
-        sx={{ height: "100%", width: "100%" }}
+        sx={{ height: "100%", width: "100%", borderRadius: "20px" }}
       />
       <Box
         sx={{
@@ -123,7 +124,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
       >
         <Typography
           variant="body2"
-          sx={{ textAlign: "left", paddingTop: 3, color: "#D3D3D3" }}
+          sx={{ textAlign: "left", paddingTop: 3, color: "#D3D3D3", fontSize: "14px" }}
         >
           {description}
         </Typography>

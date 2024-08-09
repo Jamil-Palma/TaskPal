@@ -43,6 +43,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
             bottom: "-5%",
             opacity: 1,
           },
+          "& .title": {
+            transform: "scale(1.2)",
+            color: "white",
+            transition: "ease-in 0.3s",
+          },
         },
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -91,9 +96,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
             }}
           />
           <Typography
-            variant="h5"
+            className="title"
+            variant="h6"
             component="div"
-            sx={{ position: "relative", top: "-5px", zIndex: 2 }}
+            sx={{ position: "relative", top: "-5px", zIndex: 2, color: "#D3D3D3", transition: "ease-in 0.3s", }}
           >
             {title}
           </Typography>

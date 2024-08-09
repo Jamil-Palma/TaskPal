@@ -8,7 +8,7 @@ image_service = ImageService()
 @router.post("/process")
 async def process_image(
     file: UploadFile = File(...),
-    input_text: str = Form(...),
+    input_text: Optional[str] = Form("Analyze the picture"),
     conversation_id: Optional[str] = Form(None),
     task: Optional[str] = Form(None)
 ):

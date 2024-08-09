@@ -11,6 +11,7 @@ import { Search } from "@mui/icons-material";
 import TaskCard from "../TaskCard";
 import backgroundImage from "../../assets/images/Background_for_other_pages.jpg";
 import { styled } from "@mui/system";
+import "../styles/MessageBar.css";
 
 interface TaskContent {
   task: string;
@@ -113,6 +114,7 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
           fullWidth
           value={searchQuery}
           onChange={handleSearch}
+          className="message-input"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -120,7 +122,18 @@ const PredefinedTasks: React.FC<PredefinedTasksProps> = ({ setSelectedTaskFilena
               </InputAdornment>
             ),
           }}
-          sx={{ marginBottom: 2 }}
+          sx={{ marginBottom: 2,   backgroundColor: "rgba(0, 0, 0, 0.7)", borderRadius: "10px", "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "transparent", 
+              },
+              "&:hover fieldset": {
+                borderColor: "transparent", 
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "transparent", 
+              },
+            }, 
+          }}
         />
         <Grid container spacing={2}>
           {tasksWithContent.length > 0 ? (

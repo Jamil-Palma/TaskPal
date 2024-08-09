@@ -11,6 +11,7 @@ import backgroundImage from "../../assets/images/Background_for_other_pages.jpg"
 import GenerateButton from "../../assets/images/Generate_Task_Btn.png";
 import GenerateButtonHover from "../../assets/images/Generate_Task_Btn_Hover.png";
 import { styled } from "@mui/system";
+import "../styles/MessageBar.css";
 
 interface UrlTaskProps {
   goToChat: (filename: string) => void;
@@ -116,11 +117,24 @@ const UrlTask: React.FC<UrlTaskProps> = ({ goToChat }) => {
           URL Task
         </Typography>
         <TextField
+          className="message-input"
           label="Enter URL"
           variant="outlined"
           fullWidth
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          sx={{ marginBottom: 2, backgroundColor: "rgba(0, 0, 0, 0.7)", borderRadius: "10px", "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "transparent", 
+            },
+            "&:hover fieldset": {
+              borderColor: "transparent", 
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "transparent", 
+            },
+          },
+        }}
         />
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
           <Button

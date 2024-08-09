@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import UserQuery, TaskQuery
+from app.models.schemas import UserQuery, TaskQuery, RenameRequest
 from app.services.text_service import TextService
 from app.services.json_service import JsonService
 from app.core.conversation_manager import ConversationManager
@@ -197,3 +197,16 @@ async def toggle_pin_conversation(conversation_id: str):
         print(f"Error: {e}")
         raise HTTPException(
             status_code=500, detail="An error occurred while toggling the pin status")
+
+
+@router.post("/conversations/{conversation_id}/rename")
+async def rename_conversation(conversation_id: str, request: RenameRequest):
+    try:
+        json_service.rename_conversation(conversation_id, request.new_name)
+        return {"message": "Conversation renamed successfully"}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="An error occurred while renaming the conversation")

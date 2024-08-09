@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FolderIcon from '@mui/icons-material/HistoryEdu';
-import PushPinIcon from '@mui/icons-material/PushPin'; // Import the PushPinIcon
+import PushPinIcon from '@mui/icons-material/PushPin'; 
 import axiosInstance from '../../axiosConfig';
 import '../styles/ConversationHistory.css';
 import { format } from 'date-fns';
@@ -93,6 +93,27 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     }
   };
 
+  const handleRenameConversation = async (conversationId: string) => {
+    const newName = prompt('Enter new name for the conversation:');
+    if (!newName) return;
+
+    try {
+      await axiosInstance.post(`/text/conversations/${conversationId}/rename`, {
+        new_name: newName,
+      });
+      // Update the local state to reflect the new name
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.conversation_id === conversationId
+            ? { ...conversation, summary_task: newName }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error('Error renaming conversation:', error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, 'MMM d, yyyy');
@@ -118,8 +139,8 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     if (action === 'togglePin' && selectedConversation) {
       handleTogglePinConversation(selectedConversation);
     }
-    if (action === 'rename') {
-      console.log('Rename conversation');
+    if (action === 'rename' && selectedConversation) {
+      handleRenameConversation(selectedConversation);
     }
     handleCloseMenu();
   };

@@ -173,3 +173,19 @@ class JsonService:
         # Save the updated data
         with open(file_path, 'w') as file:
             json.dump(conversation_data, file)
+
+    def rename_conversation(self, conversation_id, new_name):
+        file_path = os.path.join(self.conversation_base_path, f"{conversation_id}.json")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Conversation {conversation_id} not found in {self.conversation_base_path}")
+
+        # Load the conversation data
+        with open(file_path, 'r') as file:
+            conversation_data = json.load(file)
+
+        # Update the summary_task or relevant field
+        conversation_data['summary_task'] = new_name
+
+        # Save the updated data
+        with open(file_path, 'w') as file:
+            json.dump(conversation_data, file)

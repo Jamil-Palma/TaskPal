@@ -34,7 +34,7 @@ const useRenderMessageContent = () => {
           );
         case 'hint':
           return (
-            <Typography key={index} variant="body1" sx={{ fontWeight: 'bold', color: '#2e7d32' }}>
+            <Typography key={index} variant="body1" sx={{ fontWeight: 'bold', color: '#63fffa' }}>
               {fragment.content}
             </Typography>
           );

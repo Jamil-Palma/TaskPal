@@ -10,3 +10,7 @@ class UserQuery(BaseModel):
 class TaskQuery(BaseModel):
     task: str
 
+
+class RenameRequest(BaseModel):
+    new_name: str
+

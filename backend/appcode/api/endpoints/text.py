@@ -13,6 +13,12 @@ conversation_manager = ConversationManager(
     conversation_base_path="data/conversations")
 
 
+
+
+@router.get("/health")
+async def health_check():
+    return {"status": "healthy", "message": "Service is running correctly"}
+
 @router.post("/question")
 async def process_question(query: UserQuery):
     try:

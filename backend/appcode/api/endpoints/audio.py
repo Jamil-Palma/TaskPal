@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, File, UploadFile
 from fastapi.responses import JSONResponse
-from app.models.schemas import UserQuery
-from app.services.audio_service import AudioService
-from app.services.text_service import TextService
+from appcode.models.schemas import UserQuery
+from appcode.services.audio_service import AudioService
+from appcode.services.text_service import TextService
 from pathlib import Path
 import os
 

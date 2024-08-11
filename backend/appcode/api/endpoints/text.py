@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import UserQuery, TaskQuery, RenameRequest
-from app.services.text_service import TextService
-from app.services.json_service import JsonService
-from app.core.conversation_manager import ConversationManager
+from appcode.models.schemas import UserQuery, TaskQuery, RenameRequest
+from appcode.services.text_service import TextService
+from appcode.services.json_service import JsonService
+from appcode.core.conversation_manager import ConversationManager
 import os
 import json
 

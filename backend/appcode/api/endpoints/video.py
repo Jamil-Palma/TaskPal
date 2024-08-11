@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import UserQuery
-from app.services.video_service import VideoService
-from app.services.json_service import JsonService
-from app.services.audio_service import AudioService
+from appcode.models.schemas import UserQuery
+from appcode.services.video_service import VideoService
+from appcode.services.json_service import JsonService
+from appcode.services.audio_service import AudioService
 
 router = APIRouter()
 video_service = VideoService()

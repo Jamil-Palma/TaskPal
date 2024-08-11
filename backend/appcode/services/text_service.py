@@ -1,6 +1,6 @@
-from app.core.query_processor import QueryProcessor
-from app.core.gemini_client import GeminiChainClient
-from app.services.json_service import JsonService  
+from appcode.core.query_processor import QueryProcessor
+from appcode.core.gemini_client import GeminiChainClient
+from appcode.services.json_service import JsonService  
 import json
 from typing import Dict
 

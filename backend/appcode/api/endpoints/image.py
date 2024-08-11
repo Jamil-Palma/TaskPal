@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from typing import Optional
-from app.services.image_service import ImageService
+from appcode.services.image_service import ImageService
 
 router = APIRouter()
 image_service = ImageService()

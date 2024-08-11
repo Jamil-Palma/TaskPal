@@ -42,9 +42,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           background: "rgba(0, 0, 0, 0.2)",
-          // border: 'red', // Add border color
-          // borderStyle: 'solid', // Specify border style
-          // borderWidth: '2px', // Specify border width
           backdropFilter: "blur(10px)",
         },
       },
@@ -93,10 +90,17 @@ const App: React.FC = () => {
             >
               <MenuIcon />
             </IconButton>
-            <Box sx={{ flexGrow: 1, textAlign: "rigth" }}>
+            <Box sx={{ flexGrow: 1, textAlign: "right" }}>
               <Link to="/" style={{ textDecoration: "none", color: "white" }}>
                 <Typography variant="h6" noWrap>
-                  Chatting with GEMINI!
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src="/TASKPAL.png" // Ruta de la imagen en la carpeta public
+                      alt="Logo"
+                      style={{ width: "60px", height: "60px", marginRight: "10px" }} // Tamaño aumentado
+                    />
+                    TASK PAL
+                  </Box>
                 </Typography>
               </Link>
             </Box>
@@ -123,7 +127,6 @@ const App: React.FC = () => {
             ml={open ? `${drawerWidth}px` : "0px"}
             sx={{ transition: "margin 0.3s" }}
             p={0}
-            // style={{ border: '2px solid red' }}
           >
             <Toolbar />
             <MainView />

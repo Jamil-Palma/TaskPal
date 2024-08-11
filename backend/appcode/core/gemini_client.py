@@ -10,7 +10,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 import json
-import pyaudio
+#import pyaudio
 import wave
 import requests
 from bs4 import BeautifulSoup
@@ -104,6 +104,7 @@ class GeminiChainClient:
         return response.text
 
     def record_audio(self, duration=5, sample_rate=16000, channels=1, chunk=1024):
+        return ""
         # Initialize PyAudio
         p = pyaudio.PyAudio()
 

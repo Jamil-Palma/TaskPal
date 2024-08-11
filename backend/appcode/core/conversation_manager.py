@@ -1,8 +1,8 @@
 import uuid
 from typing import Dict, List
 from datetime import datetime
-from app.services.json_service import JsonService
-from app.services.text_service import TextService
+from appcode.services.json_service import JsonService
+from appcode.services.text_service import TextService
 
 class ConversationManager:
     def __init__(self, conversation_base_path: str):

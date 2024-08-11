@@ -1,6 +1,6 @@
 import os
-from app.core.query_processor import QueryProcessor
-from app.core.gemini_client import GeminiChainClient
+from appcode.core.query_processor import QueryProcessor
+from appcode.core.gemini_client import GeminiChainClient
 import yt_dlp
 
 class VideoService:

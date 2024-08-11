@@ -9,8 +9,8 @@ const GeminiWelcome: React.FC = () => {
     <Box margin={0} padding={0} position="relative">
       {/* <MouseTrail /> */}
       <WelcomeSection
-        title="Welcome to Google Gemini!"
-        description="Discover a vibrant community of creators on Google Gemini! Connect with thousands of like-minded individuals on Discord or the web and unleash your imagination through collaborative storytelling. From vivid worlds to unforgettable characters, bring your short text descriptions to life in new and exciting ways. Join Serendipity today and embark on a journey of endless creativity!"
+        title="Welcome to Task Pal!"
+        description="Meet Task Pal, your AI-powered sidekick for getting things done. It turns any task into simple, step-by-step instructions, making even the toughest challenges a breeze. From mastering new skills to knocking out your to-do list, Task Pal leverages cutting-edge AI to guide you every step of the way. Get ready to turn 'I can't' into 'All done.'"
       />
       
       <Box

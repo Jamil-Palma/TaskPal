@@ -1,8 +1,8 @@
 import json
 import os
 import re
-from app.core.query_processor import QueryProcessor
-from app.core.gemini_client import GeminiChainClient
+from appcode.core.query_processor import QueryProcessor
+from appcode.core.gemini_client import GeminiChainClient
 
 class JsonService:
     def __init__(self, base_path='data/task'):

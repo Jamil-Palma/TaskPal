@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+google-generativeai
+pillow
+pydub
+beautifulsoup4
+youtube-transcript-api
+langchain
+langchain-google-genai
+yt-dlp
+cloudconvert
+IPython
+IPython
+hypercorn
+python-multipart

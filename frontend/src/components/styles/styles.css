@@ -1,0 +1,229 @@
+.glow-on-hover {
+    /* width: 120px;
+    height: 40px; */
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #313a5bde;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+    transition: background 0.5s;
+}
+
+.glow-on-hover:before {
+    content: '';
+    /* background: linear-gradient(90deg, #002bff, #ff00c8); */
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #000;
+}
+
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #313a5bef;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@property --a {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    25% { background-position: 25% 0; }
+    50% { background-position: 50% 0; }
+    75% { background-position: 75% 0; }
+    100% { background-position: 0 0; }
+}
+
+@keyframes rotateBorder {
+    0% {
+        --a: 0deg;
+    }
+    100% {
+        --a: 360deg;
+    }
+}
+
+.glow-on-hover:hover {
+    cursor: pointer !important;
+}
+
+.glow-on-hover:hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from var(--a), #45f3ff, #ff00c8);
+    border-radius: 10px;
+    animation: rotateBorder 0.4s linear infinite;
+    opacity: 0.5;
+}
+
+.glow-on-hover:not(:hover)::before {
+    animation: none;
+    opacity: 0;
+}
+
+.explorenow {
+    width: 220px;
+    height: 40px;
+    outline: none;    
+    /* background: linear-gradient(0deg, rgba(255, 0, 255, 0.3), rgba(0, 0, 255, 0.3)); */
+    background: #313a5b;
+    border: none; 
+    padding: 16px 20px;
+    border-radius: 20px; 
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 16px;
+}
+.explorenow:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: #313a5b; */
+
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.3),#313a5b);
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+.explorenow:hover {
+    background: #313a5b;
+    color: #ffffff; 
+}
+
+.explorenow:active::after{
+    /* background: linear-gradient(145deg, #C977D6, #ded9df);  */
+    box-shadow: 0 5px 10px #000000;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(242, 73, 248, 0.3));
+}
+
+.explorenow:hover .icon {
+    transform: scale(1.5);
+    color: #C977D6;
+    margin-right: 10px; 
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out, margin-right 0.3s ease-in-out;
+}
+
+
+.icon {
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    margin-right: 5px; 
+}
+
+
+.modalStyle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: rgb(110, 27, 179);
+    box-shadow: 24px;
+    padding: 16px;
+    outline: none;
+  }
+  
+  .centeredText {
+    text-align: center;
+  }
+  
+  .helpIcon {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 750px !important;
+    margin: 0 20px !important;
+    padding: 10px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    border-radius: 50% !important;
+    border: 1px solid #ab5acc !important;
+    float: left !important;
+    transition: transform 0.2s, color 0.2s !important;
+    z-index: 1 !important;
+    color: #ffffffbb !important;
+    background: linear-gradient(90deg, #ab5acc, #6d37ad) !important;
+    box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.685) !important;
+    position: relative;
+}
+
+.helpIcon:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background: linear-gradient(90deg, #002bff, #ff00c8);
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 50%;
+}
+
+.helpIcon:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #313a5bef;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+}
+
+.helpIcon:hover:before {
+    opacity: 1;
+}
+
+.helpIcon:hover {
+    cursor: pointer !important;
+}
+
+.helpIcon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from var(--a), #45f3ff, #ff00c8);
+    border-radius: 50%;
+    animation: rotateBorder 0.4s linear infinite;
+    
+}
+  

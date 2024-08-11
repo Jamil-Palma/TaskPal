@@ -1,14 +1,57 @@
+# Node modules and build directories
 frontend/node_modules/
 frontend/build/
-frontend/.env
 
-backend/venv/
-backend/__pycache__/
-backend/*.pyc
-backend/*.pyo
-backend/*.pyd
+# Environment files
+frontend/.env
 backend/.env
 
+# Python-specific ignores
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/api/endpoints/__pycache__/
+backend/app/core/__pycache__/
+backend/app/models/__pycache__/
+backend/app/services/__pycache__/
+backend/data/task/
+backend/data/audio/
+backend/data/conversations/
+backend/data/image
+backend/data/text
+backend/data/video
+backend/*.py[cod]
+backend/*.so
+backend/*.egg-info/
+backend/env/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.coverage
+
+__pycache__/
+*.pyc
+
+# macOS-specific ignores
 .DS_Store
+
+# IDEs and editors
 .vscode/
+.idea/
+*.swp
+*~
+
+# Log files
 *.log
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Dependency directories
+node_modules/
+
